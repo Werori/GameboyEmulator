@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <vector>
 
 struct GameboyMemory {
   static constexpr int ROM_BANK_SIZE = 0x4000; // 16KB
@@ -16,4 +17,6 @@ struct GameboyMemory {
   std::array<uint8_t, OAM_SIZE> oam;
 
   GameboyMemory();
+
+  void loadROM(const std::vector<uint8_t> &romData);
 };

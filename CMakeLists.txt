@@ -10,9 +10,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 link_directories(${CMAKE_SOURCE_DIR}/lib/raylib)
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/GameBoy.cpp
+  src/GameboyMemory.cpp)
 
 include_directories(${CMAKE_SOURCE_DIR}/include/raylib)
+include_directories(${CMAKE_SOURCE_DIR}/include/gameboy)
+
 target_link_libraries(${PROJECT_NAME} raylib gdi32 winmm)
 
 

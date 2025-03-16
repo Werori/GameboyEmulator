@@ -1,10 +1,10 @@
 #pragma once
 
 #include "GameboyMemory.h"
+#include "Instruction.h"
 #include <array>
 #include <cstddef>
 #include <cstdint>
-#include <functional>
 
 struct CPU {
   uint16_t pc;
@@ -12,8 +12,7 @@ struct CPU {
   GameboyMemory &memory;
   uint16_t opcode;
 
-  static std::array<std::function<void()>, 256> opcodes;
-  static std::array<size_t, 256> numOfBytes;
+  std::array<Instruction, 256> opcodes;
 
   CPU(GameboyMemory &memory);
 
@@ -22,4 +21,5 @@ struct CPU {
   void decodeAndExecute();
 
   static void nop();
+  static void LDBCn16();
 };

@@ -4,9 +4,10 @@
 #include <iostream>
 #include <string_view>
 
-Gameboy::Gameboy() {
+Gameboy::Gameboy()
+    : cpu(memory) {
 
-};
+      };
 
 bool Gameboy::loadROMFromFile(std::string_view filename) {
   std::ifstream file(filename.data(), std::ios::binary);
@@ -24,6 +25,10 @@ bool Gameboy::loadROMFromFile(std::string_view filename) {
 
   memory.loadROM(romData);
 
-  cpu.nop();
   return true;
+}
+
+void Gameboy::run() {
+  cpu.fetchOpcode();
+  cpu.decodeAndExecute();
 }

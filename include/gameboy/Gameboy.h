@@ -12,4 +12,5 @@ struct Gameboy {
   Gameboy();
 
   bool loadROMFromFile(std::string_view filename);
+  void run();
 };

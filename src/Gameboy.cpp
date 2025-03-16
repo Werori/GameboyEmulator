@@ -23,5 +23,7 @@ bool Gameboy::loadROMFromFile(std::string_view filename) {
   file.close();
 
   memory.loadROM(romData);
+
+  cpu.nop();
   return true;
 }

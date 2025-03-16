@@ -1,6 +1,7 @@
 #include "GameboyMemory.h"
 
 #include <algorithm>
+#include <stdexcept>
 #include <vector>
 
 GameboyMemory::GameboyMemory() {
@@ -19,5 +20,17 @@ void GameboyMemory::loadROM(const std::vector<uint8_t> &romData) {
   if (romData.size() >= BANK_1_START) {
     std::copy(romData.begin() + ROM_BANK_SIZE, romData.begin() + BANK_1_START,
               romBank1.begin());
+  }
+}
+
+std::array<uint8_t, GameboyMemory::ROM_BANK_SIZE> &
+GameboyMemory::getMemoryBank(uint16_t address) {
+  uint8_t bankNumber = address / ROM_BANK_SIZE;
+
+  switch (bankNumber) {
+  case 0:
+    return romBank0;
+  default:
+    throw std::out_of_range("Invalid bank");
   }
 }

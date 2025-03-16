@@ -19,4 +19,5 @@ struct GameboyMemory {
   GameboyMemory();
 
   void loadROM(const std::vector<uint8_t> &romData);
+  std::array<uint8_t, ROM_BANK_SIZE> &getMemoryBank(uint16_t address);
 };

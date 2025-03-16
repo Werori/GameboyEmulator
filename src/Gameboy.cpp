@@ -29,6 +29,8 @@ bool Gameboy::loadROMFromFile(std::string_view filename) {
 }
 
 void Gameboy::run() {
-  cpu.fetchOpcode();
-  cpu.decodeAndExecute();
+  while (true) {
+    cpu.fetchOpcode();
+    cpu.decodeAndExecute();
+  }
 }

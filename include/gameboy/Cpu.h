@@ -12,6 +12,7 @@ struct CPU {
   uint16_t opcode;
   std::array<Instruction, 256> opcodes;
   Registers registers;
+  bool jumped = false;
 
   CPU(GameboyMemory &memory);
 
@@ -19,6 +20,10 @@ struct CPU {
   void fetchOpcode();
   void decodeAndExecute();
 
+  // this instruction does nothing
   static void nop();
-  static void LDBCn16();
+  // Load 16-bit address into register BC
+  void LDBCn16();
+  // Jump to 16-bit address
+  void JPa16();
 };

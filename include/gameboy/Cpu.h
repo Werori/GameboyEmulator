@@ -11,6 +11,7 @@ struct CPU {
   GameboyMemory &memory;
   uint16_t opcode;
   std::array<Instruction, 256> opcodes;
+  std::array<Instruction, 256> extendedOpcodes;
   Registers registers;
   bool jumped = false;
 
@@ -24,6 +25,8 @@ struct CPU {
   static void nop();
   // Load 16-bit address into register BC
   void LDBCn16();
+  // XOR A register with A register and set Z flag if result = 0
+  void XORAA();
   // Jump to 16-bit address
   void JPa16();
 };

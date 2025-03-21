@@ -18,4 +18,5 @@ struct Registers {
   uint8_t getA();
   uint8_t getF();
   void setFlag(uint8_t flag, bool set);
+  void setC(uint8_t address);
 };

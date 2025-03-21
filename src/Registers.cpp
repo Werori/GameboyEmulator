@@ -1,4 +1,5 @@
 #include "Registers.h"
+#include <cstdint>
 
 uint8_t Registers::getA() { return (AF & 0xff00) >> 8; }
 
@@ -11,3 +12,5 @@ void Registers::setFlag(uint8_t flag, bool set) {
     AF = (AF & 0xff00) | (getF() & ~flag);
   }
 }
+
+void Registers::setC(uint8_t address) { BC = (BC & 0xff00) | address; }

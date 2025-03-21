@@ -14,3 +14,5 @@ void Registers::setFlag(uint8_t flag, bool set) {
 }
 
 void Registers::setC(uint8_t address) { BC = (BC & 0xff00) | address; }
+uint8_t Registers::getC() { return BC & 0x00ff; }
+void Registers::setB(uint8_t address) { BC = (address << 8) | getC(); }

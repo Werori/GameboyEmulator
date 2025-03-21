@@ -23,6 +23,8 @@ struct CPU {
 
   // this instruction does nothing
   static void nop();
+  // load 8-bit into register B
+  void LDBu8();
   // load 8-bit into register C
   void LDCu8();
   // load 16-bit address into register HL

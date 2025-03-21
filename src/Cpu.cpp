@@ -12,6 +12,7 @@ CPU::CPU(GameboyMemory &memory) : memory(memory) { initializeOpcodes(); };
 
 void CPU::initializeOpcodes() {
   opcodes[0x00] = {nop, 1, 4};
+  opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 12};
 };
@@ -48,19 +49,31 @@ void CPU::XORAA() {
   registers.setFlag(registers.FLAG_C, false);
 }
 
+void CPU::LDHLu16() {
+  auto [highByte, lowByte] = getHighByteAndLowByte();
+  registers.HL = toLittleEndian(highByte, lowByte);
+}
+
 void CPU::JPa16() {
 
   // std::cout << "pc: " << std::hex << registers.PC << std::endl;
+  auto [highByte, lowByte] = getHighByteAndLowByte();
 
-  uint8_t highByte = memory.getMemoryBank(registers.PC)[registers.PC + 1];
   // std::cout << "high: " << std::hex << (int)highByte << std::endl;
 
-  uint8_t lowByte = memory.getMemoryBank(registers.PC)[registers.PC + 2];
   // std::cout << "low:" << std::hex << (int)lowByte << std::endl;
 
-  uint16_t address = (lowByte << 8) | highByte;
-  // std::cout << "address: " << std::hex << (int)address << std::endl;
-
-  registers.PC = address;
+  registers.PC = CPU::toLittleEndian(highByte, lowByte);
   jumped = true;
 };
+
+uint16_t CPU::toLittleEndian(uint8_t highByte, uint8_t lowByte) {
+  return (lowByte << 8) | highByte;
+}
+
+std::pair<uint8_t, uint8_t> CPU::getHighByteAndLowByte() {
+  uint8_t highByte = memory.getMemoryBank(registers.PC)[registers.PC + 1];
+  uint8_t lowByte = memory.getMemoryBank(registers.PC)[registers.PC + 2];
+
+  return {highByte, lowByte};
+}

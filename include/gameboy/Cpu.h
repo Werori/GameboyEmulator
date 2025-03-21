@@ -23,10 +23,17 @@ struct CPU {
 
   // this instruction does nothing
   static void nop();
+  // load 16-bit address into register HL
+  void LDHLu16();
   // Load 16-bit address into register BC
   void LDBCn16();
   // XOR A register with A register and set Z flag if result = 0
   void XORAA();
   // Jump to 16-bit address
   void JPa16();
+
+  // switch high byte and low byte
+  uint16_t toLittleEndian(uint8_t highByte, uint8_t lowByte);
+
+  std::pair<uint8_t, uint8_t> getHighByteAndLowByte();
 };

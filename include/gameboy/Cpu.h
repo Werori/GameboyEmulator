@@ -9,7 +9,7 @@
 
 struct CPU {
   GameboyMemory &memory;
-  uint16_t opcode;
+  uint8_t opcode;
   std::array<Instruction, 256> opcodes;
   std::array<Instruction, 256> extendedOpcodes;
   Registers registers;

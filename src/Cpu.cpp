@@ -19,9 +19,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 12};
 };
 
-void CPU::fetchOpcode() {
-  opcode = memory.getMemoryBank(registers.PC)[registers.PC];
-}
+void CPU::fetchOpcode() { opcode = memory.read(registers.PC); }
 void CPU::decodeAndExecute() {
   std::cout << std::hex << (int)opcode << std::endl;
   if (opcode != 0xcb) {
@@ -29,7 +27,7 @@ void CPU::decodeAndExecute() {
   } else {
     std::cout << "Extended opcode!" << std::endl;
     registers.PC += 1;
-    opcode = memory.getMemoryBank(registers.PC)[registers.PC];
+    opcode = memory.read(registers.PC);
     extendedOpcodes[opcode].func();
   }
 
@@ -43,13 +41,9 @@ void CPU::decodeAndExecute() {
 void CPU::nop() { std::cout << "Nop function" << std::endl; };
 // void CPU::LDBCn16() { throw std::runtime_error("Not implemented"); }
 
-void CPU::LDBu8() {
-  registers.setB(memory.getMemoryBank(registers.PC)[registers.PC + 1]);
-}
+void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
 
-void CPU::LDCu8() {
-  registers.setC(memory.getMemoryBank(registers.PC)[registers.PC + 1]);
-}
+void CPU::LDCu8() { registers.setC(memory.read(registers.PC + 1)); }
 
 void CPU::XORAA() {
   uint8_t result = registers.getA() ^ registers.getA();
@@ -62,6 +56,8 @@ void CPU::XORAA() {
 
 void CPU::LDHLu16() {
   auto [highByte, lowByte] = getHighByteAndLowByte();
+  std::cout << "HL address: " << std::hex
+            << (int)toLittleEndian(highByte, lowByte) << std::endl;
   registers.HL = toLittleEndian(highByte, lowByte);
 }
 
@@ -83,8 +79,10 @@ uint16_t CPU::toLittleEndian(uint8_t highByte, uint8_t lowByte) {
 }
 
 std::pair<uint8_t, uint8_t> CPU::getHighByteAndLowByte() {
-  uint8_t highByte = memory.getMemoryBank(registers.PC)[registers.PC + 1];
-  uint8_t lowByte = memory.getMemoryBank(registers.PC)[registers.PC + 2];
+  uint8_t highByte = memory.read(registers.PC + 1);
+  uint8_t lowByte = memory.read(registers.PC + 2);
+  // uint8_t highByte = memory.getMemoryBank(registers.PC)[registers.PC + 1];
+  // uint8_t lowByte = memory.getMemoryBank(registers.PC)[registers.PC + 2];
 
   return {highByte, lowByte};
 }

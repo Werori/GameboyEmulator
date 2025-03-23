@@ -29,6 +29,8 @@ struct CPU {
   void LDBu8();
   // load 8-bit into register C
   void LDCu8();
+  // relative jump to pc + i8 if N flag is not set
+  void JRNZi8();
   // load 16-bit address into register HL
   void LDHLu16();
   // get value from A and load it into address held by HL. Decrease HL.

@@ -11,14 +11,15 @@
 CPU::CPU(GameboyMemory &memory) : memory(memory) { initializeOpcodes(); };
 
 void CPU::initializeOpcodes() {
-  opcodes[0x00] = {nop, 1, 4};
-  opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4};
-  opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8};
-  opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8};
-  opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12};
-  opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8};
-  opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4};
-  opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 12};
+  opcodes[0x00] = {nop, 1, 4, 4};
+  opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
+  opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
+  opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
+  opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
+  opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
+  opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
+  opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
+  opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
 };
 
 void CPU::fetchOpcode() { opcode = memory.read(registers.PC); }
@@ -59,6 +60,14 @@ void CPU::DecB() {
 void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
 
 void CPU::LDCu8() { registers.setC(memory.read(registers.PC + 1)); }
+
+void CPU::JRNZi8() {
+  int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
+
+  if (!registers.isFlagSet(registers.FLAG_Z)) {
+    registers.PC += offset;
+  }
+}
 
 void CPU::XORAA() {
   uint8_t result = registers.getA() ^ registers.getA();

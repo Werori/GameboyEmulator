@@ -20,3 +20,7 @@ uint8_t Registers::getC() { return BC & 0x00ff; }
 void Registers::setB(uint8_t address) { BC = (address << 8) | getC(); }
 
 uint8_t Registers::getB() { return (BC & 0xff00) >> 8; }
+
+bool Registers::isFlagSet(uint8_t flag) {
+  return (Registers::getF() & flag) != 0;
+}

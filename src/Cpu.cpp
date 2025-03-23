@@ -12,6 +12,7 @@ CPU::CPU(GameboyMemory &memory) : memory(memory) { initializeOpcodes(); };
 
 void CPU::initializeOpcodes() {
   opcodes[0x00] = {nop, 1, 4};
+  opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4};
   opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8};
   opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12};
@@ -40,7 +41,20 @@ void CPU::decodeAndExecute() {
 }
 
 void CPU::nop() { std::cout << "Nop function" << std::endl; };
-// void CPU::LDBCn16() { throw std::runtime_error("Not implemented"); }
+
+void CPU::DecB() {
+  uint8_t b = registers.getB();
+  registers.setB(b--);
+
+  registers.setFlag(registers.FLAG_Z, registers.getB() == 0);
+  registers.setFlag(registers.FLAG_N, true);
+
+  if (registers.getB() <= 0x10) {
+    registers.setFlag(registers.FLAG_H, true);
+  } else {
+    registers.setFlag(registers.FLAG_H, false);
+  }
+}
 
 void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
 

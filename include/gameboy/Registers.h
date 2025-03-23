@@ -21,4 +21,5 @@ struct Registers {
   void setC(uint8_t address);
   uint8_t getC();
   void setB(uint8_t address);
+  uint8_t getB();
 };

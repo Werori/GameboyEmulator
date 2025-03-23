@@ -23,6 +23,8 @@ struct CPU {
 
   // this instruction does nothing
   static void nop();
+  // decrease register B | set N flag, H&Z dependent
+  void DecB();
   // load 8-bit into register B
   void LDBu8();
   // load 8-bit into register C

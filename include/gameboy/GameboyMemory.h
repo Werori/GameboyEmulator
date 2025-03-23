@@ -13,6 +13,8 @@ struct GameboyMemory {
   static constexpr int OAM_SIZE = 0xA0;            // 160 bytes
   static constexpr int HIGH_RAM_SIZE = 0x7f;       // 127 bytes
 
+  uint16_t interruptEnableRegister = 0xffff;
+
   Range romBank0Range = {0x0000, 0x3fff};
   Range romBank1Range = {0x4000, 0x7fff};
   Range vRAMRange = {0x8000, 0x9fff};

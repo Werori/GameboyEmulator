@@ -57,3 +57,32 @@ uint8_t GameboyMemory::read(uint16_t address) {
     throw std::runtime_error("out of range address");
   }
 }
+void GameboyMemory::write(uint16_t address, uint8_t byte) {
+  if (romBank0Range.contains(address)) {
+    std::cout << "Can't write to ROM!" << std::endl;
+  } else if (romBank1Range.contains(address)) {
+    std::cout << "Can't write to ROM!" << std::endl;
+  } else if (vRAMRange.contains(address)) {
+    std::cout << "Writing to vram..." << std::endl;
+    vram[address - vRAMRange.start] = byte;
+  } else if (externalRAMRange.contains(address)) {
+    std::cout << "Writing to external ram..." << std::endl;
+    externalRam[address - externalRAMRange.start] = byte;
+  } else if (wRam1Range.contains(address)) {
+    std::cout << "Writing to wram1..." << std::endl;
+    wram1[address - wRam1Range.start] = byte;
+  } else if (wRam2Range.contains(address)) {
+    std::cout << "Writing to wram2..." << std::endl;
+    wram2[address - wRam2Range.start] = byte;
+  } else if (oamRange.contains(address)) {
+    std::cout << "Writing to oam..." << std::endl;
+    oam[address - oamRange.start] = byte;
+  } else if (ioRange.contains(address)) {
+    throw std::runtime_error("io range!");
+  } else if (highRamRange.contains(address)) {
+    std::cout << "Writing to highRam..." << std::endl;
+    highRam[address - highRamRange.start] = byte;
+  } else {
+    throw std::runtime_error("out of range address");
+  }
+}

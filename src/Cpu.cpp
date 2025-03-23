@@ -15,6 +15,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8};
   opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12};
+  opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 12};
 };
@@ -59,6 +60,14 @@ void CPU::LDHLu16() {
   std::cout << "HL address: " << std::hex
             << (int)toLittleEndian(highByte, lowByte) << std::endl;
   registers.HL = toLittleEndian(highByte, lowByte);
+}
+
+void CPU::LDHLDecA() {
+  auto a = registers.getA();
+  auto address = registers.HL;
+
+  memory.write(address, a);
+  registers.HL--;
 }
 
 void CPU::JPa16() {

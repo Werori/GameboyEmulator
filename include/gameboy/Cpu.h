@@ -29,6 +29,8 @@ struct CPU {
   void LDCu8();
   // load 16-bit address into register HL
   void LDHLu16();
+  // get value from A and load it into address held by HL. Decrease HL.
+  void LDHLDecA();
   // Load 16-bit address into register BC
   void LDBCn16();
   // XOR A register with A register and set Z flag if result = 0

@@ -27,6 +27,8 @@ struct CPU {
   void DecB();
   // load 8-bit into register B
   void LDBu8();
+  // decrease register C | set N flag, H&Z dependent
+  void DecC();
   // load 8-bit into register C
   void LDCu8();
   // relative jump to pc + i8 if N flag is not set

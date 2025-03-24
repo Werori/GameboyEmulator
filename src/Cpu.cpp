@@ -14,6 +14,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x00] = {nop, 1, 4, 4};
   opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
   opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
+  opcodes[0x0d] = {[this]() { CPU::DecC(); }, 1, 4, 4};
   opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
@@ -22,7 +23,12 @@ void CPU::initializeOpcodes() {
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
 };
 
-void CPU::fetchOpcode() { opcode = memory.read(registers.PC); }
+void CPU::fetchOpcode() {
+  opcode = memory.read(registers.PC);
+  std::cout << "B: " << std::hex << (int)registers.getB() << std::endl;
+  std::cout << "A: " << std::hex << (int)registers.getA() << std::endl;
+  std::cout << "C: " << std::hex << (int)registers.getC() << std::endl;
+}
 void CPU::decodeAndExecute() {
   std::cout << std::hex << (int)opcode << std::endl;
   if (opcode != 0xcb) {
@@ -58,6 +64,20 @@ void CPU::DecB() {
 }
 
 void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
+
+void CPU::DecC() {
+  uint8_t c = registers.getC();
+  registers.setC(c--);
+
+  registers.setFlag(registers.FLAG_Z, registers.getC() == 0);
+  registers.setFlag(registers.FLAG_N, true);
+
+  if (registers.getC() <= 0x10) {
+    registers.setFlag(registers.FLAG_H, true);
+  } else {
+    registers.setFlag(registers.FLAG_H, false);
+  }
+}
 
 void CPU::LDCu8() { registers.setC(memory.read(registers.PC + 1)); }
 

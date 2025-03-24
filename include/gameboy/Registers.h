@@ -3,12 +3,12 @@
 #include <cstdint>
 
 struct Registers {
-  uint16_t AF = 0x0;
-  uint16_t BC = 0x0;
-  uint16_t DE = 0x0;
-  uint16_t HL = 0x0;
-  uint16_t SP = 0x0;
-  uint16_t PC = 0x100;
+  uint16_t AF = 0x01b0;
+  uint16_t BC = 0x0013;
+  uint16_t DE = 0x00d8;
+  uint16_t HL = 0x014d;
+  uint16_t SP = 0xfffe;
+  uint16_t PC = 0x0100;
 
   static constexpr uint8_t FLAG_Z = 0x80;
   static constexpr uint8_t FLAG_N = 0x40;

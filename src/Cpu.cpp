@@ -6,6 +6,7 @@
 #include <functional>
 #include <ios>
 #include <iostream>
+#include <stdexcept>
 // #include <stdexcept>
 
 CPU::CPU(GameboyMemory &memory) : memory(memory) { initializeOpcodes(); };
@@ -28,6 +29,7 @@ void CPU::fetchOpcode() {
   std::cout << "B: " << std::hex << (int)registers.getB() << std::endl;
   std::cout << "A: " << std::hex << (int)registers.getA() << std::endl;
   std::cout << "C: " << std::hex << (int)registers.getC() << std::endl;
+  std::cout << "F: " << std::hex << (int)registers.getF() << std::endl;
 }
 void CPU::decodeAndExecute() {
   std::cout << std::hex << (int)opcode << std::endl;
@@ -51,37 +53,46 @@ void CPU::nop() { std::cout << "Nop function" << std::endl; };
 
 void CPU::DecB() {
   uint8_t b = registers.getB();
-  registers.setB(b--);
-
-  registers.setFlag(registers.FLAG_Z, registers.getB() == 0);
-  registers.setFlag(registers.FLAG_N, true);
 
   if (registers.getB() <= 0x10) {
     registers.setFlag(registers.FLAG_H, true);
   } else {
     registers.setFlag(registers.FLAG_H, false);
   }
+
+  registers.setB(b -= 1);
+
+  registers.setFlag(registers.FLAG_Z, registers.getB() == 0);
+  registers.setFlag(registers.FLAG_N, true);
+
+  std::cout << std::hex << "FLAG H: " << (int)registers.FLAG_H << std::endl;
+  // throw std::runtime_error("stop from decB!");
 }
 
 void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
 
 void CPU::DecC() {
+  std::cout << "Decreasing C" << std::endl;
   uint8_t c = registers.getC();
-  registers.setC(c--);
-
-  registers.setFlag(registers.FLAG_Z, registers.getC() == 0);
-  registers.setFlag(registers.FLAG_N, true);
 
   if (registers.getC() <= 0x10) {
     registers.setFlag(registers.FLAG_H, true);
   } else {
     registers.setFlag(registers.FLAG_H, false);
   }
+
+  registers.setC(--c);
+
+  registers.setFlag(registers.FLAG_Z, registers.getC() == 0);
+  registers.setFlag(registers.FLAG_N, true);
+
+  // throw std::runtime_error("stop from decC");
 }
 
 void CPU::LDCu8() { registers.setC(memory.read(registers.PC + 1)); }
 
 void CPU::JRNZi8() {
+  // std::cout << std::hex << (int)registers.PC << std::endl;
   int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
 
   if (!registers.isFlagSet(registers.FLAG_Z)) {

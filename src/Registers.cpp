@@ -3,6 +3,8 @@
 
 uint8_t Registers::getA() { return (AF & 0xff00) >> 8; }
 
+void Registers::setA(uint8_t address) { AF = (address << 8) | (AF & 0x00ff); }
+
 uint8_t Registers::getF() { return (AF & 0x00ff); }
 
 void Registers::setFlag(uint8_t flag, bool set) {

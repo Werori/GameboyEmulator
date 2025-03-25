@@ -16,6 +16,7 @@ struct Registers {
   static constexpr uint8_t FLAG_C = 0x10;
 
   uint8_t getA();
+  void setA(uint8_t address);
   uint8_t getF();
   void setFlag(uint8_t flag, bool set);
   void setC(uint8_t address);

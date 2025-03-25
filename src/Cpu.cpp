@@ -20,6 +20,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
+  opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
 };
@@ -81,7 +82,7 @@ void CPU::DecC() {
     registers.setFlag(registers.FLAG_H, false);
   }
 
-  registers.setC(--c);
+  registers.setC(c -= 1);
 
   registers.setFlag(registers.FLAG_Z, registers.getC() == 0);
   registers.setFlag(registers.FLAG_N, true);
@@ -123,6 +124,8 @@ void CPU::LDHLDecA() {
   memory.write(address, a);
   registers.HL--;
 }
+
+void CPU::LDAu8() { registers.setC(memory.read(registers.PC + 1)); }
 
 void CPU::JPa16() {
 

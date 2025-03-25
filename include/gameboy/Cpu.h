@@ -12,6 +12,7 @@ struct CPU {
   uint8_t opcode;
   std::array<Instruction, 256> opcodes;
   std::array<Instruction, 256> extendedOpcodes;
+  uint8_t IME = 0;
   Registers registers;
   bool jumped = false;
 
@@ -45,6 +46,8 @@ struct CPU {
   void XORAA();
   // Jump to 16-bit address
   void JPa16();
+
+  void DI();
 
   // switch high byte and low byte
   uint16_t toLittleEndian(uint8_t highByte, uint8_t lowByte);

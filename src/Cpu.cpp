@@ -23,6 +23,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
+  opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
 };
 
 void CPU::fetchOpcode() {
@@ -139,6 +140,8 @@ void CPU::JPa16() {
   registers.PC = CPU::toLittleEndian(highByte, lowByte);
   jumped = true;
 };
+
+void CPU::DI() { IME = 0; }
 
 uint16_t CPU::toLittleEndian(uint8_t highByte, uint8_t lowByte) {
   return (lowByte << 8) | highByte;

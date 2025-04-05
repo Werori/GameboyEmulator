@@ -12,6 +12,7 @@ struct GameboyMemory {
   static constexpr int WRAM_SIZE = 0x1000;         // 4KB
   static constexpr int OAM_SIZE = 0xA0;            // 160 bytes
   static constexpr int HIGH_RAM_SIZE = 0x7f;       // 127 bytes
+  static constexpr int IO_REGISTERS_SIZE = 0x80;   // 128 bytes
 
   uint16_t interruptEnableRegister = 0xffff;
 
@@ -33,6 +34,7 @@ struct GameboyMemory {
   std::array<uint8_t, WRAM_SIZE> wram2;
   std::array<uint8_t, OAM_SIZE> oam;
   std::array<uint8_t, HIGH_RAM_SIZE> highRam;
+  std::array<uint8_t, IO_REGISTERS_SIZE> ioRegisters;
 
   GameboyMemory();
 

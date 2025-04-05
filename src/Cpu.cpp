@@ -23,15 +23,18 @@ void CPU::initializeOpcodes() {
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
+  opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
 };
 
 void CPU::fetchOpcode() {
+  std::cout << "READING MEMORY..." << std::endl;
   opcode = memory.read(registers.PC);
-  std::cout << "B: " << std::hex << (int)registers.getB() << std::endl;
-  std::cout << "A: " << std::hex << (int)registers.getA() << std::endl;
-  std::cout << "C: " << std::hex << (int)registers.getC() << std::endl;
-  std::cout << "F: " << std::hex << (int)registers.getF() << std::endl;
+  std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
+  // std::cout << "B: " << std::hex << (int)registers.getB() << std::endl;
+  // std::cout << "A: " << std::hex << (int)registers.getA() << std::endl;
+  // std::cout << "C: " << std::hex << (int)registers.getC() << std::endl;
+  // std::cout << "F: " << std::hex << (int)registers.getF() << std::endl;
 }
 void CPU::decodeAndExecute() {
   std::cout << std::hex << (int)opcode << std::endl;
@@ -111,6 +114,19 @@ void CPU::XORAA() {
   registers.setFlag(registers.FLAG_C, false);
 }
 
+void CPU::JPa16() {
+
+  // std::cout << "pc: " << std::hex << registers.PC << std::endl;
+  auto [highByte, lowByte] = getHighByteAndLowByte();
+
+  // std::cout << "high: " << std::hex << (int)highByte << std::endl;
+
+  // std::cout << "low:" << std::hex << (int)lowByte << std::endl;
+
+  registers.PC = CPU::toLittleEndian(highByte, lowByte);
+  jumped = true;
+};
+
 void CPU::LDHLu16() {
   auto [highByte, lowByte] = getHighByteAndLowByte();
   std::cout << "HL address: " << std::hex
@@ -128,18 +144,17 @@ void CPU::LDHLDecA() {
 
 void CPU::LDAu8() { registers.setC(memory.read(registers.PC + 1)); }
 
-void CPU::JPa16() {
+void CPU::LDFF00Plusu8A() {
+  auto a = registers.getA();
+  auto byte = memory.read(registers.PC + 1);
+  uint16_t address = 0xff00 + byte;
 
-  // std::cout << "pc: " << std::hex << registers.PC << std::endl;
-  auto [highByte, lowByte] = getHighByteAndLowByte();
+  std::cout << "io address: " << std::hex << (int)address << std::endl;
 
-  // std::cout << "high: " << std::hex << (int)highByte << std::endl;
+  memory.write(address, a);
 
-  // std::cout << "low:" << std::hex << (int)lowByte << std::endl;
-
-  registers.PC = CPU::toLittleEndian(highByte, lowByte);
-  jumped = true;
-};
+  std::cout << "pc after: " << std::hex << (int)registers.PC << std::endl;
+}
 
 void CPU::DI() { IME = 0; }
 

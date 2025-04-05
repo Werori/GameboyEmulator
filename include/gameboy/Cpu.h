@@ -46,7 +46,9 @@ struct CPU {
   void XORAA();
   // Jump to 16-bit address
   void JPa16();
-
+  // load data to 0xFF00 Plus 8-bit data in the next byte
+  void LDFF00Plusu8A();
+  // disable interrupt
   void DI();
 
   // switch high byte and low byte

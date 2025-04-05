@@ -13,6 +13,7 @@ GameboyMemory::GameboyMemory() {
   std::fill(wram1.begin(), wram1.end(), 0);
   std::fill(wram2.begin(), wram2.end(), 0);
   std::fill(oam.begin(), oam.end(), 0);
+  std::fill(ioRegisters.begin(), ioRegisters.end(), 0);
 }
 
 void GameboyMemory::loadROM(const std::vector<uint8_t> &romData) {
@@ -78,11 +79,13 @@ void GameboyMemory::write(uint16_t address, uint8_t byte) {
     std::cout << "Writing to oam..." << std::endl;
     oam[address - oamRange.start] = byte;
   } else if (ioRange.contains(address)) {
-    throw std::runtime_error("io range!");
+    ioRegisters[address & 0xff] = byte;
   } else if (highRamRange.contains(address)) {
     std::cout << "Writing to highRam..." << std::endl;
     highRam[address - highRamRange.start] = byte;
   } else if (address == 0xffff) {
+
+    std::cout << "interrupt" << std::endl;
     throw std::runtime_error("interrupt");
   } else {
     throw std::runtime_error("out of range address");

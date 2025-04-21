@@ -50,7 +50,7 @@ uint8_t GameboyMemory::read(uint16_t address) {
     std::cout << "Reading from oam..." << std::endl;
     return oam[address - oamRange.start];
   } else if (ioRange.contains(address)) {
-    throw std::runtime_error("io range!");
+    return ioRegisters[address & 0xff];
   } else if (highRamRange.contains(address)) {
     std::cout << "Reading from highRam..." << std::endl;
     return highRam[address - highRamRange.start];
@@ -84,9 +84,8 @@ void GameboyMemory::write(uint16_t address, uint8_t byte) {
     std::cout << "Writing to highRam..." << std::endl;
     highRam[address - highRamRange.start] = byte;
   } else if (address == 0xffff) {
-
     std::cout << "interrupt" << std::endl;
-    throw std::runtime_error("interrupt");
+    interruptEnableRegister = byte;
   } else {
     throw std::runtime_error("out of range address");
   }

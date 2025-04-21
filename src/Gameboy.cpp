@@ -21,6 +21,7 @@ bool Gameboy::loadROMFromFile(std::string_view filename) {
                                std::istreambuf_iterator<char>());
 
   std::cout << romData.size() << std::endl;
+
   file.close();
 
   memory.loadROM(romData);

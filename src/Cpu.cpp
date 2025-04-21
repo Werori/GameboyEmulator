@@ -24,6 +24,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
+  opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
 };
 
@@ -32,7 +33,7 @@ void CPU::fetchOpcode() {
   opcode = memory.read(registers.PC);
   std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
   // std::cout << "B: " << std::hex << (int)registers.getB() << std::endl;
-  // std::cout << "A: " << std::hex << (int)registers.getA() << std::endl;
+  std::cout << "A: " << std::hex << (int)registers.getA() << std::endl;
   // std::cout << "C: " << std::hex << (int)registers.getC() << std::endl;
   // std::cout << "F: " << std::hex << (int)registers.getF() << std::endl;
 }
@@ -147,13 +148,22 @@ void CPU::LDAu8() { registers.setC(memory.read(registers.PC + 1)); }
 void CPU::LDFF00Plusu8A() {
   auto a = registers.getA();
   auto byte = memory.read(registers.PC + 1);
+  // auto byte = registers.PC + 1;
+  std::cout << std::hex << "byte: " << (int)byte << std::endl;
   uint16_t address = 0xff00 + byte;
 
   std::cout << "io address: " << std::hex << (int)address << std::endl;
 
   memory.write(address, a);
+}
 
-  std::cout << "pc after: " << std::hex << (int)registers.PC << std::endl;
+void CPU::LDAFF00Plusu8() {
+  auto byte = memory.read(registers.PC + 1);
+  std::cout << std::hex << "byte: " << (int)byte << std::endl;
+  auto address = memory.read(0xff00 + byte);
+  std::cout << std::hex << "address: " << address << std::endl;
+
+  registers.setA(address);
 }
 
 void CPU::DI() { IME = 0; }

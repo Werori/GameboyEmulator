@@ -48,6 +48,8 @@ struct CPU {
   void JPa16();
   // load data to 0xFF00 Plus 8-bit data in the next byte
   void LDFF00Plusu8A();
+  // load value of 0xFF00 plus 8-bit into register A
+  void LDAFF00Plusu8();
   // disable interrupt
   void DI();
 

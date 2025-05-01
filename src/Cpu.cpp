@@ -26,6 +26,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
+  opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
 };
 
 void CPU::fetchOpcode() {
@@ -33,7 +34,7 @@ void CPU::fetchOpcode() {
   opcode = memory.read(registers.PC);
   std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
   // std::cout << "B: " << std::hex << (int)registers.getB() << std::endl;
-  std::cout << "A: " << std::hex << (int)registers.getA() << std::endl;
+  // std::cout << "A: " << std::hex << (int)registers.getA() << std::endl;
   // std::cout << "C: " << std::hex << (int)registers.getC() << std::endl;
   // std::cout << "F: " << std::hex << (int)registers.getF() << std::endl;
 }
@@ -60,11 +61,7 @@ void CPU::nop() { std::cout << "Nop function" << std::endl; };
 void CPU::DecB() {
   uint8_t b = registers.getB();
 
-  if (registers.getB() <= 0x10) {
-    registers.setFlag(registers.FLAG_H, true);
-  } else {
-    registers.setFlag(registers.FLAG_H, false);
-  }
+  registers.setFlag(registers.FLAG_H, b <= HALF_CARRY);
 
   registers.setB(b -= 1);
 
@@ -72,20 +69,14 @@ void CPU::DecB() {
   registers.setFlag(registers.FLAG_N, true);
 
   std::cout << std::hex << "FLAG H: " << (int)registers.FLAG_H << std::endl;
-  // throw std::runtime_error("stop from decB!");
 }
 
 void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
 
 void CPU::DecC() {
-  std::cout << "Decreasing C" << std::endl;
   uint8_t c = registers.getC();
 
-  if (registers.getC() <= 0x10) {
-    registers.setFlag(registers.FLAG_H, true);
-  } else {
-    registers.setFlag(registers.FLAG_H, false);
-  }
+  registers.setFlag(registers.FLAG_H, registers.getB() <= HALF_CARRY);
 
   registers.setC(c -= 1);
 
@@ -149,10 +140,10 @@ void CPU::LDFF00Plusu8A() {
   auto a = registers.getA();
   auto byte = memory.read(registers.PC + 1);
   // auto byte = registers.PC + 1;
-  std::cout << std::hex << "byte: " << (int)byte << std::endl;
+  // std::cout << std::hex << "byte: " << (int)byte << std::endl;
   uint16_t address = 0xff00 + byte;
 
-  std::cout << "io address: " << std::hex << (int)address << std::endl;
+  // std::cout << "io address: " << std::hex << (int)address << std::endl;
 
   memory.write(address, a);
 }
@@ -161,12 +152,25 @@ void CPU::LDAFF00Plusu8() {
   auto byte = memory.read(registers.PC + 1);
   std::cout << std::hex << "byte: " << (int)byte << std::endl;
   auto address = memory.read(0xff00 + byte);
-  std::cout << std::hex << "address: " << address << std::endl;
+  // std::cout << std::hex << "address: " << address << std::endl;
 
   registers.setA(address);
 }
 
 void CPU::DI() { IME = 0; }
+
+void CPU::CPAu8() {
+  uint8_t value = memory.read(registers.PC + 1);
+  uint8_t a = registers.getA();
+
+  std::cout << "z: " << (a == value) << " a: " << (int)a
+            << "value: " << (int)value << std::endl;
+
+  registers.setFlag(registers.FLAG_Z, a == value);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarry(a, value));
+  registers.setFlag(registers.FLAG_C, isCarry(a, value));
+}
 
 uint16_t CPU::toLittleEndian(uint8_t highByte, uint8_t lowByte) {
   return (lowByte << 8) | highByte;
@@ -179,4 +183,12 @@ std::pair<uint8_t, uint8_t> CPU::getHighByteAndLowByte() {
   // uint8_t lowByte = memory.getMemoryBank(registers.PC)[registers.PC + 2];
 
   return {highByte, lowByte};
+}
+
+bool CPU::isHalfCarry(uint8_t a, uint8_t value) {
+  return ((a & 0x0f) < (value & 0x0f));
+}
+
+bool CPU::isCarry(uint8_t a, uint8_t value) {
+  return (a < (value + (registers.getF() & CARRY_FLAG_REGISTER_F)));
 }

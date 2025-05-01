@@ -16,6 +16,9 @@ struct CPU {
   Registers registers;
   bool jumped = false;
 
+  const uint8_t HALF_CARRY = 0x10;
+  const uint8_t CARRY_FLAG_REGISTER_F = 0x10;
+
   CPU(GameboyMemory &memory);
 
   void initializeOpcodes();
@@ -52,9 +55,16 @@ struct CPU {
   void LDAFF00Plusu8();
   // disable interrupt
   void DI();
+  // subtract u8 from value in A, discard result, set flags
+  void CPAu8();
 
+private:
   // switch high byte and low byte
   uint16_t toLittleEndian(uint8_t highByte, uint8_t lowByte);
 
   std::pair<uint8_t, uint8_t> getHighByteAndLowByte();
+
+  bool isHalfCarry(uint8_t a, uint8_t value);
+
+  bool isCarry(uint8_t a, uint8_t value);
 };

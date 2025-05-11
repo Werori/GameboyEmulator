@@ -9,7 +9,9 @@
 #include <stdexcept>
 // #include <stdexcept>
 
-CPU::CPU(GameboyMemory &memory) : memory(memory) { initializeOpcodes(); };
+CPU::CPU(GameboyMemory &memory, PPU &ppu) : memory(memory), ppu(ppu) {
+  initializeOpcodes();
+};
 
 void CPU::initializeOpcodes() {
   opcodes[0x00] = {nop, 1, 4, 4};
@@ -42,12 +44,16 @@ void CPU::decodeAndExecute() {
   std::cout << std::hex << (int)opcode << std::endl;
   if (opcode != 0xcb) {
     opcodes[opcode].func();
+    length = opcodes[opcode].length;
   } else {
     std::cout << "Extended opcode!" << std::endl;
     registers.PC += 1;
     opcode = memory.read(registers.PC);
     extendedOpcodes[opcode].func();
+    length = extendedOpcodes[opcode].length;
   }
+
+  cycles += length;
 
   if (jumped) {
     jumped = false;

@@ -2,6 +2,7 @@
 
 #include "GameboyMemory.h"
 #include "Instruction.h"
+#include "Ppu.h"
 #include "Registers.h"
 #include <array>
 #include <cstddef>
@@ -9,17 +10,20 @@
 
 struct CPU {
   GameboyMemory &memory;
+  PPU &ppu;
   uint8_t opcode;
   std::array<Instruction, 256> opcodes;
   std::array<Instruction, 256> extendedOpcodes;
   uint8_t IME = 0;
   Registers registers;
   bool jumped = false;
+  int cycles = 0;
+  int length = 0;
 
   const uint8_t HALF_CARRY = 0x10;
   const uint8_t CARRY_FLAG_REGISTER_F = 0x10;
 
-  CPU(GameboyMemory &memory);
+  CPU(GameboyMemory &memory, PPU &ppu);
 
   void initializeOpcodes();
   void fetchOpcode();

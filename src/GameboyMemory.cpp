@@ -50,8 +50,32 @@ uint8_t GameboyMemory::read(uint16_t address) {
   } else if (oamRange.contains(address)) {
     std::cout << "Reading from oam..." << std::endl;
     return oam[address - oamRange.start];
+  } else if (address == 0xff00) {
+    throw std::runtime_error("reading joypad");
+  } else if (address == 0xff01) {
+    throw std::runtime_error("reading serial transfer data");
+  } else if (address == 0xff02) {
+    throw std::runtime_error("reading serial Transfer control");
+  } else if (address == 0xff04) {
+    throw std::runtime_error("reading divider register");
+  } else if (address == 0xff05) {
+    throw std::runtime_error("reading timer counter");
+  } else if (address == 0xff06) {
+    throw std::runtime_error("reading timer modulo");
+  } else if (address == 0xff07) {
+    throw std::runtime_error("reading timer control");
+  } else if (address == 0xff0f) {
+    throw std::runtime_error("reading interrupt flag");
+  } else if (address == 0xff10) {
+    throw std::runtime_error("reading sound channel 1 sweep");
+  } else if (address == 0xff11) {
+    throw std::runtime_error("reading sound channel 1 length timer");
+  } else if (address == 0xff12) {
+    throw std::runtime_error("reading sound channel 1 volume and envelope");
+  } else if (address == 0xff14) {
+    throw std::runtime_error("reading sound channel 1 period high and control");
   } else if (ioRange.contains(address)) {
-    return ioRegisters[address & 0xff];
+    throw std::runtime_error("io range");
   } else if (highRamRange.contains(address)) {
     std::cout << "Reading from highRam..." << std::endl;
     return highRam[address - highRamRange.start];
@@ -79,14 +103,37 @@ void GameboyMemory::write(uint16_t address, uint8_t byte) {
   } else if (oamRange.contains(address)) {
     std::cout << "Writing to oam..." << std::endl;
     oam[address - oamRange.start] = byte;
+  } else if (address == 0xcf) {
+    throw std::runtime_error("writing joypad");
+  } else if (address == 0xff01) {
+    throw std::runtime_error("writing serial transfer data");
+  } else if (address == 0xff02) {
+    throw std::runtime_error("writing serial transfer control");
+  } else if (address == 0xff04) {
+    throw std::runtime_error("writing divider register");
+  } else if (address == 0xff05) {
+    throw std::runtime_error("writing timer counter");
+  } else if (address == 0xff06) {
+    throw std::runtime_error("writing timer modulo");
+  } else if (address == 0xff07) {
+    throw std::runtime_error("writing timer control");
+  } else if (address == 0xff0f) {
+    throw std::runtime_error("writing interrupt flag");
+  } else if (address == 0xff10) {
+    throw std::runtime_error("writing sound channel 1 sweep");
+  } else if (address == 0xff11) {
+    throw std::runtime_error("writing sound channel 1 length timer");
+  } else if (address == 0xff12) {
+    throw std::runtime_error("writing sound channel 1 volume and envelope");
+  } else if (address == 0xff13) {
+    throw std::runtime_error("writing sound channel 1 period low");
+  } else if (address == 0xff14) {
+    throw std::runtime_error("writing sound channel 1 period high and control");
   } else if (ioRange.contains(address)) {
-    ioRegisters[address & 0xff] = byte;
+    throw std::runtime_error("io range");
   } else if (highRamRange.contains(address)) {
     std::cout << "Writing to highRam..." << std::endl;
     highRam[address - highRamRange.start] = byte;
-  } else if (address == 0xffff) {
-    std::cout << "interrupt" << std::endl;
-    interruptEnableRegister = byte;
   } else {
     throw std::runtime_error("out of range address");
   }

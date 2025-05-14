@@ -60,6 +60,8 @@ void CPU::decodeAndExecute() {
   } else {
     registers.PC += opcodes[opcode].length;
   }
+
+  ppu.tick(cycles);
 }
 
 void CPU::nop() { std::cout << "Nop function" << std::endl; };

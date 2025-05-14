@@ -43,4 +43,9 @@ struct GameboyMemory {
 
   uint8_t read(uint16_t address);
   void write(uint16_t address, uint8_t byte);
+
+  // helper function to read hardware registers
+  uint8_t readIORegister(uint16_t address);
+  // helper function to write to hardware registers
+  void writeIORegister(uint16_t address, uint8_t byte);
 };

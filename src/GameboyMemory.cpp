@@ -1,4 +1,5 @@
 #include "GameboyMemory.h"
+#include "InterruptFlag.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -55,6 +56,8 @@ uint8_t GameboyMemory::read(uint16_t address) {
   } else if (highRamRange.contains(address)) {
     std::cout << "Reading from highRam..." << std::endl;
     return highRam[address - highRamRange.start];
+  } else if (address == 0xffff) {
+    throw std::runtime_error("reading interrupt enable");
   } else {
     throw std::runtime_error("out of range address");
   }
@@ -167,6 +170,8 @@ void GameboyMemory::write(uint16_t address, uint8_t byte) {
   } else if (highRamRange.contains(address)) {
     std::cout << "Writing to highRam..." << std::endl;
     highRam[address - highRamRange.start] = byte;
+  } else if (address == 0xffff) {
+    throw std::runtime_error("writing interrupt enable");
   } else {
     throw std::runtime_error("out of range address");
   }
@@ -259,4 +264,10 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
   case 0xff4b:
     throw std::runtime_error("writing window x + 7");
   }
+}
+
+void GameboyMemory::requestInterrupt(InterruptFlag flag) {
+  uint8_t interrupt_flag = read(0xff0f); // IF register
+  interrupt_flag |= (1 << static_cast<uint8_t>(flag));
+  write(0xFF0F, interrupt_flag);
 }

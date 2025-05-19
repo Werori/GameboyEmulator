@@ -1,12 +1,14 @@
 #pragma once
 
 #include "HardwareRegisters.h"
+#include "InterruptController.h"
+#include "InterruptFlag.h"
 #include "Range.h"
 #include <array>
 #include <cstdint>
 #include <vector>
 
-struct GameboyMemory {
+struct GameboyMemory : InterruptController {
   static constexpr int ROM_BANK_SIZE = 0x4000;     // 16KB
   static constexpr int VRAM_SIZE = 0x2000;         // 8KB
   static constexpr int EXTERNAL_RAM_SIZE = 0x2000; // 8KB
@@ -14,7 +16,10 @@ struct GameboyMemory {
   static constexpr int OAM_SIZE = 0xA0;            // 160 bytes
   static constexpr int HIGH_RAM_SIZE = 0x7f;       // 127 bytes
   static constexpr int IO_REGISTERS_SIZE = 0x80;   // 128 bytes
+
   HardwareRegisters hardwareRegisters;
+
+  uint8_t interruptEnable = 0;
 
   Range romBank0Range = {0x0000, 0x3fff};
   Range romBank1Range = {0x4000, 0x7fff};
@@ -37,6 +42,8 @@ struct GameboyMemory {
   std::array<uint8_t, IO_REGISTERS_SIZE> ioRegisters;
 
   GameboyMemory();
+
+  void requestInterrupt(InterruptFlag flag) override;
 
   void loadROM(const std::vector<uint8_t> &romData);
   std::array<uint8_t, ROM_BANK_SIZE> &getMemoryBank(uint16_t address);

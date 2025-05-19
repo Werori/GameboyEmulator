@@ -5,7 +5,7 @@
 #include <string_view>
 
 Gameboy::Gameboy()
-    : cpu(memory, ppu) {
+    : memory(), ppu(memory), cpu(memory, ppu) {
 
       };
 

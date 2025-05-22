@@ -84,7 +84,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   case 0xff07:
     throw std::runtime_error("reading timer control");
   case 0xff0f:
-    throw std::runtime_error("reading interrupt flag");
+    return hardwareRegisters.interruptFlag;
   case 0xff10:
     throw std::runtime_error("reading sound channel 1 sweep");
   case 0xff11:
@@ -198,61 +198,111 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
   case 0xff07:
     throw std::runtime_error("writing timer control");
   case 0xff0f:
-    throw std::runtime_error("writing interrupt flag");
+    hardwareRegisters.interruptFlag = byte;
   case 0xff10:
-    throw std::runtime_error("writing sound channel 1 sweep");
+    hardwareRegisters.soundChannel1Sweep = byte;
+    // throw std::runtime_error("writing sound channel 1 sweep");
   case 0xff11:
-    throw std::runtime_error("writing sound channel 1 length timer");
+    hardwareRegisters.soundChannel1LengthTimer = byte;
+    // std::cout << "writing sound channel 1 length timer" << std::endl;
+    // throw std::runtime_error("writing sound channel 1 length timer");
   case 0xff12:
-    throw std::runtime_error("writing sound channel 1 volume and envelope");
+    hardwareRegisters.soundChannel1VolumeAndEnvelope = byte;
+    // std::cout << "writing sound channel 1 volume and envelope" << std::endl;
+    // ;
+    // throw std::runtime_error("writing sound channel 1 volume and envelope");
   case 0xff13:
-    throw std::runtime_error("writing sound channel 1 period low");
+    hardwareRegisters.soundChannel1PeriodLow = byte;
+    // std::cout << "writing sound channel 1 period low" << std::endl;
+    // throw std::runtime_error("writing sound channel 1 period low");
   case 0xff14:
-    throw std::runtime_error("writing sound channel 1 period high and control");
+    hardwareRegisters.soundChannel1PeriodLow = byte;
+    // std::cout << "writing sound channel 1 period high and control" <<
+    // std::endl; throw std::runtime_error("writing sound channel 1 period high
+    // and control");
   case 0xff16:
-    throw std::runtime_error("writing sound channel 2 length timer");
+    hardwareRegisters.soundChannel2LengthTimer = byte;
+    // std::cout << "writing sound channel 2 length timer" << std::endl;
+    // throw std::runtime_error("writing sound channel 2 length timer");
   case 0xff17:
-    throw std::runtime_error("writing sound channel 2 volume and envelope");
+    hardwareRegisters.soundChannel2VolumeAndEnvelope = byte;
+    // std::cout << "writing sound channel 2 volume and envelope" << std::endl;
+    // throw std::runtime_error("writing sound channel 2 volume and envelope");
   case 0xff18:
-    throw std::runtime_error("writing sound channel 2 period low");
+    hardwareRegisters.soundChannel2PeriodLow = byte;
+    // std::cout << "writing sound channel 2 period low" << std::endl;
+    // throw std::runtime_error("writing sound channel 2 period low");
   case 0xff19:
-    throw std::runtime_error("writing sound channel 2 period high and control");
+    hardwareRegisters.soundChannel2PeriodHighAndControl = byte;
+    // std::cout << "writing sound channel 2 period high and control" <<
+    // std::endl; throw std::runtime_error("writing sound channel 2 period high
+    // and control");
   case 0xff1a:
-    throw std::runtime_error("writing sound channel 3 DAC enable");
+    hardwareRegisters.soundChannel3DACEnable = byte;
+    // std::cout << "writing sound channel 3 DAC enable" << std::endl;
+    // throw std::runtime_error("writing sound channel 3 DAC enable");
   case 0xff1b:
-    throw std::runtime_error("writing sound channel 3 length timer");
+    hardwareRegisters.soundChannel3LengthTimer = byte;
+    // std::cout << "writing sound channel 3 length timer" << std::endl;
+    // throw std::runtime_error("writing sound channel 3 length timer");
   case 0xff1c:
-    throw std::runtime_error("writing sound channel 3 output level");
+    hardwareRegisters.soundChannel3OutputLevel = byte;
+    // std::cout << "writing sound channel 3 output level" << std::endl;
+    // throw std::runtime_error("writing sound channel 3 output level");
   case 0xff1d:
-    throw std::runtime_error("writing sound channel 3 period low");
+    hardwareRegisters.soundChannel3PeriodLow = byte;
+    // std::cout << "writing sound channel 3 period low" << std::endl;
+    // throw std::runtime_error("writing sound channel 3 period low");
   case 0xff1e:
-    throw std::runtime_error("writing sound channel 3 period high and control");
+    hardwareRegisters.soundChannel3PeriodHighAndControl = byte;
+    // std::cout << "writing sound channel 3 period high and control" <<
+    // std::endl; throw std::runtime_error("writing sound channel 3 period high
+    // and control");
   case 0xff20:
-    throw std::runtime_error("writing sound channel 4 length timer");
+    hardwareRegisters.soundChannel4LengthTimer = byte;
+    // std::cout << "writing sound channel 4 length timer" << std::endl;
+    // throw std::runtime_error("writing sound channel 4 length timer");
   case 0xff21:
-    throw std::runtime_error("writing sound channel 4 volume and envelope");
+    hardwareRegisters.soundChannel4VolumeAndEnvelope = byte;
+    // std::cout << "writing sound channel 4 volume and envelope" << std::endl;
+    // throw std::runtime_error("writing sound channel 4 volume and envelope");
   case 0xff22:
-    throw std::runtime_error("writing sound channel 4 frequency and random");
+    hardwareRegisters.soundChannel4FrequencyAndRandom = byte;
+    // std::cout << "writing sound channel 4 frequency and random" << std::endl;
+    // throw std::runtime_error("writing sound channel 4 frequency and random");
   case 0xff23:
-    throw std::runtime_error("writing sound channel 4 control");
+    hardwareRegisters.soundChannel4Control = byte;
+    // std::cout << "writing sound channel 4 control" << std::endl;
+    // throw std::runtime_error("writing sound channel 4 control");
   case 0xff24:
-    throw std::runtime_error("writing master volume and vin panning");
+    hardwareRegisters.masterVolumeAndVinPanning = byte;
+    // std::cout << "writing master volume and vin panning" << std::endl;
+    // throw std::runtime_error("writing master volume and vin panning");
   case 0xff25:
-    throw std::runtime_error("writing sound panning");
+    hardwareRegisters.soundPanning = byte;
+    // std::cout << "writing sound panning" << std::endl;
+    // throw std::runtime_error("writing sound panning");
   case 0xff26:
-    throw std::runtime_error("writing sound on off");
+    hardwareRegisters.soundOnOff = byte;
+    // throw std::runtime_error("writing sound on off");
   case 0xff40:
-    throw std::runtime_error("writing lcd control");
+    hardwareRegisters.lcdControl = byte;
+    // throw std::runtime_error("writing lcd control");
   case 0xff41:
-    throw std::runtime_error("writing lcd status");
+    hardwareRegisters.lcdStatus = byte;
+    // throw std::runtime_error("writing lcd status");
   case 0xff42:
-    throw std::runtime_error("writing viewport y position");
+    hardwareRegisters.viewportYPosition = byte;
+    // throw std::runtime_error("writing viewport y position");
   case 0xff43:
-    throw std::runtime_error("writing viewport x position");
+    hardwareRegisters.viewportXPosition = byte;
+    // throw std::runtime_error("writing viewport x position");
   case 0xff45:
-    throw std::runtime_error("writing ly compare");
+    hardwareRegisters.lyc = byte;
+    // throw std::runtime_error("writing ly compare");
   case 0xff46:
-    throw std::runtime_error("writing oam dma");
+    startOamDmaTransfer(byte);
+    // throw std::runtime_error("writing oam dma");
   case 0xff47:
     throw std::runtime_error("writing bg pallete data");
   case 0xff48:
@@ -267,7 +317,18 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
 }
 
 void GameboyMemory::requestInterrupt(InterruptFlag flag) {
-  uint8_t interrupt_flag = read(0xff0f); // IF register
+  uint8_t interrupt_flag = read(0xff0f);
   interrupt_flag |= (1 << static_cast<uint8_t>(flag));
   write(0xFF0F, interrupt_flag);
+}
+
+void GameboyMemory::startOamDmaTransfer(uint8_t byte) {
+  // source address is stored divided by 0x100 = 256 = address >> 8
+  // so to get it back we have to multiply by 0x100 so << 8.
+  uint16_t sourceAddress = byte << 8;
+
+  // copy 160 bytes from source to OAM
+  for (int i = 0; i < bytesToCopyIntoOAM; i++) {
+    oam[i] = read(sourceAddress + i);
+  }
 }

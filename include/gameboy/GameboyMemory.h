@@ -9,6 +9,9 @@
 #include <vector>
 
 struct GameboyMemory : InterruptController {
+private:
+  static constexpr uint8_t bytesToCopyIntoOAM = 160;
+
   static constexpr int ROM_BANK_SIZE = 0x4000;     // 16KB
   static constexpr int VRAM_SIZE = 0x2000;         // 8KB
   static constexpr int EXTERNAL_RAM_SIZE = 0x2000; // 8KB
@@ -41,6 +44,14 @@ struct GameboyMemory : InterruptController {
   std::array<uint8_t, HIGH_RAM_SIZE> highRam;
   std::array<uint8_t, IO_REGISTERS_SIZE> ioRegisters;
 
+  // helper function to read hardware registers
+  uint8_t readIORegister(uint16_t address);
+  // helper function to write to hardware registers
+  void writeIORegister(uint16_t address, uint8_t byte);
+  // start transfer from RAM/ROM into OAM
+  void startOamDmaTransfer(uint8_t byte);
+
+public:
   GameboyMemory();
 
   void requestInterrupt(InterruptFlag flag) override;
@@ -50,9 +61,4 @@ struct GameboyMemory : InterruptController {
 
   uint8_t read(uint16_t address);
   void write(uint16_t address, uint8_t byte);
-
-  // helper function to read hardware registers
-  uint8_t readIORegister(uint16_t address);
-  // helper function to write to hardware registers
-  void writeIORegister(uint16_t address, uint8_t byte);
 };

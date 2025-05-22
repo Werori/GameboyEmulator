@@ -16,6 +16,7 @@ private:
   static constexpr int VRAM_SIZE = 0x2000;         // 8KB
   static constexpr int EXTERNAL_RAM_SIZE = 0x2000; // 8KB
   static constexpr int WRAM_SIZE = 0x1000;         // 4KB
+  static constexpr int ECHO_RAM_SIZE = 0x1000;     // 4KB - mirrors WRAM
   static constexpr int OAM_SIZE = 0xA0;            // 160 bytes
   static constexpr int HIGH_RAM_SIZE = 0x7f;       // 127 bytes
   static constexpr int IO_REGISTERS_SIZE = 0x80;   // 128 bytes
@@ -30,6 +31,7 @@ private:
   Range externalRAMRange = {0xa000, 0xbfff};
   Range wRam1Range = {0xc000, 0xcfff};
   Range wRam2Range = {0xd000, 0xdfff};
+  Range echoRamRange = {0xe000, 0xfdff};
   Range oamRange = {0xfe00, 0xfe9f};
   Range ioRange = {0xff00, 0xff7f};
   Range highRamRange = {0xff80, 0xfffe};

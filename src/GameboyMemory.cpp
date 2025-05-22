@@ -49,6 +49,9 @@ uint8_t GameboyMemory::read(uint16_t address) {
   } else if (wRam2Range.contains(address)) {
     std::cout << "Reading from wram2..." << std::endl;
     return wram2[address - wRam2Range.start];
+  } else if (echoRamRange.contains(address)) {
+    std::cout << "Reading echo ram" << std::endl;
+    return wram1[(address - 0x2000) - wRam1Range.start];
   } else if (oamRange.contains(address)) {
     std::cout << "Reading from oam..." << std::endl;
     return oam[address - oamRange.start];
@@ -163,6 +166,8 @@ void GameboyMemory::write(uint16_t address, uint8_t byte) {
   } else if (wRam2Range.contains(address)) {
     std::cout << "Writing to wram2..." << std::endl;
     wram2[address - wRam2Range.start] = byte;
+  } else if (echoRamRange.contains(address)) {
+    throw std::runtime_error("writing echo ram");
   } else if (oamRange.contains(address)) {
     std::cout << "Writing to oam..." << std::endl;
     oam[address - oamRange.start] = byte;

@@ -41,7 +41,9 @@ void CPU::fetchOpcode() {
   // std::cout << "F: " << std::hex << (int)registers.getF() << std::endl;
 }
 void CPU::decodeAndExecute() {
-  std::cout << std::hex << (int)opcode << std::endl;
+  std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
+  std::cout << std::hex << "pc + 1: " << (int)memory.read(registers.PC + 1)
+            << std::endl;
   if (opcode != 0xcb) {
     opcodes[opcode].func();
     length = opcodes[opcode].length;
@@ -90,19 +92,19 @@ void CPU::DecC() {
 
   registers.setFlag(registers.FLAG_Z, registers.getC() == 0);
   registers.setFlag(registers.FLAG_N, true);
-
-  // throw std::runtime_error("stop from decC");
 }
 
 void CPU::LDCu8() { registers.setC(memory.read(registers.PC + 1)); }
 
 void CPU::JRNZi8() {
-  // std::cout << std::hex << (int)registers.PC << std::endl;
   int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
+  registers.PC += opcodes[opcode].length;
 
   if (!registers.isFlagSet(registers.FLAG_Z)) {
     registers.PC += offset;
   }
+
+  jumped = true;
 }
 
 void CPU::XORAA() {

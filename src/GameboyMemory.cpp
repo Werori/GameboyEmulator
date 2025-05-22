@@ -29,6 +29,7 @@ void GameboyMemory::loadROM(const std::vector<uint8_t> &romData) {
 }
 
 uint8_t GameboyMemory::read(uint16_t address) {
+  std::cout << "ADDRESS: " << address << std::endl;
   if (romBank0Range.contains(address)) {
     std::cout << "Reading from bank0..." << std::endl;
     return romBank0[address - romBank0Range.start];

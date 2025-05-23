@@ -122,7 +122,8 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   case 0xff26:
     throw std::runtime_error("reading sound on off");
   case 0xff40:
-    throw std::runtime_error("reading lcd control");
+    return hardwareRegisters.lcdControl;
+    // throw std::runtime_error("reading lcd control");
   case 0xff41:
     throw std::runtime_error("reading lcd status");
   case 0xff42:

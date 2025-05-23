@@ -32,4 +32,6 @@ private:
   uint8_t endOfVBlank = 153;
   int cycleCounter = 0;
   int cyclesPerScanline = 456;
+
+  uint16_t lcdControlAddress = 0xff40;
 };

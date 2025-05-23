@@ -34,6 +34,13 @@ uint8_t PPU::getLy() { return ly; }
 void PPU::tick(int cycles) {
   cycleCounter += cycles;
 
+  uint8_t lcdc = memory.read(lcdControlAddress);
+
+  if (!(lcdc & 0x80)) {
+    std::cout << "Screen is off" << std::endl;
+    return;
+  }
+
   if (cycleCounter >= cyclesPerScanline) {
     cycleCounter -= cyclesPerScanline;
     ly++;

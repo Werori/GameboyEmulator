@@ -31,20 +31,20 @@ bool Gameboy::loadROMFromFile(std::string_view filename) {
 }
 
 void Gameboy::run() {
-  // ppu.init();
-  while (true) {
+  ppu.init();
+  while (!WindowShouldClose()) {
     cpu.fetchOpcode();
     cpu.decodeAndExecute();
 
-    // BeginDrawing();
-    // if (ppu.frameReady) {
-    //   ppu.renderFrame();
-    //   ppu.drawFrame();
-    //   ppu.frameReady = false;
-    // }
-    // ClearBackground(RAYWHITE);
-    // EndDrawing();
+    BeginDrawing();
+    if (ppu.frameReady) {
+      ppu.renderFrame();
+      ppu.drawFrame();
+      ppu.frameReady = false;
+    }
+    ClearBackground(RAYWHITE);
+    EndDrawing();
   }
 
-  // ppu.close();
+  ppu.close();
 }

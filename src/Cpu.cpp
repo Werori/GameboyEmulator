@@ -6,8 +6,6 @@
 #include <functional>
 #include <ios>
 #include <iostream>
-#include <stdexcept>
-// #include <stdexcept>
 
 CPU::CPU(GameboyMemory &memory, PPU &ppu) : memory(memory), ppu(ppu) {
   initializeOpcodes();
@@ -35,10 +33,6 @@ void CPU::fetchOpcode() {
   std::cout << "READING MEMORY..." << std::endl;
   opcode = memory.read(registers.PC);
   std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
-  // std::cout << "B: " << std::hex << (int)registers.getB() << std::endl;
-  // std::cout << "A: " << std::hex << (int)registers.getA() << std::endl;
-  // std::cout << "C: " << std::hex << (int)registers.getC() << std::endl;
-  // std::cout << "F: " << std::hex << (int)registers.getF() << std::endl;
 }
 void CPU::decodeAndExecute() {
   std::cout << std::hex << "opcode: " << (int)opcode << std::endl;

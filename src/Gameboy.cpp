@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <raylib.h>
 #include <string_view>
 
 Gameboy::Gameboy()
@@ -30,8 +31,20 @@ bool Gameboy::loadROMFromFile(std::string_view filename) {
 }
 
 void Gameboy::run() {
+  // ppu.init();
   while (true) {
     cpu.fetchOpcode();
     cpu.decodeAndExecute();
+
+    // BeginDrawing();
+    // if (ppu.frameReady) {
+    //   ppu.renderFrame();
+    //   ppu.drawFrame();
+    //   ppu.frameReady = false;
+    // }
+    // ClearBackground(RAYWHITE);
+    // EndDrawing();
   }
+
+  // ppu.close();
 }

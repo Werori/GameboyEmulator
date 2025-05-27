@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameboyMemory.h"
+#include "HardwareRegisters.h"
 #include <InterruptController.h>
 #include <raylib.h>
 
@@ -8,7 +9,14 @@
 
 struct PPU {
 
+  static constexpr uint8_t NUMBER_OF_COLORS_IN_PALLETE = 4;
   GameboyMemory memory;
+  HardwareRegisters hardwareRegisters;
+  uint32_t bgPalleteData[NUMBER_OF_COLORS_IN_PALLETE] = {
+      colorToUint32(WHITE), colorToUint32(LIGHTGRAY), colorToUint32(DARKGRAY),
+      colorToUint32(BLACK)};
+  uint8_t obPallete0Data[NUMBER_OF_COLORS_IN_PALLETE];
+  uint8_t obPallete1Data[NUMBER_OF_COLORS_IN_PALLETE];
   void tick(int cycles);
   uint8_t getLy();
   bool frameReady = false;
@@ -34,4 +42,6 @@ private:
   int cyclesPerScanline = 456;
 
   uint16_t lcdControlAddress = 0xff40;
+
+  uint32_t colorToUint32(Color c);
 };

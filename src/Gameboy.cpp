@@ -38,11 +38,11 @@ void Gameboy::run() {
 
     BeginDrawing();
     if (ppu.frameReady) {
+      ClearBackground(RAYWHITE);
       ppu.renderFrame();
       ppu.drawFrame();
       ppu.frameReady = false;
     }
-    ClearBackground(RAYWHITE);
     EndDrawing();
   }
 

@@ -37,4 +37,9 @@ struct HardwareRegisters {
   uint8_t viewportYPosition = 0;
   uint8_t viewportXPosition = 0;
   uint8_t lyc = 0;
+  uint8_t bgPallete = 0xfc;
+  uint8_t objPallete0 = 0;
+  uint8_t objPallete1 = 0;
+  uint8_t windowY = 0;
+  uint8_t windowXPlus7 = 0;
 };

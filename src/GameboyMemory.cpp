@@ -311,15 +311,16 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     startOamDmaTransfer(byte);
     // throw std::runtime_error("writing oam dma");
   case 0xff47:
-    throw std::runtime_error("writing bg pallete data");
+    hardwareRegisters.bgPallete = byte;
+    // throw std::runtime_error("writing bg pallete data");
   case 0xff48:
-    throw std::runtime_error("writing obj pallete 0");
+    hardwareRegisters.objPallete0 = byte;
   case 0xff49:
-    throw std::runtime_error("writing obj pallete 1");
+    hardwareRegisters.objPallete1 = byte;
   case 0xff4a:
-    throw std::runtime_error("writing window y position");
+    hardwareRegisters.windowY = byte;
   case 0xff4b:
-    throw std::runtime_error("writing window x + 7");
+    hardwareRegisters.windowXPlus7 = byte;
   }
 }
 

@@ -183,9 +183,6 @@ uint16_t CPU::toLittleEndian(uint8_t highByte, uint8_t lowByte) {
 std::pair<uint8_t, uint8_t> CPU::getHighByteAndLowByte() {
   uint8_t highByte = memory.read(registers.PC + 1);
   uint8_t lowByte = memory.read(registers.PC + 2);
-  // uint8_t highByte = memory.getMemoryBank(registers.PC)[registers.PC + 1];
-  // uint8_t lowByte = memory.getMemoryBank(registers.PC)[registers.PC + 2];
-
   return {highByte, lowByte};
 }
 

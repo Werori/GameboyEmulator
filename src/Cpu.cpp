@@ -27,6 +27,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
+  opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
   opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
 };
 
@@ -170,6 +171,8 @@ void CPU::LDAFF00Plusu8() {
 }
 
 void CPU::DI() { IME = 0; }
+
+void CPU::LDSPHL() { registers.SP = registers.HL; }
 
 void CPU::CPAu8() {
   uint8_t value = memory.read(registers.PC + 1);

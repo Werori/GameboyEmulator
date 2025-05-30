@@ -198,7 +198,11 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
   case 0xff04:
     hardwareRegisters.dividerRegister = 0;
   case 0xff05:
-    throw std::runtime_error("writing timer counter");
+    if (((hardwareRegisters.timerControl >> 2) & 0x01) == 0) {
+      return;
+    } else {
+      throw std::runtime_error("timer control is enabled");
+    }
   case 0xff06:
     throw std::runtime_error("writing timer modulo");
   case 0xff07:

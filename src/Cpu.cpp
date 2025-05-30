@@ -6,6 +6,7 @@
 #include <functional>
 #include <ios>
 #include <iostream>
+#include <stdexcept>
 
 CPU::CPU(GameboyMemory &memory, PPU &ppu) : memory(memory), ppu(ppu) {
   initializeOpcodes();
@@ -33,6 +34,10 @@ void CPU::fetchOpcode() {
   std::cout << "READING MEMORY..." << std::endl;
   opcode = memory.read(registers.PC);
   std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
+  // std::cout << "register A: " << (int)registers.getA() << std::endl;
+  // std::cout << "register B: " << (int)registers.getB() << std::endl;
+  // std::cout << "register C: " << (int)registers.getC() << std::endl;
+  // std::cout << "register F: " << (int)registers.getF() << std::endl;
 }
 void CPU::decodeAndExecute() {
   std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
@@ -49,12 +54,12 @@ void CPU::decodeAndExecute() {
     length = extendedOpcodes[opcode].length;
   }
 
-  cycles += length;
-
   if (jumped) {
+    cycles += opcodes[opcode].machine_cycles_branch;
     jumped = false;
   } else {
-    registers.PC += opcodes[opcode].length;
+    cycles += opcodes[opcode].machine_cycles_no_branch;
+    registers.PC += length;
   }
 
   ppu.tick(cycles);
@@ -63,16 +68,19 @@ void CPU::decodeAndExecute() {
 void CPU::nop() { std::cout << "Nop function" << std::endl; };
 
 void CPU::DecB() {
+  std::cout << "B before: " << (int)registers.getB();
   uint8_t b = registers.getB();
 
-  registers.setFlag(registers.FLAG_H, b <= HALF_CARRY);
+  registers.setFlag(registers.FLAG_H, (b & LOWER_NIBBLE_MASK) == 0);
 
-  registers.setB(b -= 1);
+  b -= 1;
+  registers.setB(b);
 
   registers.setFlag(registers.FLAG_Z, registers.getB() == 0);
   registers.setFlag(registers.FLAG_N, true);
 
   std::cout << std::hex << "FLAG H: " << (int)registers.FLAG_H << std::endl;
+  std::cout << "B after: " << (int)registers.getB();
 }
 
 void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
@@ -80,9 +88,10 @@ void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
 void CPU::DecC() {
   uint8_t c = registers.getC();
 
-  registers.setFlag(registers.FLAG_H, registers.getB() <= HALF_CARRY);
+  registers.setFlag(registers.FLAG_H, (c & LOWER_NIBBLE_MASK) == 0);
 
-  registers.setC(c -= 1);
+  c -= 1;
+  registers.setC(c);
 
   registers.setFlag(registers.FLAG_Z, registers.getC() == 0);
   registers.setFlag(registers.FLAG_N, true);
@@ -96,9 +105,8 @@ void CPU::JRNZi8() {
 
   if (!registers.isFlagSet(registers.FLAG_Z)) {
     registers.PC += offset;
+    jumped = true;
   }
-
-  jumped = true;
 }
 
 void CPU::XORAA() {
@@ -113,21 +121,21 @@ void CPU::XORAA() {
 void CPU::JPa16() {
 
   // std::cout << "pc: " << std::hex << registers.PC << std::endl;
-  auto [highByte, lowByte] = getHighByteAndLowByte();
+  auto [lowByte, highByte] = getLowByteAndHighByte();
 
   // std::cout << "high: " << std::hex << (int)highByte << std::endl;
 
   // std::cout << "low:" << std::hex << (int)lowByte << std::endl;
 
-  registers.PC = CPU::toLittleEndian(highByte, lowByte);
+  registers.PC = CPU::toLittleEndian(lowByte, highByte);
   jumped = true;
 };
 
 void CPU::LDHLu16() {
-  auto [highByte, lowByte] = getHighByteAndLowByte();
+  auto [lowByte, highByte] = getLowByteAndHighByte();
   std::cout << "HL address: " << std::hex
-            << (int)toLittleEndian(highByte, lowByte) << std::endl;
-  registers.HL = toLittleEndian(highByte, lowByte);
+            << (int)toLittleEndian(lowByte, highByte) << std::endl;
+  registers.HL = toLittleEndian(lowByte, highByte);
 }
 
 void CPU::LDHLDecA() {
@@ -176,14 +184,14 @@ void CPU::CPAu8() {
   registers.setFlag(registers.FLAG_C, isCarry(a, value));
 }
 
-uint16_t CPU::toLittleEndian(uint8_t highByte, uint8_t lowByte) {
-  return (lowByte << 8) | highByte;
+uint16_t CPU::toLittleEndian(uint8_t lowByte, uint8_t highByte) {
+  return (highByte << 8) | lowByte;
 }
 
-std::pair<uint8_t, uint8_t> CPU::getHighByteAndLowByte() {
-  uint8_t highByte = memory.read(registers.PC + 1);
-  uint8_t lowByte = memory.read(registers.PC + 2);
-  return {highByte, lowByte};
+std::pair<uint8_t, uint8_t> CPU::getLowByteAndHighByte() {
+  uint8_t lowByte = memory.read(registers.PC + 1);
+  uint8_t highByte = memory.read(registers.PC + 2);
+  return {lowByte, highByte};
 }
 
 bool CPU::isHalfCarry(uint8_t a, uint8_t value) {

@@ -29,16 +29,14 @@ void GameboyMemory::loadROM(const std::vector<uint8_t> &romData) {
 }
 
 uint8_t GameboyMemory::read(uint16_t address) {
-  std::cout << "ADDRESS: " << address << std::endl;
+  // std::cout << "ADDRESS: " << address << std::endl;
   if (romBank0Range.contains(address)) {
-    std::cout << "Reading from bank0..." << std::endl;
+    // std::cout << "Reading from bank0..." << std::endl;
     return romBank0[address - romBank0Range.start];
   } else if (romBank1Range.contains(address)) {
     std::cout << "Reading from bank1..." << std::endl;
     return romBank1[address - romBank1Range.start];
   } else if (vRAMRange.contains(address)) {
-    std::cout << "Reading from vram..." << std::endl;
-    throw std::runtime_error("Reading from VRAM");
     return vram[address - vRAMRange.start];
   } else if (externalRAMRange.contains(address)) {
     std::cout << "Reading from external ram..." << std::endl;
@@ -157,6 +155,7 @@ void GameboyMemory::write(uint16_t address, uint8_t byte) {
     std::cout << "Can't write to ROM!" << std::endl;
   } else if (vRAMRange.contains(address)) {
     std::cout << "Writing to vram..." << std::endl;
+    throw std::runtime_error("writing to vram");
     vram[address - vRAMRange.start] = byte;
   } else if (externalRAMRange.contains(address)) {
     std::cout << "Writing to external ram..." << std::endl;
@@ -321,6 +320,8 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.windowY = byte;
   case 0xff4b:
     hardwareRegisters.windowXPlus7 = byte;
+    // case 0xff50:
+    // throw std::runtime_error("boot rom disable!");
   }
 }
 

@@ -31,11 +31,16 @@ struct PPU {
 private:
   static constexpr int SCREEN_WIDTH = 160;
   static constexpr int SCREEN_HEIGHT = 144;
+  static constexpr int TILES_IN_ROW = 32;
+  static constexpr int TILE_SIZE = 8;
+  static constexpr int TILE_BYTES = 16;
+  static constexpr int SIGNED_CENTER = 0x9000;
+  static constexpr int BYTES_PER_ROW = 2;
+  static constexpr int MSB_INDEX = 7;
 
   uint32_t framebuffer[SCREEN_WIDTH * SCREEN_HEIGHT] = {0};
   Texture2D frameTexture = {0, 0, 0, 0, 0};
   uint8_t scaleFactor = 2;
-  uint8_t ly = 0;
   uint8_t startOfVBlank = 144;
   uint8_t endOfVBlank = 153;
   int cycleCounter = 0;

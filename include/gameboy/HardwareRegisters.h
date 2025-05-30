@@ -36,6 +36,9 @@ struct HardwareRegisters {
   uint8_t lcdStatus = 0x85;
   uint8_t viewportYPosition = 0;
   uint8_t viewportXPosition = 0;
+  uint8_t scx = 0;
+  uint8_t scy = 0;
+  uint8_t ly = 0;
   uint8_t lyc = 0;
   uint8_t bgPallete = 0xfc;
   uint8_t objPallete0 = 0;

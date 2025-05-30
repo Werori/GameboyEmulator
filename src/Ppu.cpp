@@ -22,12 +22,15 @@ void PPU::init() {
   frameTexture = LoadTextureFromImage(image);
 }
 
-void PPU::renderFrame() {
-  std::cout << "renderFrame() called" << std::endl;
-  UpdateTexture(frameTexture, framebuffer);
-}
+void PPU::renderFrame() { UpdateTexture(frameTexture, framebuffer); }
 
-void PPU::drawFrame() { DrawTexture(frameTexture, 0, 0, WHITE); }
+void PPU::drawFrame() {
+  DrawTexturePro(frameTexture,
+                 {0, 0, (float)frameTexture.width, (float)frameTexture.height},
+                 {0, 0, static_cast<float>(SCREEN_WIDTH * scaleFactor),
+                  static_cast<float>(SCREEN_HEIGHT * scaleFactor)},
+                 {0, 0}, 0.0f, WHITE);
+}
 
 void PPU::close() {
   if (frameTexture.id != 0) {
@@ -36,7 +39,7 @@ void PPU::close() {
   CloseWindow();
 }
 
-uint8_t PPU::getLy() { return ly; }
+uint8_t PPU::getLy() { return hardwareRegisters.ly; }
 
 void PPU::tick(int cycles) {
   cycleCounter += cycles;
@@ -45,7 +48,7 @@ void PPU::tick(int cycles) {
 
   if (!(lcdc & 0x80)) { // LCD off early out
     std::cout << "Screen is off" << std::endl;
-    ly = 0;
+    hardwareRegisters.ly = 0;
     cycleCounter = 0;
     return;
   }
@@ -53,35 +56,72 @@ void PPU::tick(int cycles) {
   // Increment scanline when enough cycles passed
   if (cycleCounter >= cyclesPerScanline) {
     cycleCounter -= cyclesPerScanline;
-    ly++;
-    std::cout << "ly++ ------------ " << (int)ly << std::endl;
+    hardwareRegisters.ly++;
   }
 
   // VBlank interrupt trigger at line 144
-  if (ly == startOfVBlank) {
+  if (hardwareRegisters.ly == startOfVBlank) {
     std::cout << "VBlank" << std::endl;
     memory.requestInterrupt(InterruptFlag::VBlank);
   }
 
   // Frame ready trigger and reset at line 154 (one past endOfVBlank)
-  if (ly > endOfVBlank) {
-    std::cout << "end v blank" << std::endl;
-    ly = 0;
+  if (hardwareRegisters.ly > endOfVBlank) {
+    hardwareRegisters.ly = 0;
     frameReady = true;
-  }
+    if ((lcdc & 0x1)) {
+      std::cout << "BG on" << std::endl;
+      uint16_t bgTileMapBase = (lcdc & (1 << 3)) ? 0x9C00 : 0x9800;
+      // uint32_t color = bgPalleteData[1];
+      // for (int y = 0; y < SCREEN_HEIGHT; y++) {
+      //   for (int x = 0; x < SCREEN_WIDTH; x++) {
+      //     framebuffer[y * SCREEN_WIDTH + x] = color;
+      //   }
+      // }
+      uint8_t scx = hardwareRegisters.scx;
+      uint8_t scy = hardwareRegisters.scy;
 
-  // BG disabled fill black (optional, can happen any time)
-  if ((lcdc & 0x1)) {
-    uint32_t color = bgPalleteData[3];
-    for (int y = 0; y < SCREEN_HEIGHT; y++) {
-      for (int x = 0; x < SCREEN_WIDTH; x++) {
-        framebuffer[y * SCREEN_WIDTH + x] = color;
+      for (int screenY = 0; screenY < SCREEN_HEIGHT; screenY++) {
+        for (int screenX = 0; screenX < SCREEN_WIDTH; screenX++) {
+          // background can be bigger than screen so add scroll values
+          int bgX = (screenX + scx) % 256;
+          int bgY = (screenY + scy) % 256;
+
+          // find tile in a row and column
+          int tileX = bgX / 8;
+          int tileY = bgY / 8;
+
+          uint16_t tileMapOffset = tileY * TILES_IN_ROW + tileX;
+          uint8_t tileIndex = memory.read(bgTileMapBase + tileMapOffset);
+          int tileLine = bgY % 8;
+
+          uint16_t tileAddress;
+
+          if (lcdc & (1 << 4)) {
+            tileAddress = 0x8000 + tileIndex * TILE_BYTES;
+          } else {
+            int8_t signedIndex = static_cast<int8_t>(tileIndex);
+            tileAddress = SIGNED_CENTER + signedIndex * 16;
+          }
+
+          uint8_t lowByte = memory.read(tileAddress + tileLine * BYTES_PER_ROW);
+          uint8_t highByte =
+              memory.read(tileAddress + tileLine * BYTES_PER_ROW + 1);
+          int tilePixelX = bgX % TILE_SIZE;
+          int bitIndex = MSB_INDEX - tilePixelX;
+          uint8_t bit0 = (lowByte >> bitIndex) & 1;
+          uint8_t bit1 = (highByte >> bitIndex) & 1;
+          uint8_t colorId = (bit1 << 1) | bit0;
+
+          framebuffer[screenY * SCREEN_WIDTH + screenX] =
+              bgPalleteData[colorId];
+        }
       }
     }
   }
 
   // Write LY to memory register
-  memory.write(0xff44, ly);
+  memory.write(0xff44, hardwareRegisters.ly);
 }
 
 uint32_t PPU::colorToUint32(Color c) {

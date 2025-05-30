@@ -20,7 +20,7 @@ struct CPU {
   int cycles = 0;
   int length = 0;
 
-  const uint8_t HALF_CARRY = 0x10;
+  const uint8_t LOWER_NIBBLE_MASK = 0x0f;
   const uint8_t CARRY_FLAG_REGISTER_F = 0x10;
 
   CPU(GameboyMemory &memory, PPU &ppu);
@@ -64,9 +64,9 @@ struct CPU {
 
 private:
   // switch high byte and low byte
-  uint16_t toLittleEndian(uint8_t highByte, uint8_t lowByte);
+  uint16_t toLittleEndian(uint8_t lowByte, uint8_t highByte);
 
-  std::pair<uint8_t, uint8_t> getHighByteAndLowByte();
+  std::pair<uint8_t, uint8_t> getLowByteAndHighByte();
 
   bool isHalfCarry(uint8_t a, uint8_t value);
 

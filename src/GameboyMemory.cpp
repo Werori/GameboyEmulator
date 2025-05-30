@@ -192,11 +192,11 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
   case 0xff00:
     throw std::runtime_error("writing joypad");
   case 0xff01:
-    throw std::runtime_error("writing serial transfer data");
+    // needed for multiplayer
   case 0xff02:
-    throw std::runtime_error("writing serial Transfer control");
+    // needed for multiplayer
   case 0xff04:
-    throw std::runtime_error("writing divider register");
+    hardwareRegisters.dividerRegister = 0;
   case 0xff05:
     throw std::runtime_error("writing timer counter");
   case 0xff06:
@@ -341,3 +341,5 @@ void GameboyMemory::startOamDmaTransfer(uint8_t byte) {
     oam[i] = read(sourceAddress + i);
   }
 }
+
+void GameboyMemory::increaseDivider() { hardwareRegisters.dividerRegister++; }

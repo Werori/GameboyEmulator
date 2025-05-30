@@ -33,7 +33,7 @@ void CPU::initializeOpcodes() {
 
 void CPU::fetchOpcode() {
   opcode = memory.read(registers.PC);
-  std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
+  // std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
   // std::cout << "register A: " << (int)registers.getA() << std::endl;
   // std::cout << "register B: " << (int)registers.getB() << std::endl;
   // std::cout << "register C: " << (int)registers.getC() << std::endl;
@@ -42,8 +42,8 @@ void CPU::fetchOpcode() {
 void CPU::decodeAndExecute() {
   handleInterrupts();
   std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
-  std::cout << std::hex << "pc + 1: " << (int)memory.read(registers.PC + 1)
-            << std::endl;
+  // std::cout << std::hex << "pc + 1: " << (int)memory.read(registers.PC + 1)
+  //           << std::endl;
   if (opcode != 0xcb) {
     opcodes[opcode].func();
     length = opcodes[opcode].length;
@@ -63,13 +63,18 @@ void CPU::decodeAndExecute() {
     registers.PC += length;
   }
 
+  while (cycles >= 256) {
+    memory.increaseDivider();
+    cycles -= 256;
+  }
+
   ppu.tick(cycles);
 }
 
 void CPU::nop() { std::cout << "Nop function" << std::endl; };
 
 void CPU::DecB() {
-  std::cout << "B before: " << (int)registers.getB();
+  // std::cout << "B before: " << (int)registers.getB();
   uint8_t b = registers.getB();
 
   registers.setFlag(registers.FLAG_H, (b & LOWER_NIBBLE_MASK) == 0);
@@ -80,8 +85,8 @@ void CPU::DecB() {
   registers.setFlag(registers.FLAG_Z, registers.getB() == 0);
   registers.setFlag(registers.FLAG_N, true);
 
-  std::cout << std::hex << "FLAG H: " << (int)registers.FLAG_H << std::endl;
-  std::cout << "B after: " << (int)registers.getB();
+  // std::cout << std::hex << "FLAG H: " << (int)registers.FLAG_H << std::endl;
+  // std::cout << "B after: " << (int)registers.getB();
 }
 
 void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
@@ -134,8 +139,8 @@ void CPU::JPa16() {
 
 void CPU::LDHLu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
-  std::cout << "HL address: " << std::hex
-            << (int)toLittleEndian(lowByte, highByte) << std::endl;
+  // std::cout << "HL address: " << std::hex
+  // << (int)toLittleEndian(lowByte, highByte) << std::endl;
   registers.HL = toLittleEndian(lowByte, highByte);
 }
 
@@ -178,8 +183,8 @@ void CPU::CPAu8() {
   uint8_t value = memory.read(registers.PC + 1);
   uint8_t a = registers.getA();
 
-  std::cout << "z: " << (a == value) << " a: " << (int)a
-            << "value: " << (int)value << std::endl;
+  // std::cout << "z: " << (a == value) << " a: " << (int)a
+  // << "value: " << (int)value << std::endl;
 
   registers.setFlag(registers.FLAG_Z, a == value);
   registers.setFlag(registers.FLAG_N, true);

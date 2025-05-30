@@ -32,7 +32,6 @@ void CPU::initializeOpcodes() {
 };
 
 void CPU::fetchOpcode() {
-  std::cout << "READING MEMORY..." << std::endl;
   opcode = memory.read(registers.PC);
   std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
   // std::cout << "register A: " << (int)registers.getA() << std::endl;
@@ -41,6 +40,7 @@ void CPU::fetchOpcode() {
   // std::cout << "register F: " << (int)registers.getF() << std::endl;
 }
 void CPU::decodeAndExecute() {
+  handleInterrupts();
   std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
   std::cout << std::hex << "pc + 1: " << (int)memory.read(registers.PC + 1)
             << std::endl;
@@ -203,4 +203,12 @@ bool CPU::isHalfCarry(uint8_t a, uint8_t value) {
 
 bool CPU::isCarry(uint8_t a, uint8_t value) {
   return (a < (value + (registers.getF() & CARRY_FLAG_REGISTER_F)));
+}
+
+void CPU::handleInterrupts() {
+  if (!IME) {
+    return;
+  } else {
+    throw std::runtime_error("IME is on");
+  }
 }

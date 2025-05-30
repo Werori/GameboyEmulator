@@ -177,7 +177,7 @@ void GameboyMemory::write(uint16_t address, uint8_t byte) {
     std::cout << "Writing to highRam..." << std::endl;
     highRam[address - highRamRange.start] = byte;
   } else if (address == 0xffff) {
-    throw std::runtime_error("writing interrupt enable");
+    interruptEnable = byte;
   } else {
     throw std::runtime_error("out of range address");
   }

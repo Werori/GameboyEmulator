@@ -73,4 +73,6 @@ private:
   bool isHalfCarry(uint8_t a, uint8_t value);
 
   bool isCarry(uint8_t a, uint8_t value);
+
+  void handleInterrupts();
 };

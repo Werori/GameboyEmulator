@@ -48,7 +48,7 @@ uint8_t GameboyMemory::read(uint16_t address) {
     std::cout << "Reading from wram2..." << std::endl;
     return wram2[address - wRam2Range.start];
   } else if (echoRamRange.contains(address)) {
-    std::cout << "Reading echo ram" << std::endl;
+    // std::cout << "Reading echo ram" << std::endl;
     return wram1[(address - 0x2000) - wRam1Range.start];
   } else if (oamRange.contains(address)) {
     std::cout << "Reading from oam..." << std::endl;
@@ -129,7 +129,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   case 0xff43:
     throw std::runtime_error("reading viewport x position");
   case 0xff44:
-    throw std::runtime_error("reading ly");
+    return hardwareRegisters.ly;
   case 0xff45:
     throw std::runtime_error("reading ly compare");
   case 0xff46:

@@ -39,16 +39,17 @@ void PPU::close() {
   CloseWindow();
 }
 
-uint8_t PPU::getLy() { return hardwareRegisters.ly; }
+uint8_t PPU::getLy() { return memory.getLy(); }
 
 void PPU::tick(int cycles) {
   cycleCounter += cycles;
 
   uint8_t lcdc = memory.read(lcdControlAddress);
 
-  if (!(lcdc & 0x80)) { // LCD off early out
+  // check if screen is turned off
+  if (!(lcdc & 0x80)) {
     std::cout << "Screen is off" << std::endl;
-    hardwareRegisters.ly = 0;
+    memory.setLy(0);
     cycleCounter = 0;
     return;
   }
@@ -56,21 +57,22 @@ void PPU::tick(int cycles) {
   // Increment scanline when enough cycles passed
   if (cycleCounter >= cyclesPerScanline) {
     cycleCounter -= cyclesPerScanline;
-    hardwareRegisters.ly++;
+    memory.setLy(memory.getLy() + 1);
   }
 
   // VBlank interrupt trigger at line 144
-  if (hardwareRegisters.ly == startOfVBlank) {
+  if (memory.getLy() == startOfVBlank) {
     std::cout << "VBlank" << std::endl;
     memory.requestInterrupt(InterruptFlag::VBlank);
   }
 
   // Frame ready trigger and reset at line 154 (one past endOfVBlank)
-  if (hardwareRegisters.ly > endOfVBlank) {
-    hardwareRegisters.ly = 0;
+  if (memory.getLy() > endOfVBlank) {
+    memory.setLy(0);
     frameReady = true;
     if ((lcdc & 0x1)) {
       std::cout << "BG on" << std::endl;
+
       uint16_t bgTileMapBase = (lcdc & (1 << 3)) ? 0x9C00 : 0x9800;
       // uint32_t color = bgPalleteData[1];
       // for (int y = 0; y < SCREEN_HEIGHT; y++) {
@@ -78,8 +80,8 @@ void PPU::tick(int cycles) {
       //     framebuffer[y * SCREEN_WIDTH + x] = color;
       //   }
       // }
-      uint8_t scx = hardwareRegisters.scx;
-      uint8_t scy = hardwareRegisters.scy;
+      uint8_t scx = memory.getScx();
+      uint8_t scy = memory.getScy();
 
       for (int screenY = 0; screenY < SCREEN_HEIGHT; screenY++) {
         for (int screenX = 0; screenX < SCREEN_WIDTH; screenX++) {
@@ -117,11 +119,18 @@ void PPU::tick(int cycles) {
               bgPalleteData[colorId];
         }
       }
+
+      if (lcdc & 0x20) {
+        std::cout << "lcdc is: " << (int)lcdc << std::endl;
+        throw std::runtime_error("window is enabled");
+      }
+    } else if (lcdc & (1 << 1)) {
+      throw std::runtime_error("obj enable");
     }
   }
 
   // Write LY to memory register
-  memory.write(0xff44, hardwareRegisters.ly);
+  memory.write(0xff44, memory.getLy());
 }
 
 uint32_t PPU::colorToUint32(Color c) {

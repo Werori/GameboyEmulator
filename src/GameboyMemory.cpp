@@ -347,3 +347,11 @@ void GameboyMemory::startOamDmaTransfer(uint8_t byte) {
 }
 
 void GameboyMemory::increaseDivider() { hardwareRegisters.dividerRegister++; }
+
+void GameboyMemory::setLy(uint8_t value) { hardwareRegisters.ly = value; }
+
+uint8_t GameboyMemory::getLy() { return hardwareRegisters.ly; }
+
+uint8_t GameboyMemory::getScx() { return hardwareRegisters.scx; }
+
+uint8_t GameboyMemory::getScy() { return hardwareRegisters.scy; }

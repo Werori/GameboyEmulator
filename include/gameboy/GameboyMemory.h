@@ -65,4 +65,10 @@ public:
   void write(uint16_t address, uint8_t byte);
 
   void increaseDivider();
+
+  void setLy(uint8_t value);
+  uint8_t getLy();
+
+  uint8_t getScx();
+  uint8_t getScy();
 };

@@ -48,4 +48,6 @@ private:
   uint16_t lcdControlAddress = 0xff40;
 
   uint32_t colorToUint32(Color c);
+
+  void renderBackground();
 };

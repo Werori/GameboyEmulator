@@ -73,52 +73,7 @@ void PPU::tick(int cycles) {
     if ((lcdc & 0x1)) {
       std::cout << "BG on" << std::endl;
 
-      uint16_t bgTileMapBase = (lcdc & (1 << 3)) ? 0x9C00 : 0x9800;
-      // uint32_t color = bgPalleteData[1];
-      // for (int y = 0; y < SCREEN_HEIGHT; y++) {
-      //   for (int x = 0; x < SCREEN_WIDTH; x++) {
-      //     framebuffer[y * SCREEN_WIDTH + x] = color;
-      //   }
-      // }
-      uint8_t scx = memory.getScx();
-      uint8_t scy = memory.getScy();
-
-      for (int screenY = 0; screenY < SCREEN_HEIGHT; screenY++) {
-        for (int screenX = 0; screenX < SCREEN_WIDTH; screenX++) {
-          // background can be bigger than screen so add scroll values
-          int bgX = (screenX + scx) % 256;
-          int bgY = (screenY + scy) % 256;
-
-          // find tile in a row and column
-          int tileX = bgX / 8;
-          int tileY = bgY / 8;
-
-          uint16_t tileMapOffset = tileY * TILES_IN_ROW + tileX;
-          uint8_t tileIndex = memory.read(bgTileMapBase + tileMapOffset);
-          int tileLine = bgY % 8;
-
-          uint16_t tileAddress;
-
-          if (lcdc & (1 << 4)) {
-            tileAddress = 0x8000 + tileIndex * TILE_BYTES;
-          } else {
-            int8_t signedIndex = static_cast<int8_t>(tileIndex);
-            tileAddress = SIGNED_CENTER + signedIndex * 16;
-          }
-
-          uint8_t lowByte = memory.read(tileAddress + tileLine * BYTES_PER_ROW);
-          uint8_t highByte =
-              memory.read(tileAddress + tileLine * BYTES_PER_ROW + 1);
-          int tilePixelX = bgX % TILE_SIZE;
-          int bitIndex = MSB_INDEX - tilePixelX;
-          uint8_t bit0 = (lowByte >> bitIndex) & 1;
-          uint8_t bit1 = (highByte >> bitIndex) & 1;
-          uint8_t colorId = (bit1 << 1) | bit0;
-
-          framebuffer[screenY * SCREEN_WIDTH + screenX] =
-              bgPalleteData[colorId];
-        }
-      }
+      renderBackground();
 
       if (lcdc & 0x20) {
         std::cout << "lcdc is: " << (int)lcdc << std::endl;
@@ -136,4 +91,53 @@ void PPU::tick(int cycles) {
 uint32_t PPU::colorToUint32(Color c) {
   return ((uint32_t)c.a << 24) | ((uint32_t)c.r << 16) | ((uint32_t)c.g << 8) |
          ((uint32_t)c.b);
+}
+
+void PPU::renderBackground() {
+  uint8_t lcdc = memory.read(lcdControlAddress);
+  uint16_t bgTileMapBase = (lcdc & (1 << 3)) ? 0x9C00 : 0x9800;
+  // uint32_t color = bgPalleteData[1];
+  // for (int y = 0; y < SCREEN_HEIGHT; y++) {
+  //   for (int x = 0; x < SCREEN_WIDTH; x++) {
+  //     framebuffer[y * SCREEN_WIDTH + x] = color;
+  //   }
+  // }
+  uint8_t scx = memory.getScx();
+  uint8_t scy = memory.getScy();
+
+  for (int screenY = 0; screenY < SCREEN_HEIGHT; screenY++) {
+    for (int screenX = 0; screenX < SCREEN_WIDTH; screenX++) {
+      // background can be bigger than screen so add scroll values
+      int bgX = (screenX + scx) % 256;
+      int bgY = (screenY + scy) % 256;
+
+      // find tile in a row and column
+      int tileX = bgX / 8;
+      int tileY = bgY / 8;
+
+      uint16_t tileMapOffset = tileY * TILES_IN_ROW + tileX;
+      uint8_t tileIndex = memory.read(bgTileMapBase + tileMapOffset);
+      int tileLine = bgY % 8;
+
+      uint16_t tileAddress;
+
+      if (lcdc & (1 << 4)) {
+        tileAddress = 0x8000 + tileIndex * TILE_BYTES;
+      } else {
+        int8_t signedIndex = static_cast<int8_t>(tileIndex);
+        tileAddress = SIGNED_CENTER + signedIndex * 16;
+      }
+
+      uint8_t lowByte = memory.read(tileAddress + tileLine * BYTES_PER_ROW);
+      uint8_t highByte =
+          memory.read(tileAddress + tileLine * BYTES_PER_ROW + 1);
+      int tilePixelX = bgX % TILE_SIZE;
+      int bitIndex = MSB_INDEX - tilePixelX;
+      uint8_t bit0 = (lowByte >> bitIndex) & 1;
+      uint8_t bit1 = (highByte >> bitIndex) & 1;
+      uint8_t colorId = (bit1 << 1) | bit0;
+
+      framebuffer[screenY * SCREEN_WIDTH + screenX] = bgPalleteData[colorId];
+    }
+  }
 }

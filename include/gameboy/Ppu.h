@@ -36,6 +36,7 @@ private:
   static constexpr int SIGNED_CENTER = 0x9000;
   static constexpr int BYTES_PER_ROW = 2;
   static constexpr int MSB_INDEX = 7;
+  static constexpr int WINDOW_X_START_POS = 7;
 
   uint32_t framebuffer[SCREEN_WIDTH * SCREEN_HEIGHT] = {0};
   Texture2D frameTexture = {0, 0, 0, 0, 0};
@@ -50,4 +51,6 @@ private:
   uint32_t colorToUint32(Color c);
 
   void renderBackground();
+
+  void renderWindow();
 };

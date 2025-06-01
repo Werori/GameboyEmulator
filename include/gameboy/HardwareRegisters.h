@@ -44,5 +44,5 @@ struct HardwareRegisters {
   uint8_t objPallete0 = 0;
   uint8_t objPallete1 = 0;
   uint8_t windowY = 0;
-  uint8_t windowXPlus7 = 0;
+  uint8_t windowX = 0;
 };

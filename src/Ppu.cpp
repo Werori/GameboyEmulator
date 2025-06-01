@@ -60,28 +60,35 @@ void PPU::tick(int cycles) {
     memory.setLy(memory.getLy() + 1);
   }
 
-  // VBlank interrupt trigger at line 144
+  // VBlank interrupt at line 144
   if (memory.getLy() == startOfVBlank) {
     std::cout << "VBlank" << std::endl;
     memory.requestInterrupt(InterruptFlag::VBlank);
   }
 
-  // Frame ready trigger and reset at line 154 (one past endOfVBlank)
+  std::cout << "LY: " << (int)memory.getLy() << std::endl;
+
+  // Frame ready
   if (memory.getLy() > endOfVBlank) {
-    memory.setLy(0);
     frameReady = true;
     if ((lcdc & 0x1)) {
       std::cout << "BG on" << std::endl;
 
       renderBackground();
 
-      if (lcdc & 0x20) {
+      // std::cout << "lcdc is: " << (int)lcdc << std::endl;
+      // std::cout << "ly is: " << (int)memory.getLy() << std::endl;
+      // std::cout << "wy:  " << (int)memory.getWindowY() << std::endl;
+
+      // throw std::runtime_error("window is enabled");
+      if ((lcdc & 0x20) && (memory.getLy() >= memory.getWindowY())) {
         std::cout << "lcdc is: " << (int)lcdc << std::endl;
         throw std::runtime_error("window is enabled");
       }
     } else if (lcdc & (1 << 1)) {
       throw std::runtime_error("obj enable");
     }
+    memory.setLy(0);
   }
 
   // Write LY to memory register
@@ -112,12 +119,12 @@ void PPU::renderBackground() {
       int bgY = (screenY + scy) % 256;
 
       // find tile in a row and column
-      int tileX = bgX / 8;
-      int tileY = bgY / 8;
+      int tileX = bgX / TILE_SIZE;
+      int tileY = bgY / TILE_SIZE;
 
       uint16_t tileMapOffset = tileY * TILES_IN_ROW + tileX;
       uint8_t tileIndex = memory.read(bgTileMapBase + tileMapOffset);
-      int tileLine = bgY % 8;
+      int tileLine = bgY % TILE_SIZE;
 
       uint16_t tileAddress;
 
@@ -138,6 +145,45 @@ void PPU::renderBackground() {
       uint8_t colorId = (bit1 << 1) | bit0;
 
       framebuffer[screenY * SCREEN_WIDTH + screenX] = bgPalleteData[colorId];
+    }
+  }
+}
+
+void PPU::renderWindow() {
+  uint8_t lcdc = memory.read(lcdControlAddress);
+  uint16_t windowTileMapBase = (lcdc & (1 << 6)) ? 0x9C00 : 0x9800;
+
+  uint8_t wX = memory.getWindowX() - WINDOW_X_START_POS;
+  uint8_t wY = memory.getWindowY();
+
+  for (int windowY = wY; windowY < SCREEN_HEIGHT; windowY++) {
+    for (int windowX = wX; windowX < SCREEN_WIDTH; windowX++) {
+      int tileX = windowX / TILE_SIZE;
+      int tileY = windowY / TILE_SIZE;
+
+      uint16_t tileMapOffset = tileY * TILES_IN_ROW + tileX;
+      uint8_t tileIndex = memory.read(windowTileMapBase + tileMapOffset);
+      int tileLine = windowY % TILE_SIZE;
+
+      uint16_t tileAddress;
+
+      if (lcdc & (1 << 4)) {
+        tileAddress = 0x8000 + tileIndex * TILE_BYTES;
+      } else {
+        int8_t signedIndex = static_cast<int8_t>(tileIndex);
+        tileAddress = SIGNED_CENTER + signedIndex * 16;
+      }
+
+      uint8_t lowByte = memory.read(tileAddress + tileLine * BYTES_PER_ROW);
+      uint8_t highByte =
+          memory.read(tileAddress + tileLine * BYTES_PER_ROW + 1);
+      int tilePixelX = windowX % TILE_SIZE;
+      int bitIndex = MSB_INDEX - tilePixelX;
+      uint8_t bit0 = (lowByte >> bitIndex) & 1;
+      uint8_t bit1 = (highByte >> bitIndex) & 1;
+      uint8_t colorId = (bit1 << 1) | bit0;
+
+      framebuffer[windowY * SCREEN_WIDTH + windowX] = bgPalleteData[colorId];
     }
   }
 }

@@ -73,77 +73,111 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   switch (address) {
   case 0xff00:
     throw std::runtime_error("reading joypad");
+    break;
   case 0xff01:
     throw std::runtime_error("reading serial transfer data");
+    break;
   case 0xff02:
     throw std::runtime_error("reading serial Transfer control");
+    break;
   case 0xff04:
     throw std::runtime_error("reading divider register");
+    break;
   case 0xff05:
     throw std::runtime_error("reading timer counter");
+    break;
   case 0xff06:
     throw std::runtime_error("reading timer modulo");
+    break;
   case 0xff07:
     throw std::runtime_error("reading timer control");
+    break;
   case 0xff0f:
     return hardwareRegisters.interruptFlag;
+    break;
   case 0xff10:
     throw std::runtime_error("reading sound channel 1 sweep");
+    break;
   case 0xff11:
     throw std::runtime_error("reading sound channel 1 length timer");
+    break;
   case 0xff12:
     throw std::runtime_error("reading sound channel 1 volume and envelope");
+    break;
   case 0xff14:
     throw std::runtime_error("reading sound channel 1 period high and control");
+    break;
   case 0xff16:
     throw std::runtime_error("reading sound channel 2 length timer");
+    break;
   case 0xff17:
     throw std::runtime_error("reading sound channel 2 volume and envelope");
+    break;
   case 0xff19:
     throw std::runtime_error("reading sound channel 2 period high and control");
+    break;
   case 0xff1a:
     throw std::runtime_error("reading sound channel 3 DAC enable");
+    break;
   case 0xff1c:
     throw std::runtime_error("reading sound channel 3 output level");
+    break;
   case 0xff1e:
     throw std::runtime_error("reading sound channel 3 period high and control");
+    break;
   case 0xff21:
     throw std::runtime_error("reading sound channel 4 volume and envelope");
+    break;
   case 0xff22:
     throw std::runtime_error("reading sound channel 4 frequency and random");
+    break;
   case 0xff23:
     throw std::runtime_error("reading sound channel 4 control");
+    break;
   case 0xff24:
     throw std::runtime_error("reading master volume and vin panning");
+    break;
   case 0xff25:
     throw std::runtime_error("reading sound panning");
+    break;
   case 0xff26:
     throw std::runtime_error("reading sound on off");
+    break;
   case 0xff40:
     return hardwareRegisters.lcdControl;
     // throw std::runtime_error("reading lcd control");
   case 0xff41:
     throw std::runtime_error("reading lcd status");
+    break;
   case 0xff42:
     throw std::runtime_error("reading viewport y position");
+    break;
   case 0xff43:
     throw std::runtime_error("reading viewport x position");
+    break;
   case 0xff44:
     return hardwareRegisters.ly;
   case 0xff45:
     throw std::runtime_error("reading ly compare");
+    break;
   case 0xff46:
     throw std::runtime_error("reading oam dma");
+    break;
   case 0xff47:
     throw std::runtime_error("reading bg pallete data");
+    break;
   case 0xff48:
     throw std::runtime_error("reading obj pallete 0");
+    break;
   case 0xff49:
     throw std::runtime_error("reading obj pallete 1");
+    break;
   case 0xff4a:
     throw std::runtime_error("reading window y position");
+    break;
   case 0xff4b:
     throw std::runtime_error("reading window x + 7");
+    break;
   }
   return 0;
 }
@@ -191,139 +225,182 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
   switch (address) {
   case 0xff00:
     throw std::runtime_error("writing joypad");
+    break;
   case 0xff01:
     // needed for multiplayer
+    break;
   case 0xff02:
     // needed for multiplayer
+    break;
   case 0xff04:
     hardwareRegisters.dividerRegister = 0;
+    break;
   case 0xff05:
     if (((hardwareRegisters.timerControl >> 2) & 0x01) == 0) {
       return;
     } else {
       throw std::runtime_error("timer control is enabled");
     }
+    break;
   case 0xff06:
     throw std::runtime_error("writing timer modulo");
+    break;
   case 0xff07:
     throw std::runtime_error("writing timer control");
+    break;
   case 0xff0f:
     hardwareRegisters.interruptFlag = byte;
+    break;
   case 0xff10:
     hardwareRegisters.soundChannel1Sweep = byte;
+    break;
     // throw std::runtime_error("writing sound channel 1 sweep");
   case 0xff11:
     hardwareRegisters.soundChannel1LengthTimer = byte;
+    break;
     // std::cout << "writing sound channel 1 length timer" << std::endl;
     // throw std::runtime_error("writing sound channel 1 length timer");
   case 0xff12:
     hardwareRegisters.soundChannel1VolumeAndEnvelope = byte;
+    break;
     // std::cout << "writing sound channel 1 volume and envelope" << std::endl;
     // ;
     // throw std::runtime_error("writing sound channel 1 volume and envelope");
   case 0xff13:
     hardwareRegisters.soundChannel1PeriodLow = byte;
+    break;
     // std::cout << "writing sound channel 1 period low" << std::endl;
     // throw std::runtime_error("writing sound channel 1 period low");
   case 0xff14:
     hardwareRegisters.soundChannel1PeriodLow = byte;
+    break;
     // std::cout << "writing sound channel 1 period high and control" <<
     // std::endl; throw std::runtime_error("writing sound channel 1 period high
     // and control");
   case 0xff16:
     hardwareRegisters.soundChannel2LengthTimer = byte;
+    break;
     // std::cout << "writing sound channel 2 length timer" << std::endl;
     // throw std::runtime_error("writing sound channel 2 length timer");
   case 0xff17:
     hardwareRegisters.soundChannel2VolumeAndEnvelope = byte;
+    break;
     // std::cout << "writing sound channel 2 volume and envelope" << std::endl;
     // throw std::runtime_error("writing sound channel 2 volume and envelope");
   case 0xff18:
     hardwareRegisters.soundChannel2PeriodLow = byte;
+    break;
     // std::cout << "writing sound channel 2 period low" << std::endl;
     // throw std::runtime_error("writing sound channel 2 period low");
   case 0xff19:
     hardwareRegisters.soundChannel2PeriodHighAndControl = byte;
+    break;
     // std::cout << "writing sound channel 2 period high and control" <<
     // std::endl; throw std::runtime_error("writing sound channel 2 period high
     // and control");
   case 0xff1a:
     hardwareRegisters.soundChannel3DACEnable = byte;
+    break;
     // std::cout << "writing sound channel 3 DAC enable" << std::endl;
     // throw std::runtime_error("writing sound channel 3 DAC enable");
   case 0xff1b:
     hardwareRegisters.soundChannel3LengthTimer = byte;
+    break;
     // std::cout << "writing sound channel 3 length timer" << std::endl;
     // throw std::runtime_error("writing sound channel 3 length timer");
   case 0xff1c:
     hardwareRegisters.soundChannel3OutputLevel = byte;
+    break;
     // std::cout << "writing sound channel 3 output level" << std::endl;
     // throw std::runtime_error("writing sound channel 3 output level");
   case 0xff1d:
     hardwareRegisters.soundChannel3PeriodLow = byte;
+    break;
     // std::cout << "writing sound channel 3 period low" << std::endl;
     // throw std::runtime_error("writing sound channel 3 period low");
   case 0xff1e:
     hardwareRegisters.soundChannel3PeriodHighAndControl = byte;
+    break;
     // std::cout << "writing sound channel 3 period high and control" <<
     // std::endl; throw std::runtime_error("writing sound channel 3 period high
     // and control");
   case 0xff20:
     hardwareRegisters.soundChannel4LengthTimer = byte;
+    break;
     // std::cout << "writing sound channel 4 length timer" << std::endl;
     // throw std::runtime_error("writing sound channel 4 length timer");
   case 0xff21:
     hardwareRegisters.soundChannel4VolumeAndEnvelope = byte;
+    break;
     // std::cout << "writing sound channel 4 volume and envelope" << std::endl;
     // throw std::runtime_error("writing sound channel 4 volume and envelope");
   case 0xff22:
     hardwareRegisters.soundChannel4FrequencyAndRandom = byte;
+    break;
     // std::cout << "writing sound channel 4 frequency and random" << std::endl;
     // throw std::runtime_error("writing sound channel 4 frequency and random");
   case 0xff23:
     hardwareRegisters.soundChannel4Control = byte;
+    break;
     // std::cout << "writing sound channel 4 control" << std::endl;
     // throw std::runtime_error("writing sound channel 4 control");
   case 0xff24:
     hardwareRegisters.masterVolumeAndVinPanning = byte;
+    break;
     // std::cout << "writing master volume and vin panning" << std::endl;
     // throw std::runtime_error("writing master volume and vin panning");
   case 0xff25:
     hardwareRegisters.soundPanning = byte;
+    break;
     // std::cout << "writing sound panning" << std::endl;
     // throw std::runtime_error("writing sound panning");
   case 0xff26:
     hardwareRegisters.soundOnOff = byte;
+    break;
     // throw std::runtime_error("writing sound on off");
   case 0xff40:
     hardwareRegisters.lcdControl = byte;
+    break;
     // throw std::runtime_error("writing lcd control");
   case 0xff41:
     hardwareRegisters.lcdStatus = byte;
+    break;
     // throw std::runtime_error("writing lcd status");
   case 0xff42:
     hardwareRegisters.viewportYPosition = byte;
+    break;
     // throw std::runtime_error("writing viewport y position");
   case 0xff43:
     hardwareRegisters.viewportXPosition = byte;
+    break;
     // throw std::runtime_error("writing viewport x position");
   case 0xff45:
     hardwareRegisters.lyc = byte;
+    break;
     // throw std::runtime_error("writing ly compare");
   case 0xff46:
     startOamDmaTransfer(byte);
+    break;
     // throw std::runtime_error("writing oam dma");
   case 0xff47:
     hardwareRegisters.bgPallete = byte;
+    break;
     // throw std::runtime_error("writing bg pallete data");
   case 0xff48:
     hardwareRegisters.objPallete0 = byte;
+    break;
   case 0xff49:
     hardwareRegisters.objPallete1 = byte;
+    break;
   case 0xff4a:
+    std::cout << "wy: " << (int)byte << std::endl;
+    throw std::runtime_error("writing wY");
     hardwareRegisters.windowY = byte;
+    break;
   case 0xff4b:
-    hardwareRegisters.windowXPlus7 = byte;
+    throw std::runtime_error("writing wX");
+    hardwareRegisters.windowX = byte;
+    break;
     // case 0xff50:
     // throw std::runtime_error("boot rom disable!");
   }
@@ -355,3 +432,7 @@ uint8_t GameboyMemory::getLy() { return hardwareRegisters.ly; }
 uint8_t GameboyMemory::getScx() { return hardwareRegisters.scx; }
 
 uint8_t GameboyMemory::getScy() { return hardwareRegisters.scy; }
+
+uint8_t GameboyMemory::getWindowX() { return hardwareRegisters.windowX; }
+
+uint8_t GameboyMemory::getWindowY() { return hardwareRegisters.windowY; }

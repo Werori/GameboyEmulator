@@ -71,4 +71,7 @@ public:
 
   uint8_t getScx();
   uint8_t getScy();
+
+  uint8_t getWindowX();
+  uint8_t getWindowY();
 };

@@ -26,6 +26,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
+  opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
   opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
@@ -43,7 +44,7 @@ void CPU::fetchOpcode() {
 void CPU::decodeAndExecute() {
   handleInterrupts();
   std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
-  std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
+  // std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
   // std::cout << std::hex << "pc + 1: " << (int)memory.read(registers.PC +
   // 1)
   //           << std::endl;
@@ -183,6 +184,14 @@ void CPU::LDFF00Plusu8A() {
   // std::cout << "io address: " << std::hex << (int)address << std::endl;
 
   memory.write(address, a);
+}
+
+void CPU::LDu16A() {
+  auto [lowByte, highByte] = getLowByteAndHighByte();
+  uint16_t address = toLittleEndian(lowByte, highByte);
+
+  uint8_t value = registers.getA();
+  memory.write(address, value);
 }
 
 void CPU::LDAFF00Plusu8() {

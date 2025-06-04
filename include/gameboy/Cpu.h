@@ -42,6 +42,8 @@ struct CPU {
   void JRNZi8();
   // load 16-bit address into register HL
   void LDHLu16();
+  // load 8-bit address into register HL
+  void LDHLu8();
   // get value from A and load it into address held by HL. Decrease HL.
   void LDHLDecA();
   // load u8 value into A register

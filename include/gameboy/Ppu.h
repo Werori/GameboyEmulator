@@ -42,6 +42,10 @@ private:
 
   uint8_t prevMode = 0;
 
+  uint8_t lastLcdc = 0;
+  bool lcdEnabled = false;
+  uint8_t mode = 0;
+
   uint32_t framebuffer[SCREEN_WIDTH * SCREEN_HEIGHT] = {0};
   Texture2D frameTexture = {0, 0, 0, 0, 0};
   uint8_t scaleFactor = 2;

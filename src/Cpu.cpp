@@ -75,6 +75,8 @@ void CPU::decodeAndExecute() {
     ppu.tick(1);
   }
   // ppu.tick(cycles);
+  // cycles = 0;
+  // ppu.tick(cycles);
 }
 
 void CPU::nop() {
@@ -181,7 +183,7 @@ void CPU::LDAFF00Plusu8() {
   auto byte = memory.read(registers.PC + 1);
   std::cout << std::hex << "byte: " << (int)byte << std::endl;
   // auto address = memory.read(0xff00 + byte);
-  auto address = 0xff00 | byte;
+  auto address = 0xff00 + byte;
   uint8_t value = memory.read(address);
   // std::cout << std::hex << "address: " << address << std::endl;
 

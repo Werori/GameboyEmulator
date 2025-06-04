@@ -224,13 +224,19 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
 
   switch (address) {
   case 0xff00:
-    hardwareRegisters.joypad = 0xf;
     throw std::runtime_error("writing joypad");
     break;
   case 0xff01:
+    hardwareRegisters.serialTransferData = byte;
     // needed for multiplayer
     break;
   case 0xff02:
+    hardwareRegisters.serialTransferControl = byte;
+    if (byte & 0x80) {
+      // Simulate immediate transfer completion
+      hardwareRegisters.serialTransferControl &= ~0x80; // clear the start bit
+      requestInterrupt(InterruptFlag::Serial);
+    }
     // needed for multiplayer
     break;
   case 0xff04:

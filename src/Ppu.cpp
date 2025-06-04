@@ -46,15 +46,34 @@ void PPU::tick(int cycles) {
 
   uint8_t lcdc = memory.read(lcdControlAddress);
 
-  // check if screen is turned off
-  if (!(lcdc & 0x80)) {
-    std::cout << "Screen is off" << std::endl;
+  bool wasOn = (lastLcdc & 0x80);
+  bool isOn = (lcdc & 0x80);
+
+  if (wasOn && !isOn) {
+    lcdEnabled = false;
     memory.setLy(0);
     cycleCounter = 0;
-    return;
+    mode = 0;
+    std::cout << "Screen turned off" << std::endl;
+  } else if (!wasOn && isOn) {
+    lcdEnabled = true;
+    cycleCounter = 0;
+    mode = 2;
+    std::cout << "screen turned on" << std::endl;
   }
 
-  // std::cout << "LY: " << (int)memory.getLy() << std::endl;
+  lastLcdc = lcdc;
+
+  // if (!lcdEnabled)
+  //   return;
+
+  // if (!(lcdc & 0x80)) {
+  //   // LCD is off — don't do anything PPU-related yet
+  //   memory.setLy(0);
+  //   cycleCounter = 0;
+  //   return;
+  // }
+
   // Increment scanline when enough cycles passed
   if (cycleCounter >= cyclesPerScanline) {
     cycleCounter -= cyclesPerScanline;
@@ -92,11 +111,9 @@ void PPU::tick(int cycles) {
 
   uint8_t stat = memory.read(0xFF41);
 
-  // Write LY to memory register
-  memory.write(0xff44, memory.getLy());
   uint8_t ly = memory.getLy();
   int lineCycle = cycleCounter;
-  uint8_t mode = 0;
+  mode = 0;
   if (ly >= SCREEN_HEIGHT) {
     mode = 1; // VBlank
   } else if (lineCycle < MODE_2) {

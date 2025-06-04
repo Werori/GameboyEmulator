@@ -34,29 +34,29 @@ uint8_t GameboyMemory::read(uint16_t address) {
     // std::cout << "Reading from bank0..." << std::endl;
     return romBank0[address - romBank0Range.start];
   } else if (romBank1Range.contains(address)) {
-    std::cout << "Reading from bank1..." << std::endl;
+    // std::cout << "Reading from bank1..." << std::endl;
     return romBank1[address - romBank1Range.start];
   } else if (vRAMRange.contains(address)) {
     return vram[address - vRAMRange.start];
   } else if (externalRAMRange.contains(address)) {
-    std::cout << "Reading from external ram..." << std::endl;
+    // std::cout << "Reading from external ram..." << std::endl;
     return externalRam[address - externalRAMRange.start];
   } else if (wRam1Range.contains(address)) {
-    std::cout << "Reading from wram1..." << std::endl;
+    // std::cout << "Reading from wram1..." << std::endl;
     return wram1[address - wRam1Range.start];
   } else if (wRam2Range.contains(address)) {
-    std::cout << "Reading from wram2..." << std::endl;
+    // std::cout << "Reading from wram2..." << std::endl;
     return wram2[address - wRam2Range.start];
   } else if (echoRamRange.contains(address)) {
     // std::cout << "Reading echo ram" << std::endl;
     return wram1[(address - 0x2000) - wRam1Range.start];
   } else if (oamRange.contains(address)) {
-    std::cout << "Reading from oam..." << std::endl;
+    // std::cout << "Reading from oam..." << std::endl;
     return oam[address - oamRange.start];
   } else if (ioRange.contains(address)) {
     return readIORegister(address);
   } else if (highRamRange.contains(address)) {
-    std::cout << "Reading from highRam..." << std::endl;
+    // std::cout << "Reading from highRam..." << std::endl;
     return highRam[address - highRamRange.start];
   } else if (address == 0xffff) {
     throw std::runtime_error("reading interrupt enable");
@@ -147,7 +147,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
     return hardwareRegisters.lcdControl;
     // throw std::runtime_error("reading lcd control");
   case 0xff41:
-    throw std::runtime_error("reading lcd status");
+    return hardwareRegisters.lcdStatus;
     break;
   case 0xff42:
     throw std::runtime_error("reading viewport y position");
@@ -158,7 +158,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   case 0xff44:
     return hardwareRegisters.ly;
   case 0xff45:
-    throw std::runtime_error("reading ly compare");
+    return hardwareRegisters.lyc;
     break;
   case 0xff46:
     throw std::runtime_error("reading oam dma");
@@ -184,31 +184,31 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
 
 void GameboyMemory::write(uint16_t address, uint8_t byte) {
   if (romBank0Range.contains(address)) {
-    std::cout << "Can't write to ROM!" << std::endl;
+    // std::cout << "Can't write to ROM!" << std::endl;
   } else if (romBank1Range.contains(address)) {
-    std::cout << "Can't write to ROM!" << std::endl;
+    // std::cout << "Can't write to ROM!" << std::endl;
   } else if (vRAMRange.contains(address)) {
-    std::cout << "Writing to vram..." << std::endl;
+    // std::cout << "Writing to vram..." << std::endl;
     throw std::runtime_error("writing to vram");
     vram[address - vRAMRange.start] = byte;
   } else if (externalRAMRange.contains(address)) {
-    std::cout << "Writing to external ram..." << std::endl;
+    // std::cout << "Writing to external ram..." << std::endl;
     externalRam[address - externalRAMRange.start] = byte;
   } else if (wRam1Range.contains(address)) {
-    std::cout << "Writing to wram1..." << std::endl;
+    // std::cout << "Writing to wram1..." << std::endl;
     wram1[address - wRam1Range.start] = byte;
   } else if (wRam2Range.contains(address)) {
-    std::cout << "Writing to wram2..." << std::endl;
+    // std::cout << "Writing to wram2..." << std::endl;
     wram2[address - wRam2Range.start] = byte;
   } else if (echoRamRange.contains(address)) {
     throw std::runtime_error("writing echo ram");
   } else if (oamRange.contains(address)) {
-    std::cout << "Writing to oam..." << std::endl;
+    // std::cout << "Writing to oam..." << std::endl;
     oam[address - oamRange.start] = byte;
   } else if (ioRange.contains(address)) {
     writeIORegister(address, byte);
   } else if (highRamRange.contains(address)) {
-    std::cout << "Writing to highRam..." << std::endl;
+    // std::cout << "Writing to highRam..." << std::endl;
     highRam[address - highRamRange.start] = byte;
   } else if (address == 0xffff) {
     interruptEnable = byte;
@@ -224,6 +224,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
 
   switch (address) {
   case 0xff00:
+    hardwareRegisters.joypad = 0xf;
     throw std::runtime_error("writing joypad");
     break;
   case 0xff01:
@@ -362,10 +363,12 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.lcdControl = byte;
     break;
     // throw std::runtime_error("writing lcd control");
-  case 0xff41:
-    hardwareRegisters.lcdStatus = byte;
+  case 0xff41: {
+    uint8_t currentStat = hardwareRegisters.lcdStatus;
+    hardwareRegisters.lcdStatus = (byte & 0x78) | (currentStat & 0x87);
     break;
     // throw std::runtime_error("writing lcd status");
+  }
   case 0xff42:
     hardwareRegisters.viewportYPosition = byte;
     break;
@@ -401,8 +404,8 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     throw std::runtime_error("writing wX");
     hardwareRegisters.windowX = byte;
     break;
-    // case 0xff50:
-    // throw std::runtime_error("boot rom disable!");
+  case 0xff50:
+    throw std::runtime_error("boot rom disable!");
   }
 }
 

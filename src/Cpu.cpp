@@ -42,8 +42,11 @@ void CPU::fetchOpcode() {
 void CPU::decodeAndExecute() {
   handleInterrupts();
   std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
-  // std::cout << std::hex << "pc + 1: " << (int)memory.read(registers.PC + 1)
+  std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
+  // std::cout << std::hex << "pc + 1: " << (int)memory.read(registers.PC +
+  // 1)
   //           << std::endl;
+
   if (opcode != 0xcb) {
     opcodes[opcode].func();
     length = opcodes[opcode].length;
@@ -68,10 +71,16 @@ void CPU::decodeAndExecute() {
     cycles -= 256;
   }
 
-  ppu.tick(cycles);
+  for (int i = 0; i < cycles; i++) {
+    ppu.tick(1);
+  }
+  // ppu.tick(cycles);
 }
 
-void CPU::nop() { std::cout << "Nop function" << std::endl; };
+void CPU::nop() {
+  // std::cout << "Nop function" << std::endl;
+
+};
 
 void CPU::DecB() {
   // std::cout << "B before: " << (int)registers.getB();
@@ -126,7 +135,8 @@ void CPU::XORAA() {
 
 void CPU::JPa16() {
 
-  // std::cout << "pc: " << std::hex << registers.PC << std::endl;
+  // std::cout << "pc in jump before: " << std::hex << registers.PC <<
+  // std::endl;
   auto [lowByte, highByte] = getLowByteAndHighByte();
 
   // std::cout << "high: " << std::hex << (int)highByte << std::endl;
@@ -134,6 +144,7 @@ void CPU::JPa16() {
   // std::cout << "low:" << std::hex << (int)lowByte << std::endl;
 
   registers.PC = CPU::toLittleEndian(lowByte, highByte);
+  // std::cout << "pc in jump is: " << (int)registers.PC << std::endl;
   jumped = true;
 };
 
@@ -169,10 +180,12 @@ void CPU::LDFF00Plusu8A() {
 void CPU::LDAFF00Plusu8() {
   auto byte = memory.read(registers.PC + 1);
   std::cout << std::hex << "byte: " << (int)byte << std::endl;
-  auto address = memory.read(0xff00 + byte);
+  // auto address = memory.read(0xff00 + byte);
+  auto address = 0xff00 | byte;
+  uint8_t value = memory.read(address);
   // std::cout << std::hex << "address: " << address << std::endl;
 
-  registers.setA(address);
+  registers.setA(value);
 }
 
 void CPU::DI() { IME = 0; }
@@ -183,17 +196,20 @@ void CPU::CPAu8() {
   uint8_t value = memory.read(registers.PC + 1);
   uint8_t a = registers.getA();
 
-  // std::cout << "z: " << (a == value) << " a: " << (int)a
-  // << "value: " << (int)value << std::endl;
+  std::cout << "CPA value: " << (int)value << std::endl;
 
   registers.setFlag(registers.FLAG_Z, a == value);
+  std::cout << "Compare A=" << (int)a << " to value=" << (int)value
+            << std::endl;
+  std::cout << "Ly is: " << (int)memory.getLy() << std::endl;
   registers.setFlag(registers.FLAG_N, true);
   registers.setFlag(registers.FLAG_H, isHalfCarry(a, value));
   registers.setFlag(registers.FLAG_C, isCarry(a, value));
 }
 
 uint16_t CPU::toLittleEndian(uint8_t lowByte, uint8_t highByte) {
-  return (highByte << 8) | lowByte;
+  return (static_cast<uint16_t>(lowByte)) |
+         (static_cast<uint16_t>(highByte) << 8);
 }
 
 std::pair<uint8_t, uint8_t> CPU::getLowByteAndHighByte() {
@@ -206,9 +222,7 @@ bool CPU::isHalfCarry(uint8_t a, uint8_t value) {
   return ((a & 0x0f) < (value & 0x0f));
 }
 
-bool CPU::isCarry(uint8_t a, uint8_t value) {
-  return (a < (value + (registers.getF() & CARRY_FLAG_REGISTER_F)));
-}
+bool CPU::isCarry(uint8_t a, uint8_t value) { return a < value; }
 
 void CPU::handleInterrupts() {
   if (!IME) {

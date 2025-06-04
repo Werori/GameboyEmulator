@@ -9,7 +9,7 @@
 struct PPU {
 
   static constexpr uint8_t NUMBER_OF_COLORS_IN_PALLETE = 4;
-  GameboyMemory memory;
+  GameboyMemory &memory;
   // HardwareRegisters hardwareRegisters;
   uint32_t bgPalleteData[NUMBER_OF_COLORS_IN_PALLETE] = {
       colorToUint32(WHITE), colorToUint32(LIGHTGRAY), colorToUint32(DARKGRAY),
@@ -37,6 +37,10 @@ private:
   static constexpr int BYTES_PER_ROW = 2;
   static constexpr int MSB_INDEX = 7;
   static constexpr int WINDOW_X_START_POS = 7;
+  static constexpr int MODE_2 = 80;
+  static constexpr int MODE_3 = 252;
+
+  uint8_t prevMode = 0;
 
   uint32_t framebuffer[SCREEN_WIDTH * SCREEN_HEIGHT] = {0};
   Texture2D frameTexture = {0, 0, 0, 0, 0};

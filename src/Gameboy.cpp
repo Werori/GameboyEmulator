@@ -37,9 +37,11 @@ void Gameboy::run() {
     cpu.decodeAndExecute();
 
     BeginDrawing();
-    ppu.renderFrame();
+    if (ppu.frameReady) {
+      ppu.renderFrame();
+      ppu.frameReady = false;
+    }
     ppu.drawFrame();
-    ppu.frameReady = false;
     EndDrawing();
   }
 

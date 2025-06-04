@@ -54,6 +54,7 @@ void PPU::tick(int cycles) {
     return;
   }
 
+  // std::cout << "LY: " << (int)memory.getLy() << std::endl;
   // Increment scanline when enough cycles passed
   if (cycleCounter >= cyclesPerScanline) {
     cycleCounter -= cyclesPerScanline;
@@ -62,17 +63,12 @@ void PPU::tick(int cycles) {
 
   // VBlank interrupt at line 144
   if (memory.getLy() == startOfVBlank) {
-    std::cout << "VBlank" << std::endl;
+    // std::cout << "VBlank" << std::endl;
     memory.requestInterrupt(InterruptFlag::VBlank);
-  }
 
-  std::cout << "LY: " << (int)memory.getLy() << std::endl;
-
-  // Frame ready
-  if (memory.getLy() > endOfVBlank) {
     frameReady = true;
     if ((lcdc & 0x1)) {
-      std::cout << "BG on" << std::endl;
+      // std::cout << "BG on" << std::endl;
 
       renderBackground();
 
@@ -88,11 +84,61 @@ void PPU::tick(int cycles) {
     } else if (lcdc & (1 << 1)) {
       throw std::runtime_error("obj enable");
     }
+  }
+
+  if (memory.getLy() > endOfVBlank) {
     memory.setLy(0);
   }
 
+  uint8_t stat = memory.read(0xFF41);
+
   // Write LY to memory register
   memory.write(0xff44, memory.getLy());
+  uint8_t ly = memory.getLy();
+  int lineCycle = cycleCounter;
+  uint8_t mode = 0;
+  if (ly >= SCREEN_HEIGHT) {
+    mode = 1; // VBlank
+  } else if (lineCycle < MODE_2) {
+    mode = 2; // OAM
+  } else if (lineCycle < MODE_3) {
+    mode = 3; // Drawing
+  } else {
+    mode = 0; // HBlank
+  }
+
+  if (mode != prevMode) {
+    bool interrupt = false;
+    switch (mode) {
+    case 0:
+      interrupt = stat & (1 << 3);
+      break;
+    case 1:
+      interrupt = stat & (1 << 4);
+      break;
+    case 2:
+      interrupt = stat & (1 << 5);
+      break;
+    }
+
+    if (interrupt) {
+      memory.requestInterrupt(InterruptFlag::LCDStat);
+    }
+
+    prevMode = mode;
+  }
+
+  stat = (stat & 0xFC) | mode;
+  uint8_t lyc = memory.read(0xFF45); // LYC
+  if (ly == lyc) {
+    stat |= (1 << 2);
+    if (stat & (1 << 6)) {
+      memory.requestInterrupt(InterruptFlag::LCDStat);
+    }
+  } else {
+    stat &= ~(1 << 2);
+  }
+  memory.write(0xFF41, stat);
 }
 
 uint32_t PPU::colorToUint32(Color c) {

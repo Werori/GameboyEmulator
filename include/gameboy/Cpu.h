@@ -21,7 +21,6 @@ struct CPU {
   int length = 0;
 
   const uint8_t LOWER_NIBBLE_MASK = 0x0f;
-  const uint8_t CARRY_FLAG_REGISTER_F = 0x10;
 
   CPU(GameboyMemory &memory, PPU &ppu);
 

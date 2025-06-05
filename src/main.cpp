@@ -2,7 +2,7 @@
 
 int main() {
   Gameboy gameboy;
-  gameboy.loadROMFromFile("games/tetris.gb");
+  gameboy.loadROMFromFile("games/instr_timing.gb");
   gameboy.run();
   return 0;
 }

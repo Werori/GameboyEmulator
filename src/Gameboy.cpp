@@ -1,3 +1,4 @@
+#include "Cpu.h"
 #include "Gameboy.h"
 #include <cstdint>
 #include <fstream>
@@ -5,10 +6,9 @@
 #include <raylib.h>
 #include <string_view>
 
-Gameboy::Gameboy()
-    : memory(), ppu(memory), cpu(memory, ppu) {
-
-      };
+Gameboy::Gameboy() : memory(), ppu(memory), cpu(memory, ppu) {
+  memory.addObserver(&ppu);
+};
 
 bool Gameboy::loadROMFromFile(std::string_view filename) {
   std::ifstream file(filename.data(), std::ios::binary);
@@ -31,18 +31,26 @@ bool Gameboy::loadROMFromFile(std::string_view filename) {
 }
 
 void Gameboy::run() {
+  const int CYCLES_PER_FRAME = 70224;
   ppu.init();
-  while (!WindowShouldClose()) {
-    cpu.fetchOpcode();
-    cpu.decodeAndExecute();
 
+  while (!WindowShouldClose()) {
+    // Run CPU instructions until enough cycles for one frame
+    while (cpu.cycles < CYCLES_PER_FRAME) {
+      cpu.fetchOpcode();
+      cpu.decodeAndExecute();
+    }
+
+    // Now that we've emulated one frame worth of CPU cycles, draw the frame
     BeginDrawing();
     if (ppu.frameReady) {
       ppu.renderFrame();
       ppu.frameReady = false;
     }
+    ClearBackground(WHITE);
     ppu.drawFrame();
     EndDrawing();
+    cpu.cycles = 0; // used by last opcode
   }
 
   ppu.close();

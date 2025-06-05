@@ -29,7 +29,6 @@ void GameboyMemory::loadROM(const std::vector<uint8_t> &romData) {
 }
 
 uint8_t GameboyMemory::read(uint16_t address) {
-  // std::cout << "ADDRESS: " << address << std::endl;
   if (romBank0Range.contains(address)) {
     // std::cout << "Reading from bank0..." << std::endl;
     return romBank0[address - romBank0Range.start];
@@ -49,7 +48,7 @@ uint8_t GameboyMemory::read(uint16_t address) {
     return wram2[address - wRam2Range.start];
   } else if (echoRamRange.contains(address)) {
     // std::cout << "Reading echo ram" << std::endl;
-    return wram1[(address - 0x2000) - wRam1Range.start];
+    return wram1[address - echoRamRange.start];
   } else if (oamRange.contains(address)) {
     // std::cout << "Reading from oam..." << std::endl;
     return oam[address - oamRange.start];
@@ -178,15 +177,17 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   case 0xff4b:
     throw std::runtime_error("reading window x + 7");
     break;
+  default:
+    throw std::runtime_error("out of range io");
   }
   return 0;
 }
 
 void GameboyMemory::write(uint16_t address, uint8_t byte) {
   if (romBank0Range.contains(address)) {
-    // std::cout << "Can't write to ROM!" << std::endl;
+    // throw std::runtime_error("can't write to rom bank0");
   } else if (romBank1Range.contains(address)) {
-    // std::cout << "Can't write to ROM!" << std::endl;
+    throw std::runtime_error("can't write to rom bank1");
   } else if (vRAMRange.contains(address)) {
     // std::cout << "Writing to vram..." << std::endl;
     throw std::runtime_error("writing to vram");
@@ -243,6 +244,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.dividerRegister = 0;
     break;
   case 0xff05:
+    throw std::runtime_error("writing timer counter");
     if (((hardwareRegisters.timerControl >> 2) & 0x01) == 0) {
       return;
     } else {
@@ -412,6 +414,11 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     break;
   case 0xff50:
     throw std::runtime_error("boot rom disable!");
+  default:
+    throw std::runtime_error("out of range io write");
+  }
+  for (auto *observer : observers) {
+    observer->onRegisterWrite(address, byte);
   }
 }
 
@@ -445,3 +452,7 @@ uint8_t GameboyMemory::getScy() { return hardwareRegisters.scy; }
 uint8_t GameboyMemory::getWindowX() { return hardwareRegisters.windowX; }
 
 uint8_t GameboyMemory::getWindowY() { return hardwareRegisters.windowY; }
+
+void GameboyMemory::addObserver(IRegisterObserver *observer) {
+  observers.push_back(observer);
+}

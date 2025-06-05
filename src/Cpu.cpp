@@ -6,7 +6,6 @@
 #include <functional>
 #include <ios>
 #include <iostream>
-#include <stdexcept>
 
 CPU::CPU(GameboyMemory &memory, PPU &ppu) : memory(memory), ppu(ppu) {
   initializeOpcodes();
@@ -24,8 +23,10 @@ void CPU::initializeOpcodes() {
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
   opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
+  opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
+  opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
@@ -36,7 +37,7 @@ void CPU::initializeOpcodes() {
 
 void CPU::fetchOpcode() {
   opcode = memory.read(registers.PC);
-  // std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
+  std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
   // std::cout << "register A: " << (int)registers.getA() << std::endl;
   // std::cout << "register B: " << (int)registers.getB() << std::endl;
   // std::cout << "register C: " << (int)registers.getC() << std::endl;
@@ -62,24 +63,31 @@ void CPU::decodeAndExecute() {
   }
 
   if (jumped) {
-    cycles += opcodes[opcode].machine_cycles_branch;
+    // cycles += opcodes[opcode].machine_cycles_branch;
+    lastInstructionCycles = opcodes[opcode].machine_cycles_branch;
     jumped = false;
   } else {
-    cycles += opcodes[opcode].machine_cycles_no_branch;
+    // cycles += opcodes[opcode].machine_cycles_no_branch;
+    lastInstructionCycles = opcodes[opcode].machine_cycles_no_branch;
     registers.PC += length;
   }
 
-  while (cycles >= 256) {
+  ppu.tick(lastInstructionCycles);
+  memory.dividerCounter += lastInstructionCycles;
+
+  while (memory.dividerCounter >= 256) {
     memory.increaseDivider();
-    cycles -= 256;
+    memory.dividerCounter -= 256;
   }
 
-  for (int i = 0; i < cycles; i++) {
-    ppu.tick(1);
-  }
-  // ppu.tick(cycles);
+  // for (int i = 0; i < cycles; i++) {
+  //   ppu.tick(1);
+  // }
+
+  // ppu.tick(cycles * 4);
   // cycles = 0;
   // ppu.tick(cycles);
+  cycles += lastInstructionCycles;
 }
 
 void CPU::nop() {
@@ -136,6 +144,8 @@ void CPU::XORAA() {
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, false);
   registers.setFlag(registers.FLAG_C, false);
+
+  registers.setA(result);
 }
 
 void CPU::JPa16() {
@@ -152,6 +162,18 @@ void CPU::JPa16() {
   // std::cout << "pc in jump is: " << (int)registers.PC << std::endl;
   jumped = true;
 };
+
+void CPU::RST08h() {
+  std::cout << "RST -----------------------------------" << std::endl;
+  uint16_t pc = registers.PC + 1;
+  registers.SP -= 2;
+
+  memory.write(registers.SP, pc & 0xff);
+  memory.write(registers.SP + 1, (pc >> 8) & 0xff);
+
+  registers.PC = 0x08;
+  jumped = true;
+}
 
 void CPU::LDHLu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
@@ -171,15 +193,21 @@ void CPU::LDHLDecA() {
   auto address = registers.HL;
 
   memory.write(address, a);
+  // std::cout << "HL: " << std::hex << (int)address << std::endl;
   registers.HL--;
 }
 
 void CPU::LDHLu8() {
   uint8_t value = memory.read(registers.PC + 1);
-  registers.HL = value;
+  memory.write(registers.HL, value);
 }
 
 void CPU::LDAu8() { registers.setC(memory.read(registers.PC + 1)); }
+
+void CPU::LDBA() {
+  uint8_t a = registers.getA();
+  registers.setB(a);
+}
 
 void CPU::LDFF00Plusu8A() {
   auto a = registers.getA();
@@ -203,7 +231,7 @@ void CPU::LDu16A() {
 
 void CPU::LDAFF00Plusu8() {
   auto byte = memory.read(registers.PC + 1);
-  std::cout << std::hex << "byte: " << (int)byte << std::endl;
+  // std::cout << std::hex << "byte: " << (int)byte << std::endl;
   // auto address = memory.read(0xff00 + byte);
   auto address = 0xff00 + byte;
   uint8_t value = memory.read(address);
@@ -220,12 +248,12 @@ void CPU::CPAu8() {
   uint8_t value = memory.read(registers.PC + 1);
   uint8_t a = registers.getA();
 
-  std::cout << "CPA value: " << (int)value << std::endl;
+  // std::cout << "CPA value: " << (int)value << std::endl;
 
   registers.setFlag(registers.FLAG_Z, a == value);
-  std::cout << "Compare A=" << (int)a << " to value=" << (int)value
-            << std::endl;
-  std::cout << "Ly is: " << (int)memory.getLy() << std::endl;
+  // std::cout << "Compare A=" << (int)a << " to value=" << (int)value
+  // << std::endl;
+  // std::cout << "Ly is: " << (int)memory.getLy() << std::endl;
   registers.setFlag(registers.FLAG_N, true);
   registers.setFlag(registers.FLAG_H, isHalfCarry(a, value));
   registers.setFlag(registers.FLAG_C, isCarry(a, value));
@@ -251,7 +279,42 @@ bool CPU::isCarry(uint8_t a, uint8_t value) { return a < value; }
 void CPU::handleInterrupts() {
   if (!IME) {
     return;
-  } else {
-    throw std::runtime_error("IME is on");
+  }
+  uint8_t interruptFlag = memory.read(0xFF0F);
+  uint8_t interruptEnable = memory.read(0xFFFF);
+
+  uint8_t firedInterrupts = interruptFlag & interruptEnable;
+
+  if (firedInterrupts == 0) {
+    return; // no interrupt requested or enabled
+  }
+
+  // Interrupts have priority from bit 0 to 4:
+  const uint16_t interruptVectors[5] = {
+      0x40, // V-Blank
+      0x48, // LCD STAT
+      0x50, // Timer
+      0x58, // Serial
+      0x60  // Joypad
+  };
+
+  for (int i = 0; i < 5; ++i) {
+    if (firedInterrupts & (1 << i)) {
+      IME = 0; // disable interrupts
+
+      // clear the interrupt request flag bit
+      interruptFlag &= ~(1 << i);
+      memory.write(0xFF0F, interruptFlag);
+
+      // push current PC onto stack (16-bit)
+      registers.SP -= 1;
+      memory.write(registers.SP, (registers.PC >> 8) & 0xFF); // high byte
+      registers.SP -= 1;
+      memory.write(registers.SP, registers.PC & 0xFF); // low byte
+
+      registers.PC = interruptVectors[i]; // jump to interrupt handler
+
+      break; // handle one interrupt per call
+    }
   }
 }

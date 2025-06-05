@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-struct PPU {
+struct PPU : IRegisterObserver {
 
   static constexpr uint8_t NUMBER_OF_COLORS_IN_PALLETE = 4;
   GameboyMemory &memory;
@@ -48,7 +48,7 @@ private:
 
   uint32_t framebuffer[SCREEN_WIDTH * SCREEN_HEIGHT] = {0};
   Texture2D frameTexture = {0, 0, 0, 0, 0};
-  uint8_t scaleFactor = 2;
+  uint8_t scaleFactor = 4;
   uint8_t startOfVBlank = 144;
   uint8_t endOfVBlank = 153;
   int cycleCounter = 0;
@@ -61,4 +61,10 @@ private:
   void renderBackground();
 
   void renderWindow();
+
+  void onRegisterWrite(uint16_t address, uint8_t byte);
+
+  uint32_t shadeToColor(uint8_t shade);
+
+  void renderScanline(uint8_t ly);
 };

@@ -19,6 +19,7 @@ struct CPU {
   bool jumped = false;
   int cycles = 0;
   int length = 0;
+  int lastInstructionCycles = 0;
 
   const uint8_t LOWER_NIBBLE_MASK = 0x0f;
 
@@ -50,12 +51,16 @@ struct CPU {
   void LDHLDecA();
   // load u8 value into A register
   void LDAu8();
+  // copy value of register A into B
+  void LDBA();
   // Load 16-bit address into register BC
   void LDBCn16();
   // XOR A register with A register and set Z flag if result = 0
   void XORAA();
   // Jump to 16-bit address
   void JPa16();
+  // push PC onto stack and jump to 0x08
+  void RST08h();
   // load data to 0xFF00 Plus 8-bit data in the next byte
   void LDFF00Plusu8A();
   // load value of A into 16-bit address

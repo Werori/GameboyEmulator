@@ -64,51 +64,52 @@ void PPU::tick(int cycles) {
 
   lastLcdc = lcdc;
 
-  // if (!lcdEnabled)
-  //   return;
+  if (!lcdEnabled)
+    return;
 
-  // if (!(lcdc & 0x80)) {
-  //   // LCD is off — don't do anything PPU-related yet
-  //   memory.setLy(0);
-  //   cycleCounter = 0;
-  //   return;
-  // }
+  if (!(lcdc & 0x80)) {
+    // LCD is off — don't do anything PPU-related yet
+    memory.setLy(0);
+    cycleCounter = 0;
+    return;
+  }
 
   // Increment scanline when enough cycles passed
-  if (cycleCounter >= cyclesPerScanline) {
+  while (cycleCounter >= cyclesPerScanline) {
     cycleCounter -= cyclesPerScanline;
-    memory.setLy(memory.getLy() + 1);
-  }
+    uint8_t currentLy = memory.getLy();
+    currentLy++;
+    memory.setLy(currentLy);
 
-  // VBlank interrupt at line 144
-  if (memory.getLy() == startOfVBlank) {
-    // std::cout << "VBlank" << std::endl;
-    memory.requestInterrupt(InterruptFlag::VBlank);
+    if (memory.getLy() < startOfVBlank) {
+      if ((lcdc & 0x1)) {
+        // std::cout << "BG on" << std::endl;
 
-    frameReady = true;
-    if ((lcdc & 0x1)) {
-      // std::cout << "BG on" << std::endl;
+        renderScanline(currentLy);
+        // std::cout << "lcdc is: " << (int)lcdc << std::endl;
+        // std::cout << "ly is: " << (int)memory.getLy() << std::endl;
+        // std::cout << "wy:  " << (int)memory.getWindowY() << std::endl;
 
-      renderBackground();
-
-      // std::cout << "lcdc is: " << (int)lcdc << std::endl;
-      // std::cout << "ly is: " << (int)memory.getLy() << std::endl;
-      // std::cout << "wy:  " << (int)memory.getWindowY() << std::endl;
-
-      // throw std::runtime_error("window is enabled");
-      if ((lcdc & 0x20) && (memory.getLy() >= memory.getWindowY())) {
-        std::cout << "lcdc is: " << (int)lcdc << std::endl;
-        throw std::runtime_error("window is enabled");
+        if ((lcdc & 0x20) && (currentLy >= memory.getWindowY())) {
+          std::cout << "lcdc is: " << (int)lcdc << std::endl;
+          throw std::runtime_error("window is enabled");
+        }
+      } else if (lcdc & (1 << 1)) {
+        throw std::runtime_error("obj enable");
       }
-    } else if (lcdc & (1 << 1)) {
-      throw std::runtime_error("obj enable");
+    }
+
+    // VBlank interrupt at line 144
+    if (memory.getLy() == startOfVBlank) {
+      // std::cout << "VBlank" << std::endl;
+      frameReady = true;
+      memory.requestInterrupt(InterruptFlag::VBlank);
+    }
+
+    if (currentLy >= endOfVBlank) {
+      memory.setLy(0);
     }
   }
-
-  if (memory.getLy() > endOfVBlank) {
-    memory.setLy(0);
-  }
-
   uint8_t stat = memory.read(0xFF41);
 
   uint8_t ly = memory.getLy();
@@ -248,5 +249,81 @@ void PPU::renderWindow() {
 
       framebuffer[windowY * SCREEN_WIDTH + windowX] = bgPalleteData[colorId];
     }
+  }
+}
+
+void PPU::onRegisterWrite(uint16_t address, uint8_t byte) {
+  switch (address) {
+  case 0xff47:
+    for (int i = 0; i < 4; ++i) {
+      uint8_t shade = (byte >> (i * 2)) & 0x03;
+      bgPalleteData[i] = shadeToColor(shade);
+    }
+    break;
+  case 0xff48:
+    for (int i = 0; i < 4; ++i) {
+      obPallete0Data[i] = (byte >> (i * 2)) & 0x03;
+    }
+    break;
+  case 0xff49:
+    for (int i = 0; i < 4; ++i) {
+      obPallete1Data[i] = (byte >> (i * 2)) & 0x03;
+    }
+    break;
+  }
+}
+
+uint32_t PPU::shadeToColor(uint8_t shade) {
+  switch (shade) {
+  case 0:
+    return colorToUint32(WHITE);
+  case 1:
+    return colorToUint32(LIGHTGRAY);
+  case 2:
+    return colorToUint32(DARKGRAY);
+  case 3:
+    return colorToUint32(BLACK);
+  default:
+    return 0xffffffff;
+  }
+}
+
+void PPU::renderScanline(uint8_t ly) {
+  uint8_t scrollY = memory.getScy();
+  uint8_t scrollX = memory.getScx();
+  uint8_t lcdc = memory.read(0xFF40);
+
+  uint16_t tileMapBase = (lcdc & 0x08) ? 0x9C00 : 0x9800;
+  bool tileDataSigned = !(lcdc & 0x10);
+
+  uint8_t yInBG = ly + scrollY;
+  uint8_t tileRow = yInBG / 8;
+
+  for (int x = 0; x < SCREEN_WIDTH; x++) {
+    uint8_t xInBG = x + scrollX;
+    uint8_t tileCol = xInBG / 8;
+
+    // Get tile index from background map
+    uint16_t tileMapAddr = tileMapBase + tileRow * 32 + tileCol;
+    int8_t tileIndex = memory.read(tileMapAddr);
+
+    // Compute address of tile data
+    uint16_t tileAddr;
+    if (tileDataSigned)
+      tileAddr = 0x9000 + ((int8_t)tileIndex) * TILE_BYTES;
+    else
+      tileAddr = 0x8000 + tileIndex * TILE_BYTES;
+
+    // Get row inside tile
+    uint8_t yInTile = yInBG % 8;
+    uint8_t byte1 = memory.read(tileAddr + yInTile * 2);
+    uint8_t byte2 = memory.read(tileAddr + yInTile * 2 + 1);
+
+    uint8_t xInTile = 7 - (xInBG % 8);
+    uint8_t hi = (byte2 >> xInTile) & 1;
+    uint8_t lo = (byte1 >> xInTile) & 1;
+    uint8_t colorID = (hi << 1) | lo;
+
+    framebuffer[ly * SCREEN_WIDTH + x] = bgPalleteData[colorID];
   }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HardwareRegisters.h"
+#include "IRegisterObserver.h"
 #include "InterruptController.h"
 #include "InterruptFlag.h"
 #include "Range.h"
@@ -22,6 +23,8 @@ private:
   static constexpr int IO_REGISTERS_SIZE = 0x80;   // 128 bytes
 
   HardwareRegisters hardwareRegisters;
+
+  std::vector<IRegisterObserver *> observers;
 
   uint8_t interruptEnable = 0;
 
@@ -54,6 +57,7 @@ private:
   void startOamDmaTransfer(uint8_t byte);
 
 public:
+  int dividerCounter = 0;
   GameboyMemory();
 
   void requestInterrupt(InterruptFlag flag) override;
@@ -74,4 +78,7 @@ public:
 
   uint8_t getWindowX();
   uint8_t getWindowY();
+
+  void addObserver(IRegisterObserver *observer);
+  void removeObserver(IRegisterObserver *observer);
 };

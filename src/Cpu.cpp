@@ -101,15 +101,14 @@ void CPU::nop() {
 void CPU::DecB() {
   // std::cout << "B before: " << (int)registers.getB();
   uint8_t b = registers.getB();
+  uint8_t result = b - 1;
 
-  registers.setFlag(registers.FLAG_H, (b & LOWER_NIBBLE_MASK) == 0);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(b, 1));
 
-  b -= 1;
-  registers.setB(b);
-
-  registers.setFlag(registers.FLAG_Z, registers.getB() == 0);
+  registers.setFlag(registers.FLAG_Z, b == 0);
   registers.setFlag(registers.FLAG_N, true);
 
+  registers.setB(result);
   // std::cout << std::hex << "FLAG H: " << (int)registers.FLAG_H << std::endl;
   // std::cout << "B after: " << (int)registers.getB();
 }
@@ -118,14 +117,14 @@ void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
 
 void CPU::DecC() {
   uint8_t c = registers.getC();
+  uint8_t result = c - 1;
 
-  registers.setFlag(registers.FLAG_H, (c & LOWER_NIBBLE_MASK) == 0);
-
-  c -= 1;
-  registers.setC(c);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(c, 1));
 
   registers.setFlag(registers.FLAG_Z, registers.getC() == 0);
   registers.setFlag(registers.FLAG_N, true);
+
+  registers.setC(result);
 }
 
 void CPU::LDCu8() { registers.setC(memory.read(registers.PC + 1)); }
@@ -183,8 +182,8 @@ void CPU::RST08h() {
   uint16_t pc = registers.PC + 1;
   registers.SP -= 2;
 
-  memory.write(registers.SP, pc & 0xff);
-  memory.write(registers.SP + 1, (pc >> 8) & 0xff);
+  memory.write(registers.SP, (pc >> 8) & 0xff);
+  memory.write(registers.SP + 1, pc & 0xff);
 
   registers.PC = 0x08;
   jumped = true;
@@ -198,8 +197,9 @@ void CPU::LDHLu16() {
 }
 
 void CPU::LDAHLInc() {
-  auto address = registers.HL + 1;
-  registers.setA(address);
+  auto value = memory.read(registers.HL);
+  registers.setA(value);
+  registers.HL = registers.HL + 1;
 }
 
 void CPU::LDSPu16() {
@@ -275,8 +275,8 @@ void CPU::CPAu8() {
   // << std::endl;
   // std::cout << "Ly is: " << (int)memory.getLy() << std::endl;
   registers.setFlag(registers.FLAG_N, true);
-  registers.setFlag(registers.FLAG_H, isHalfCarry(a, value));
-  registers.setFlag(registers.FLAG_C, isCarry(a, value));
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, value));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, value));
 }
 
 uint16_t CPU::toLittleEndian(uint8_t lowByte, uint8_t highByte) {
@@ -290,11 +290,19 @@ std::pair<uint8_t, uint8_t> CPU::getLowByteAndHighByte() {
   return {lowByte, highByte};
 }
 
-bool CPU::isHalfCarry(uint8_t a, uint8_t value) {
-  return ((a & 0x0f) < (value & 0x0f));
+bool CPU::isHalfCarryAdd(uint8_t a, uint8_t value) {
+  return ((a & 0x0f) + (value & 0x0f) > 0x0f);
 }
 
-bool CPU::isCarry(uint8_t a, uint8_t value) { return a < value; }
+bool CPU::isHalfCarrySub(uint8_t a, uint8_t value) {
+  return (a & 0x0f) < (value & 0x0f);
+}
+
+bool CPU::isCarrySub(uint8_t a, uint8_t value) { return a < value; }
+
+bool CPU::isCarryAdd(uint8_t a, uint8_t value) {
+  return (uint16_t)a + (uint16_t)value > 0xFF;
+}
 
 void CPU::handleInterrupts() {
   if (!IME) {

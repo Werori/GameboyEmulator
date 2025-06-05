@@ -86,9 +86,11 @@ private:
 
   std::pair<uint8_t, uint8_t> getLowByteAndHighByte();
 
-  bool isHalfCarry(uint8_t a, uint8_t value);
+  bool isHalfCarryAdd(uint8_t a, uint8_t value);
+  bool isHalfCarrySub(uint8_t a, uint8_t value);
 
-  bool isCarry(uint8_t a, uint8_t value);
+  bool isCarryAdd(uint8_t a, uint8_t value);
+  bool isCarrySub(uint8_t a, uint8_t value);
 
   void handleInterrupts();
 

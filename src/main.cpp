@@ -2,7 +2,7 @@
 
 int main() {
   Gameboy gameboy;
-  gameboy.loadROMFromFile("games/instr_timing.gb");
+  gameboy.loadROMFromFile("games/interrupt_time.gb");
   gameboy.run();
   return 0;
 }

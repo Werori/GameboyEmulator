@@ -99,7 +99,8 @@ void PPU::tick(int cycles) {
         mode = 3;
         if (lcdc & 0x1) {
           renderScanline(ly);
-          if ((lcdc & 0x20) && (ly >= memory.getWindowY())) {
+          if ((lcdc & 0x20) && ly >= memory.getWindowY() &&
+              memory.getWindowX() <= SCREEN_WIDTH) {
             std::cout << "lcdc is: " << (int)lcdc << std::endl;
             throw std::runtime_error("window is enabled");
           }

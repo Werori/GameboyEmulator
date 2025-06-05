@@ -14,31 +14,31 @@ CPU::CPU(GameboyMemory &memory, PPU &ppu) : memory(memory), ppu(ppu) {
 
 void CPU::initializeOpcodes() {
   opcodes[0x00] = {nop, 1, 4, 4};
-  opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
-  opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
-  opcodes[0x0d] = {[this]() { CPU::DecC(); }, 1, 4, 4};
-  opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
-  opcodes[0x11] = {[this]() { CPU::LDDEu16(); }, 3, 12, 12};
-  opcodes[0x12] = {[this]() { CPU::LDDEA(); }, 1, 8, 8};
-  opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
-  opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
-  opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
-  opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
-  opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
-  opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
-  opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
-  opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
-  opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
-  opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
-  opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
+  // opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
+  // opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
+  // opcodes[0x0d] = {[this]() { CPU::DecC(); }, 1, 4, 4};
+  // opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
+  // opcodes[0x11] = {[this]() { CPU::LDDEu16(); }, 3, 12, 12};
+  // opcodes[0x12] = {[this]() { CPU::LDDEA(); }, 1, 8, 8};
+  // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
+  // opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
+  // opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
+  // opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
+  // opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
+  // opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
+  // opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
+  // opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
+  // opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
+  // opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
+  // opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
-  opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
-  opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
-  opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
-  opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
-  opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
-  opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
-  opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
+  // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
+  // opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
+  // opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
+  // opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
+  // opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
+  // opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
+  // opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
 };
 
 void CPU::fetchOpcode() {
@@ -50,7 +50,6 @@ void CPU::fetchOpcode() {
   // std::cout << "register F: " << (int)registers.getF() << std::endl;
 }
 void CPU::decodeAndExecute() {
-  handleInterrupts();
   std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
   // std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
   // std::cout << std::hex << "pc + 1: " << (int)memory.read(registers.PC +
@@ -86,14 +85,8 @@ void CPU::decodeAndExecute() {
     memory.dividerCounter -= 256;
   }
 
-  // for (int i = 0; i < cycles; i++) {
-  //   ppu.tick(1);
-  // }
-
-  // ppu.tick(cycles * 4);
-  // cycles = 0;
-  // ppu.tick(cycles);
   cycles += lastInstructionCycles;
+  handleInterrupts();
 }
 
 void CPU::nop() {
@@ -347,12 +340,11 @@ void CPU::handleInterrupts() {
   uint8_t interruptEnable = memory.read(0xFFFF);
 
   uint8_t firedInterrupts = interruptFlag & interruptEnable;
+  // throw std::runtime_error("interrupts off fired");
 
   if (firedInterrupts == 0) {
     return; // no interrupt requested or enabled
   }
-
-  throw std::runtime_error("interrupts fired");
 
   // Interrupts have priority from bit 0 to 4:
   const uint16_t interruptVectors[5] = {
@@ -364,6 +356,7 @@ void CPU::handleInterrupts() {
   };
 
   for (int i = 0; i < 5; ++i) {
+    throw std::runtime_error("HERE");
     if (firedInterrupts & (1 << i)) {
       IME = 0; // disable interrupts
 
@@ -373,9 +366,9 @@ void CPU::handleInterrupts() {
 
       // push current PC onto stack (16-bit)
       registers.SP -= 1;
-      memory.write(registers.SP, (registers.PC >> 8) & 0xFF); // high byte
-      registers.SP -= 1;
       memory.write(registers.SP, registers.PC & 0xFF); // low byte
+      registers.SP -= 1;
+      memory.write(registers.SP, (registers.PC >> 8) & 0xFF); // high byte
 
       registers.PC = interruptVectors[i]; // jump to interrupt handler
 

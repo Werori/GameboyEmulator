@@ -14,7 +14,8 @@ struct CPU {
   uint8_t opcode;
   std::array<Instruction, 256> opcodes;
   std::array<Instruction, 256> extendedOpcodes;
-  uint8_t IME = 0;
+  uint8_t IME = 1;
+
   Registers registers;
   bool jumped = false;
   int cycles = 0;

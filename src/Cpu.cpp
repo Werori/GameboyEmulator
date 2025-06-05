@@ -19,6 +19,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
   opcodes[0x11] = {[this]() { CPU::LDDEu16(); }, 3, 12, 12};
   opcodes[0x12] = {[this]() { CPU::LDDEA(); }, 1, 8, 8};
+  opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
@@ -139,6 +140,17 @@ void CPU::LDDEA() {
   auto a = registers.getA();
   auto address = registers.DE;
   memory.write(address, a);
+}
+
+void CPU::IncE() {
+  uint8_t e = registers.getE();
+  uint8_t result = e + 1;
+
+  registers.setFlag(registers.FLAG_Z, e == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_C, isHalfCarryAdd(e, 1));
+
+  registers.setE(result);
 }
 
 void CPU::JRNZi8() {

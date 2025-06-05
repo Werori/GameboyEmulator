@@ -24,4 +24,6 @@ struct Registers {
   void setB(uint8_t address);
   uint8_t getB();
   bool isFlagSet(uint8_t flag);
+  uint8_t getE();
+  void setE(uint8_t address);
 };

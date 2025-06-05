@@ -43,6 +43,8 @@ struct CPU {
   void LDDEu16();
   // Load A to address at DE
   void LDDEA();
+  // increase E
+  void IncE();
   // relative jump to pc + i8 if N flag is not set
   void JRNZi8();
   // load 16-bit address into register HL

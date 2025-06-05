@@ -6,6 +6,7 @@
 #include <functional>
 #include <ios>
 #include <iostream>
+#include <stdexcept>
 
 CPU::CPU(GameboyMemory &memory, PPU &ppu) : memory(memory), ppu(ppu) {
   initializeOpcodes();
@@ -29,6 +30,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
+  opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
@@ -106,7 +108,7 @@ void CPU::DecB() {
 
   registers.setFlag(registers.FLAG_H, isHalfCarrySub(b, 1));
 
-  registers.setFlag(registers.FLAG_Z, b == 0);
+  registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, true);
 
   registers.setB(result);
@@ -122,7 +124,7 @@ void CPU::DecC() {
 
   registers.setFlag(registers.FLAG_H, isHalfCarrySub(c, 1));
 
-  registers.setFlag(registers.FLAG_Z, registers.getC() == 0);
+  registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, true);
 
   registers.setC(result);
@@ -146,19 +148,21 @@ void CPU::IncE() {
   uint8_t e = registers.getE();
   uint8_t result = e + 1;
 
-  registers.setFlag(registers.FLAG_Z, e == 0);
+  registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, false);
-  registers.setFlag(registers.FLAG_C, isHalfCarryAdd(e, 1));
+  registers.setFlag(registers.FLAG_H, isHalfCarryAdd(e, 1));
 
+  std::cout << "INC E: before=" << +e << " after=" << +result
+            << " Z=" << registers.isFlagSet(registers.FLAG_Z)
+            << " H=" << registers.isFlagSet(registers.FLAG_H) << std::endl;
   registers.setE(result);
 }
 
 void CPU::JRNZi8() {
   int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
-  registers.PC += opcodes[opcode].length;
 
   if (!registers.isFlagSet(registers.FLAG_Z)) {
-    registers.PC += offset;
+    registers.PC = opcodes[opcode].length + offset;
     jumped = true;
   }
 }
@@ -172,6 +176,23 @@ void CPU::XORAA() {
   registers.setFlag(registers.FLAG_C, false);
 
   registers.setA(result);
+}
+
+void CPU::RetNz() {
+  if (!registers.isFlagSet(registers.FLAG_Z)) {
+    // Pop return address from stack
+    uint8_t low = memory.read(registers.SP);
+    uint8_t high = memory.read(registers.SP + 1);
+    registers.SP += 2;
+
+    uint16_t returnAddress = (high << 8) | low;
+    registers.PC = returnAddress;
+
+    jumped = true; // Indicate we changed PC by a jump/return
+  } else {
+    // Do nothing, just continue; PC will move past the opcode naturally
+    jumped = false;
+  }
 }
 
 void CPU::JPa16() {
@@ -192,10 +213,12 @@ void CPU::JPa16() {
 void CPU::RST08h() {
   std::cout << "RST -----------------------------------" << std::endl;
   uint16_t pc = registers.PC + 1;
-  registers.SP -= 2;
 
+  registers.SP -= 1;
+  memory.write(registers.SP, pc & 0xff);
+
+  registers.SP -= 1;
   memory.write(registers.SP, (pc >> 8) & 0xff);
-  memory.write(registers.SP + 1, pc & 0xff);
 
   registers.PC = 0x08;
   jumped = true;
@@ -328,6 +351,8 @@ void CPU::handleInterrupts() {
   if (firedInterrupts == 0) {
     return; // no interrupt requested or enabled
   }
+
+  throw std::runtime_error("interrupts fired");
 
   // Interrupts have priority from bit 0 to 4:
   const uint16_t interruptVectors[5] = {

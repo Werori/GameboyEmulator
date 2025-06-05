@@ -65,6 +65,8 @@ struct CPU {
   void LDBCn16();
   // XOR A register with A register and set Z flag if result = 0
   void XORAA();
+  // return from stack if not zero
+  void RetNz();
   // Jump to 16-bit address
   void JPa16();
   // push PC onto stack and jump to 0x08

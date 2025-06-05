@@ -43,7 +43,7 @@ uint8_t PPU::getLy() { return memory.getLy(); }
 
 void PPU::tick(int cycles) {
   cycleCounter += cycles;
-
+  uint8_t ly = memory.getLy();
   uint8_t lcdc = memory.read(lcdControlAddress);
 
   bool wasOn = (lastLcdc & 0x80);
@@ -68,93 +68,64 @@ void PPU::tick(int cycles) {
     return;
 
   if (!(lcdc & 0x80)) {
-    // LCD is off — don't do anything PPU-related yet
     memory.setLy(0);
     cycleCounter = 0;
     return;
   }
-
-  // Increment scanline when enough cycles passed
   while (cycleCounter >= cyclesPerScanline) {
     cycleCounter -= cyclesPerScanline;
-    uint8_t currentLy = memory.getLy();
-    currentLy++;
-    memory.setLy(currentLy);
+    ly++;
 
-    if (memory.getLy() < startOfVBlank) {
-      if ((lcdc & 0x1)) {
-        // std::cout << "BG on" << std::endl;
+    if (ly > endOfVBlank)
+      ly = 0;
+    memory.setLy(ly);
 
-        renderScanline(currentLy);
-        // std::cout << "lcdc is: " << (int)lcdc << std::endl;
-        // std::cout << "ly is: " << (int)memory.getLy() << std::endl;
-        // std::cout << "wy:  " << (int)memory.getWindowY() << std::endl;
-
-        if ((lcdc & 0x20) && (currentLy >= memory.getWindowY())) {
-          std::cout << "lcdc is: " << (int)lcdc << std::endl;
-          throw std::runtime_error("window is enabled");
-        }
-      } else if (lcdc & (1 << 1)) {
-        throw std::runtime_error("obj enable");
-      }
-    }
-
-    // VBlank interrupt at line 144
-    if (memory.getLy() == startOfVBlank) {
-      // std::cout << "VBlank" << std::endl;
+    if (ly == startOfVBlank) {
+      mode = 1;
       frameReady = true;
       memory.requestInterrupt(InterruptFlag::VBlank);
-    }
-
-    if (currentLy >= endOfVBlank) {
-      memory.setLy(0);
+    } else if (ly > startOfVBlank && ly <= endOfVBlank) {
+      mode = 1;
+    } else {
+      mode = 2;
     }
   }
+
+  if (ly < startOfVBlank) {
+    if (cycleCounter < 80) {
+      mode = 2;
+    } else if (cycleCounter < 252) {
+      if (mode != 3) {
+        mode = 3;
+        if (lcdc & 0x1) {
+          renderScanline(ly);
+          if ((lcdc & 0x20) && (ly >= memory.getWindowY())) {
+            std::cout << "lcdc is: " << (int)lcdc << std::endl;
+            throw std::runtime_error("window is enabled");
+          }
+        } else if (lcdc & (1 << 1)) {
+          throw std::runtime_error("obj enable");
+        }
+      }
+    } else {
+      mode = 0;
+    }
+  } else {
+    mode = 1;
+  }
+
   uint8_t stat = memory.read(0xFF41);
+  stat = (stat & 0xFC) | (mode & 0x3); // Clear bits 0-1 and set new mode
+  memory.write(0xFF41, stat);
 
-  uint8_t ly = memory.getLy();
-  int lineCycle = cycleCounter;
-  mode = 0;
-  if (ly >= SCREEN_HEIGHT) {
-    mode = 1; // VBlank
-  } else if (lineCycle < MODE_2) {
-    mode = 2; // OAM
-  } else if (lineCycle < MODE_3) {
-    mode = 3; // Drawing
-  } else {
-    mode = 0; // HBlank
-  }
-
-  if (mode != prevMode) {
-    bool interrupt = false;
-    switch (mode) {
-    case 0:
-      interrupt = stat & (1 << 3);
-      break;
-    case 1:
-      interrupt = stat & (1 << 4);
-      break;
-    case 2:
-      interrupt = stat & (1 << 5);
-      break;
-    }
-
-    if (interrupt) {
-      memory.requestInterrupt(InterruptFlag::LCDStat);
-    }
-
-    prevMode = mode;
-  }
-
-  stat = (stat & 0xFC) | mode;
-  uint8_t lyc = memory.read(0xFF45); // LYC
+  uint8_t lyc = memory.read(0xFF45);
   if (ly == lyc) {
-    stat |= (1 << 2);
-    if (stat & (1 << 6)) {
+    stat |= 0x04;
+    if (stat & 0x40) {
       memory.requestInterrupt(InterruptFlag::LCDStat);
     }
   } else {
-    stat &= ~(1 << 2);
+    stat &= ~0x04;
   }
   memory.write(0xFF41, stat);
 }

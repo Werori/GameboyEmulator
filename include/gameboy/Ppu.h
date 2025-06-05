@@ -40,8 +40,6 @@ private:
   static constexpr int MODE_2 = 80;
   static constexpr int MODE_3 = 252;
 
-  uint8_t prevMode = 0;
-
   uint8_t lastLcdc = 0;
   bool lcdEnabled = false;
   uint8_t mode = 0;

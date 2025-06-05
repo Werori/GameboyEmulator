@@ -29,6 +29,7 @@ void GameboyMemory::loadROM(const std::vector<uint8_t> &romData) {
 }
 
 uint8_t GameboyMemory::read(uint16_t address) {
+  // std::cout << "ADDRESS READ: " << address << std::endl;
   if (romBank0Range.contains(address)) {
     // std::cout << "Reading from bank0..." << std::endl;
     return romBank0[address - romBank0Range.start];
@@ -184,6 +185,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
 }
 
 void GameboyMemory::write(uint16_t address, uint8_t byte) {
+  // std::cout << "ADDRESS WRITE: " << std::endl;
   if (romBank0Range.contains(address)) {
     // throw std::runtime_error("can't write to rom bank0");
   } else if (romBank1Range.contains(address)) {

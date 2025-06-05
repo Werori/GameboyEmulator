@@ -36,7 +36,7 @@ void CPU::initializeOpcodes() {
   // opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   // opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   // opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
-  // opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
+  opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
   // opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
   // opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
 };

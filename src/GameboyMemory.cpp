@@ -255,15 +255,20 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     break;
   case 0xff05:
     throw std::runtime_error("writing timer counter");
+    // if (((hardwareRegisters.timerControl >> 2) & 0x01) == 0) {
+    //   return;
+    // } else {
+    //   throw std::runtime_error("timer control is enabled");
+    // }
     break;
   case 0xff06:
     throw std::runtime_error("writing timer modulo");
     break;
   case 0xff07: {
-    // throw std::runtime_error("writing timerControl");
+    throw std::runtime_error("writing timerControl");
     break;
   case 0xff0f:
-    // throw std::runtime_error("writing interrupt flag");
+    throw std::runtime_error("writing interrupt flag");
     hardwareRegisters.interruptFlag = byte;
     break;
   case 0xff10:
@@ -362,17 +367,17 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     break;
     // std::cout << "writing sound channel 4 control" << std::endl;
   case 0xff24:
-    // throw std::runtime_error("writing master volume and vin panning");
+    throw std::runtime_error("writing master volume and vin panning");
     hardwareRegisters.masterVolumeAndVinPanning = byte;
     break;
     // std::cout << "writing master volume and vin panning" << std::endl;
   case 0xff25:
-    // throw std::runtime_error("writing sound panning");
+    throw std::runtime_error("writing sound panning");
     hardwareRegisters.soundPanning = byte;
     break;
     // std::cout << "writing sound panning" << std::endl;
   case 0xff26:
-    // throw std::runtime_error("writing sound on off");
+    throw std::runtime_error("writing sound on off");
     hardwareRegisters.soundOnOff = byte;
     break;
   case 0xff40:

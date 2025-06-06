@@ -2,3 +2,7 @@
 */build/
 .cache/
 *.exe
+.vs/
+.vscode/
+.git/
+build-vs/

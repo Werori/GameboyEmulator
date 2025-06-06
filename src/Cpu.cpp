@@ -15,31 +15,32 @@ CPU::CPU(GameboyMemory &memory, PPU &ppu, Timers &timers)
 
 void CPU::initializeOpcodes() {
   opcodes[0x00] = {nop, 1, 4, 4};
-  // opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
-  // opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
-  // opcodes[0x0d] = {[this]() { CPU::DecC(); }, 1, 4, 4};
-  // opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
+  opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
+  opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
+  opcodes[0x0d] = {[this]() { CPU::DecC(); }, 1, 4, 4};
+  opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
   // opcodes[0x11] = {[this]() { CPU::LDDEu16(); }, 3, 12, 12};
   // opcodes[0x12] = {[this]() { CPU::LDDEA(); }, 1, 8, 8};
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
-  // opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
+  opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   // opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
-  opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
-  // opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
+  // opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
+  opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
   // opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   // opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
-  // opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
+  opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   // opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
+  // opcodes[0xcd] = {[this]() { CPU::CallU16(); }, 3, 24, 24};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
-  // opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
+  opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
   // opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
-  // opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
+  opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
 };
 
 void CPU::fetchOpcode() {
@@ -98,17 +99,17 @@ void CPU::nop() {
 };
 
 void CPU::DecB() {
-  // std::cout << "B before: " << (int)registers.getB();
+  std::cout << "B before: " << (int)registers.getB();
   uint8_t b = registers.getB();
   uint8_t result = b - 1;
 
   registers.setFlag(registers.FLAG_H, isHalfCarrySub(b, 1));
 
-  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_Z, b == 0);
   registers.setFlag(registers.FLAG_N, true);
 
   registers.setB(result);
-  // std::cout << std::hex << "FLAG H: " << (int)registers.FLAG_H << std::endl;
+  std::cout << std::hex << "FLAG f: " << (int)registers.getF() << std::endl;
   // std::cout << "B after: " << (int)registers.getB();
 }
 
@@ -120,7 +121,7 @@ void CPU::DecC() {
 
   registers.setFlag(registers.FLAG_H, isHalfCarrySub(c, 1));
 
-  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_Z, c == 0);
   registers.setFlag(registers.FLAG_N, true);
 
   registers.setC(result);
@@ -205,6 +206,8 @@ void CPU::JPa16() {
   // std::cout << "pc in jump is: " << (int)registers.PC << std::endl;
   jumped = true;
 };
+
+void CPU::CallU16() {}
 
 void CPU::RST08h() {
   std::cout << "RST -----------------------------------" << std::endl;

@@ -24,6 +24,13 @@ private:
 
   HardwareRegisters hardwareRegisters;
 
+  const int TIMER_PERIODS[4] = {
+      1024, // 00: 4096 Hz
+      16,   // 01: 262144 Hz
+      64,   // 10: 65536 Hz
+      256   // 11: 16384 Hz
+  };
+
   std::vector<IRegisterObserver *> observers;
 
   uint8_t interruptEnable = 0;

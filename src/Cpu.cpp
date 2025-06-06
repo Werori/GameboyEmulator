@@ -8,7 +8,8 @@
 #include <iostream>
 #include <stdexcept>
 
-CPU::CPU(GameboyMemory &memory, PPU &ppu) : memory(memory), ppu(ppu) {
+CPU::CPU(GameboyMemory &memory, PPU &ppu, Timers &timers)
+    : memory(memory), ppu(ppu), timers(timers) {
   initializeOpcodes();
 };
 
@@ -24,17 +25,17 @@ void CPU::initializeOpcodes() {
   // opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   // opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   // opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
-  // opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
+  opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   // opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
   // opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
-  // opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
+  opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   // opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
   // opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   // opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
-  // opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
-  // opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
+  opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
+  opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   // opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
   // opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
@@ -78,6 +79,8 @@ void CPU::decodeAndExecute() {
   }
 
   ppu.tick(lastInstructionCycles);
+  timers.tick(lastInstructionCycles);
+
   memory.dividerCounter += lastInstructionCycles;
 
   while (memory.dividerCounter >= 256) {
@@ -234,6 +237,7 @@ void CPU::LDSPu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
   uint16_t address = toLittleEndian(lowByte, highByte);
   registers.SP = address;
+  std::cout << "SP: " << registers.SP << std::endl;
 }
 
 void CPU::LDHLDecA() {

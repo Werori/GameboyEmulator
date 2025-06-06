@@ -4,6 +4,7 @@
 #include "Instruction.h"
 #include "Ppu.h"
 #include "Registers.h"
+#include "Timers.h"
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -11,6 +12,7 @@
 struct CPU {
   GameboyMemory &memory;
   PPU &ppu;
+  Timers &timers;
   uint8_t opcode;
   std::array<Instruction, 256> opcodes;
   std::array<Instruction, 256> extendedOpcodes;
@@ -24,7 +26,7 @@ struct CPU {
 
   const uint8_t LOWER_NIBBLE_MASK = 0x0f;
 
-  CPU(GameboyMemory &memory, PPU &ppu);
+  CPU(GameboyMemory &memory, PPU &ppu, Timers &timers);
 
   void initializeOpcodes();
   void fetchOpcode();

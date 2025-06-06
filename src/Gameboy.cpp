@@ -6,8 +6,10 @@
 #include <raylib.h>
 #include <string_view>
 
-Gameboy::Gameboy() : memory(), ppu(memory), cpu(memory, ppu) {
+Gameboy::Gameboy()
+    : memory(), ppu(memory), cpu(memory, ppu, timers), timers(memory) {
   memory.addObserver(&ppu);
+  memory.addObserver(&timers);
 };
 
 bool Gameboy::loadROMFromFile(std::string_view filename) {

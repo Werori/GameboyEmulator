@@ -255,17 +255,12 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     break;
   case 0xff05:
     throw std::runtime_error("writing timer counter");
-    if (((hardwareRegisters.timerControl >> 2) & 0x01) == 0) {
-      return;
-    } else {
-      throw std::runtime_error("timer control is enabled");
-    }
     break;
   case 0xff06:
     throw std::runtime_error("writing timer modulo");
     break;
-  case 0xff07:
-    throw std::runtime_error("writing timer control");
+  case 0xff07: {
+    // throw std::runtime_error("writing timerControl");
     break;
   case 0xff0f:
     throw std::runtime_error("writing interrupt flag");
@@ -432,11 +427,11 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
   default:
     throw std::runtime_error("out of range io write");
   }
-  for (auto *observer : observers) {
-    observer->onRegisterWrite(address, byte);
+    for (auto *observer : observers) {
+      observer->onRegisterWrite(address, byte);
+    }
   }
 }
-
 void GameboyMemory::requestInterrupt(InterruptFlag flag) {
   uint8_t interrupt_flag = read(0xff0f);
   interrupt_flag |= (1 << static_cast<uint8_t>(flag));

@@ -92,6 +92,8 @@ struct CPU {
   void LDAFF00Plusu8();
   // disable interrupt
   void DI();
+  // load B into A
+  void LDAB();
   // load E into A
   void LDAE();
   // copy HL value into stack pointer

@@ -2,8 +2,8 @@
 
 int main() {
   Gameboy gameboy;
-  gameboy.loadROMFromFile("games/cpu_instrs.gb");
-  // gameboy.loadROMFromFile("games/tetris.gb");
+  // gameboy.loadROMFromFile("games/cpu_instrs.gb");
+  gameboy.loadROMFromFile("games/tetris.gb");
   gameboy.run();
   return 0;
 }

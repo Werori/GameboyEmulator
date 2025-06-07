@@ -37,7 +37,7 @@ uint8_t GameboyMemory::read(uint16_t address) {
     // std::cout << "Reading from bank1..." << std::endl;
     return romBank1[address - romBank1Range.start];
   } else if (vRAMRange.contains(address)) {
-    throw std::runtime_error("reading vram");
+    // throw std::runtime_error("reading vram");
     return vram[address - vRAMRange.start];
   } else if (externalRAMRange.contains(address)) {
     throw std::runtime_error("reading external RAM");
@@ -195,7 +195,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
 }
 
 void GameboyMemory::write(uint16_t address, uint8_t byte) {
-  std::cout << "ADDRESS WRITE: " << std::hex << (int)address << std::endl;
+  // std::cout << "ADDRESS WRITE: " << std::hex << (int)address << std::endl;
   if (romBank0Range.contains(address)) {
     throw std::runtime_error("can't write to rom bank0");
   } else if (romBank1Range.contains(address)) {
@@ -393,7 +393,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     break;
   }
   case 0xff42:
-    throw std::runtime_error("writing viewport y position");
+    // throw std::runtime_error("writing viewport y position");
     hardwareRegisters.viewportYPosition = byte;
     break;
   case 0xff43:

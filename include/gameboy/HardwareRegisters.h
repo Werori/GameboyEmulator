@@ -29,7 +29,8 @@ struct HardwareRegisters {
   uint8_t soundPanning = 0xf3;
   uint8_t soundOnOff = 0xf1;
   uint16_t storageWaveform;
-  uint8_t lcdControl = 0x91;
+  // uint8_t lcdControl = 0x91;
+  uint8_t lcdControl = 0;
   uint8_t lcdStatus = 0x85;
   uint8_t viewportYPosition = 0;
   uint8_t viewportXPosition = 0;

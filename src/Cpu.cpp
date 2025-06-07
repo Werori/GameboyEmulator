@@ -23,7 +23,7 @@ void CPU::initializeOpcodes() {
   // opcodes[0x12] = {[this]() { CPU::LDDEA(); }, 1, 8, 8};
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   // opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
-  opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
+  // opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   // opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   // opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
@@ -34,7 +34,7 @@ void CPU::initializeOpcodes() {
   // opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
-  opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
+  // opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   // opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
@@ -254,7 +254,7 @@ void CPU::LDHLu8() {
   memory.write(registers.HL, value);
 }
 
-void CPU::LDAu8() { registers.setC(memory.read(registers.PC + 1)); }
+void CPU::LDAu8() { registers.setA(memory.read(registers.PC + 1)); }
 
 void CPU::LDBA() {
   uint8_t a = registers.getA();
@@ -279,6 +279,10 @@ void CPU::LDu16A() {
 
   uint8_t value = registers.getA();
   memory.write(address, value);
+  // auto add = memory.read(address);
+  // std::cout << "value: " << std::hex << (int)value << std::endl;
+  // std::cout << "add: " << std::hex << (int)add << std::endl;
+  // throw std::runtime_error("reading....");
 }
 
 void CPU::LDAFF00Plusu8() {

@@ -104,6 +104,10 @@ struct CPU {
   void LDSPHL();
   // subtract u8 from value in A, discard result, set flags
   void CPAu8();
+  // loads A into A
+  void LDAA();
+  // enable interrupt
+  void EI();
 
 private:
   // switch high byte and low byte

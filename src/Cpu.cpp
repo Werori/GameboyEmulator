@@ -49,6 +49,8 @@ void CPU::initializeOpcodes() {
   opcodes[0x78] = {[this]() { CPU::LDAB(); }, 1, 4, 4};
   opcodes[0x7b] = {[this]() { CPU::LDAE(); }, 1, 4, 4};
   opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
+  opcodes[0x7f] = {[this]() { CPU::LDAA(); }, 1, 4, 4};
+  opcodes[0xfb] = {[this]() { CPU::EI(); }, 1, 4, 4};
 };
 
 void CPU::fetchOpcode() {
@@ -372,16 +374,17 @@ void CPU::CPAu8() {
   uint8_t value = memory.read(registers.PC + 1);
   uint8_t a = registers.getA();
 
-  // std::cout << "CPA value: " << (int)value << std::endl;
-
   registers.setFlag(registers.FLAG_Z, a == value);
-  // std::cout << "Compare A=" << (int)a << " to value=" << (int)value
-  // << std::endl;
-  // std::cout << "Ly is: " << (int)memory.getLy() << std::endl;
   registers.setFlag(registers.FLAG_N, true);
   registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, value));
   registers.setFlag(registers.FLAG_C, isCarrySub(a, value));
 }
+
+void CPU::LDAA() {
+  // do nothing
+}
+
+void CPU::EI() { IME = 1; }
 
 uint16_t CPU::toLittleEndian(uint8_t lowByte, uint8_t highByte) {
   return (static_cast<uint16_t>(lowByte)) |
@@ -432,7 +435,6 @@ void CPU::handleInterrupts() {
   };
 
   for (int i = 0; i < 5; ++i) {
-    throw std::runtime_error("HERE");
     if (firedInterrupts & (1 << i)) {
       IME = 0; // disable interrupts
 
@@ -441,10 +443,7 @@ void CPU::handleInterrupts() {
       memory.write(0xFF0F, interruptFlag);
 
       // push current PC onto stack (16-bit)
-      registers.SP -= 1;
-      memory.write(registers.SP, registers.PC & 0xFF); // low byte
-      registers.SP -= 1;
-      memory.write(registers.SP, (registers.PC >> 8) & 0xFF); // high byte
+      pushToStack(registers.PC);
 
       registers.PC = interruptVectors[i]; // jump to interrupt handler
 

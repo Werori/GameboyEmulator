@@ -58,6 +58,8 @@ struct CPU {
   void JRNZi8();
   // load 16-bit address into register HL
   void LDHLu16();
+  // jump if not zero
+  void JRZi8();
   // load address at HL++ into A
   void LDAHLInc();
   // load 16-bit valu into SP

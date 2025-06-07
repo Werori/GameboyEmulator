@@ -26,6 +26,7 @@ void CPU::initializeOpcodes() {
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
+  opcodes[0x28] = {[this]() { CPU::JRZi8(); }, 2, 8, 12};
   opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
@@ -188,10 +189,15 @@ void CPU::IncE() {
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, isHalfCarryAdd(e, 1));
 
-  // std::cout << "INC E: before=" << +e << " after=" << +result
-  //           << " Z=" << registers.isFlagSet(registers.FLAG_Z)
-  //           << " H=" << registers.isFlagSet(registers.FLAG_H) << std::endl;
   registers.setE(result);
+}
+
+void CPU::JRZi8() {
+  int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
+  if (registers.isFlagSet(registers.FLAG_Z)) {
+    registers.PC = registers.PC + opcodes[opcode].length + offset;
+    jumped = true;
+  }
 }
 
 void CPU::JRNZi8() {
@@ -201,7 +207,6 @@ void CPU::JRNZi8() {
 
   if (!registers.isFlagSet(registers.FLAG_Z)) {
     registers.PC = registers.PC + opcodes[opcode].length + offset;
-    // std::cout << "pc in jr: " << std::hex << (int)registers.PC << std::endl;
     jumped = true;
   }
 }

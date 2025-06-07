@@ -76,6 +76,8 @@ struct CPU {
   void RST08h();
   // load data to 0xFF00 Plus 8-bit data in the next byte
   void LDFF00Plusu8A();
+  // load value of A into ff00 + C
+  void LDFF00PlusCA();
   // load value of A into 16-bit address
   void LDu16A();
   // load value of 0xFF00 plus 8-bit into register A

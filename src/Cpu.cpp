@@ -24,7 +24,7 @@ void CPU::initializeOpcodes() {
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
-  // opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
+  opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
   opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
@@ -35,6 +35,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
+  opcodes[0xe2] = {[this]() { CPU::LDFF00PlusCA(); }, 1, 8, 8};
   opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
@@ -279,6 +280,14 @@ void CPU::LDFF00Plusu8A() {
   uint16_t address = 0xff00 + byte;
 
   // std::cout << "io address: " << std::hex << (int)address << std::endl;
+
+  memory.write(address, a);
+}
+
+void CPU::LDFF00PlusCA() {
+  uint8_t a = registers.getA();
+  uint8_t c = registers.getC();
+  uint16_t address = 0xff00 + c;
 
   memory.write(address, a);
 }

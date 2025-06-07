@@ -38,6 +38,8 @@ struct CPU {
   void DecB();
   // load 8-bit into register B
   void LDBu8();
+  // increase C and set flags
+  void IncC();
   // decrease register C | set N flag, H&Z dependent
   void DecC();
   // load 8-bit into register C

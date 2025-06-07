@@ -17,6 +17,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x00] = {nop, 1, 4, 4};
   opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
   opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
+  opcodes[0x0c] = {[this]() { CPU::IncC(); }, 1, 4, 4};
   opcodes[0x0d] = {[this]() { CPU::DecC(); }, 1, 4, 4};
   opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
   // opcodes[0x11] = {[this]() { CPU::LDDEu16(); }, 3, 12, 12};
@@ -121,6 +122,17 @@ void CPU::DecB() {
 }
 
 void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
+
+void CPU::IncC() {
+  uint8_t c = registers.getC();
+  uint8_t result = c + 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, isHalfCarryAdd(c, 1));
+
+  registers.setC(result);
+}
 
 void CPU::DecC() {
   uint8_t c = registers.getC();

@@ -34,6 +34,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   // opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
+  opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xe2] = {[this]() { CPU::LDFF00PlusCA(); }, 1, 8, 8};
@@ -215,19 +216,19 @@ void CPU::RetNz() {
 }
 
 void CPU::JPa16() {
-
-  // std::cout << "pc in jump before: " << std::hex << registers.PC <<
-  // std::endl;
   auto [lowByte, highByte] = getLowByteAndHighByte();
-
-  // std::cout << "high: " << std::hex << (int)highByte << std::endl;
-
-  // std::cout << "low:" << std::hex << (int)lowByte << std::endl;
-
-  registers.PC = CPU::toLittleEndian(lowByte, highByte);
-  // std::cout << "pc in jump is: " << (int)registers.PC << std::endl;
+  registers.PC = toLittleEndian(lowByte, highByte);
   jumped = true;
 };
+
+void CPU::Call() {
+  auto [lowByte, highByte] = getLowByteAndHighByte();
+  uint16_t address = toLittleEndian(lowByte, highByte);
+
+  pushToStack(registers.PC + 3);
+
+  registers.PC = address;
+}
 
 void CPU::RST08h() {
   // std::cout << "RST -----------------------------------" << std::endl;
@@ -414,4 +415,11 @@ void CPU::handleInterrupts() {
       break; // handle one interrupt per call
     }
   }
+}
+
+void CPU::pushToStack(uint16_t address) {
+  registers.SP--;
+  memory.write(registers.SP, (address >> 8) & 0xff);
+  registers.SP--;
+  memory.write(registers.SP, (address & 0xff));
 }

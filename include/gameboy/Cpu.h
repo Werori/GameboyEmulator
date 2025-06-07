@@ -74,6 +74,8 @@ struct CPU {
   void RetNz();
   // Jump to 16-bit address
   void JPa16();
+  // push pc onto stack and set pc to given address
+  void Call();
   // push PC onto stack and jump to 0x08
   void RST08h();
   // load data to 0xFF00 Plus 8-bit data in the next byte
@@ -106,4 +108,6 @@ private:
   void handleInterrupts();
 
   void checkInterrupts();
+
+  void pushToStack(uint16_t address);
 };

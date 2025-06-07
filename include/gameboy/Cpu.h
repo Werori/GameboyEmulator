@@ -94,6 +94,8 @@ struct CPU {
   void LDFF00Plusu8A();
   // load value of A into ff00 + C
   void LDFF00PlusCA();
+  // push HL onto stack
+  void PushHL();
   // load value of A into 16-bit address
   void LDu16A();
   // load value of 0xFF00 plus 8-bit into register A

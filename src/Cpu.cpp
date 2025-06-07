@@ -43,6 +43,7 @@ void CPU::initializeOpcodes() {
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xe2] = {[this]() { CPU::LDFF00PlusCA(); }, 1, 8, 8};
+  opcodes[0xe5] = {[this]() { CPU::PushHL(); }, 1, 16, 16};
   opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
@@ -344,6 +345,8 @@ void CPU::LDFF00PlusCA() {
 
   memory.write(address, a);
 }
+
+void CPU::PushHL() { pushToStack(registers.HL); }
 
 void CPU::LDu16A() {
   auto [lowByte, highByte] = getLowByteAndHighByte();

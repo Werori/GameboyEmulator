@@ -41,6 +41,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
   opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
+  opcodes[0xa7] = {[this]() { CPU::AndAA(); }, 1, 4, 4};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xe2] = {[this]() { CPU::LDFF00PlusCA(); }, 1, 8, 8};
   opcodes[0xe5] = {[this]() { CPU::PushHL(); }, 1, 16, 16};
@@ -270,6 +271,16 @@ void CPU::Call() {
 }
 
 void CPU::PushDE() { pushToStack(registers.DE); }
+
+void CPU::AndAA() {
+  uint8_t a = registers.getA();
+  registers.setA(a & a);
+
+  registers.setFlag(registers.FLAG_Z, registers.getA() == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+  registers.setFlag(registers.FLAG_C, false);
+}
 
 void CPU::RST08h() {
   // std::cout << "RST -----------------------------------" << std::endl;

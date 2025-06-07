@@ -34,6 +34,7 @@ bool Gameboy::loadROMFromFile(std::string_view filename) {
 
 void Gameboy::run() {
   const int CYCLES_PER_FRAME = 70224;
+  // const int CYCLES_PER_FRAME = 1;
   ppu.init();
 
   while (!WindowShouldClose()) {
@@ -42,16 +43,18 @@ void Gameboy::run() {
       cpu.fetchOpcode();
       cpu.decodeAndExecute();
     }
+    BeginDrawing();
+    ClearBackground(WHITE);
 
     // Now that we've emulated one frame worth of CPU cycles, draw the frame
-    BeginDrawing();
     if (ppu.frameReady) {
       ppu.renderFrame();
       ppu.frameReady = false;
     }
-    ClearBackground(WHITE);
     ppu.drawFrame();
     EndDrawing();
+    // BeginDrawing();
+    // EndDrawing();
     cpu.cycles = 0; // used by last opcode
   }
 

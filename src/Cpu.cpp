@@ -25,9 +25,9 @@ void CPU::initializeOpcodes() {
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   // opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
-  // opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
+  opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
-  // opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
+  opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   // opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
@@ -35,29 +35,34 @@ void CPU::initializeOpcodes() {
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
-  // opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
-  // opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
+  opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
+  opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
   // opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
-  // opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
+  opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
 };
 
 void CPU::fetchOpcode() {
   opcode = memory.read(registers.PC);
-  std::cout << "register A: " << (int)registers.getA() << std::endl;
-  std::cout << "register B: " << (int)registers.getB() << std::endl;
-  std::cout << "register C: " << (int)registers.getC() << std::endl;
-  std::cout << "register F: " << (int)registers.getF() << std::endl;
-  std::cout << "HL: 0x" << std::hex << registers.HL << std::endl;
+  // std::cout << "register A: " << (int)registers.getA() << std::endl;
+  // std::cout << "register B: " << (int)registers.getB() << std::endl;
+  // std::cout << "register C: " << (int)registers.getC() << std::endl;
+  // std::cout << "register F: " << (int)registers.getF() << std::endl;
+  // std::cout << "HL: 0x" << std::hex << registers.HL << std::endl;
 }
 
 void CPU::decodeAndExecute() {
-  std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
-  std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
+  // std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
   // std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
   // std::cout << std::hex << "pc + 1: " << (int)memory.read(registers.PC +
   // 1)
   //           << std::endl;
+
+  if (opcodes[opcode].func) {
+    //
+  } else {
+    std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
+  }
 
   if (opcode != 0xcb) {
     opcodes[opcode].func();
@@ -150,19 +155,20 @@ void CPU::IncE() {
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, isHalfCarryAdd(e, 1));
 
-  std::cout << "INC E: before=" << +e << " after=" << +result
-            << " Z=" << registers.isFlagSet(registers.FLAG_Z)
-            << " H=" << registers.isFlagSet(registers.FLAG_H) << std::endl;
+  // std::cout << "INC E: before=" << +e << " after=" << +result
+  //           << " Z=" << registers.isFlagSet(registers.FLAG_Z)
+  //           << " H=" << registers.isFlagSet(registers.FLAG_H) << std::endl;
   registers.setE(result);
 }
 
 void CPU::JRNZi8() {
   int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
-  std::cout << "offset: " << std::dec << static_cast<int>(offset) << std::endl;
+  // std::cout << "offset: " << std::dec << static_cast<int>(offset) <<
+  // std::endl;
 
   if (!registers.isFlagSet(registers.FLAG_Z)) {
     registers.PC = registers.PC + opcodes[opcode].length + offset;
-    std::cout << "pc in jr: " << std::hex << (int)registers.PC << std::endl;
+    // std::cout << "pc in jr: " << std::hex << (int)registers.PC << std::endl;
     jumped = true;
   }
 }
@@ -211,7 +217,7 @@ void CPU::JPa16() {
 };
 
 void CPU::RST08h() {
-  std::cout << "RST -----------------------------------" << std::endl;
+  // std::cout << "RST -----------------------------------" << std::endl;
   uint16_t pc = registers.PC + 1;
 
   registers.SP -= 1;
@@ -241,7 +247,7 @@ void CPU::LDSPu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
   uint16_t address = toLittleEndian(lowByte, highByte);
   registers.SP = address;
-  std::cout << "SP: " << registers.SP << std::endl;
+  // std::cout << "SP: " << registers.SP << std::endl;
 }
 
 void CPU::LDHLDecA() {

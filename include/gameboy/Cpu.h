@@ -92,6 +92,8 @@ struct CPU {
   void LDAFF00Plusu8();
   // disable interrupt
   void DI();
+  // load E into A
+  void LDAE();
   // copy HL value into stack pointer
   void LDSPHL();
   // subtract u8 from value in A, discard result, set flags

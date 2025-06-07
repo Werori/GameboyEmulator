@@ -15,6 +15,7 @@ CPU::CPU(GameboyMemory &memory, PPU &ppu, Timers &timers)
 void CPU::initializeOpcodes() {
   opcodes[0x00] = {nop, 1, 4, 4};
   opcodes[0x01] = {[this]() { CPU::LDBCu16(); }, 3, 12, 12};
+  opcodes[0x03] = {[this]() { CPU::IncBC(); }, 1, 8, 8};
   opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
   opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
   opcodes[0x0b] = {[this]() { CPU::DecBC(); }, 1, 8, 8};
@@ -124,6 +125,8 @@ void CPU::LDBCu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
   registers.BC = toLittleEndian(lowByte, highByte);
 }
+
+void CPU::IncBC() { registers.BC = registers.BC++; }
 
 void CPU::DecB() {
   // std::cout << "B before: " << (int)registers.getB();

@@ -34,6 +34,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   // opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
+  opcodes[0xb1] = {[this]() { CPU::ORAC(); }, 1, 4, 4};
   // opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
@@ -207,6 +208,15 @@ void CPU::XORAA() {
   registers.setFlag(registers.FLAG_C, false);
 
   registers.setA(result);
+}
+
+void CPU::ORAC() {
+  registers.setA((registers.getA() | registers.getC()));
+
+  registers.setFlag(registers.FLAG_Z, registers.getA() == 0);
+  registers.setFlag(registers.FLAG_C, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_N, false);
 }
 
 void CPU::RetNz() {

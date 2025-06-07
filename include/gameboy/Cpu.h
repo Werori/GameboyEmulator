@@ -74,6 +74,8 @@ struct CPU {
   void LDBCn16();
   // XOR A register with A register and set Z flag if result = 0
   void XORAA();
+  // bitwise A | C, set flags
+  void ORAC();
   // return from stack if not zero
   void RetNz();
   // Jump to 16-bit address

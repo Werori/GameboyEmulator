@@ -18,6 +18,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x01] = {[this]() { CPU::LDBCu16(); }, 3, 12, 12};
   opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
   opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
+  opcodes[0x0b] = {[this]() { CPU::DecBC(); }, 1, 8, 8};
   opcodes[0x0c] = {[this]() { CPU::IncC(); }, 1, 4, 4};
   opcodes[0x0d] = {[this]() { CPU::DecC(); }, 1, 4, 4};
   opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
@@ -129,6 +130,8 @@ void CPU::DecB() {
 }
 
 void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
+
+void CPU::DecBC() { registers.BC--; }
 
 void CPU::IncC() {
   uint8_t c = registers.getC();

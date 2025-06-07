@@ -158,10 +158,10 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
     return hardwareRegisters.lcdStatus;
     break;
   case 0xff42:
-    throw std::runtime_error("reading viewport y position");
+    throw std::runtime_error("reading scx");
     break;
   case 0xff43:
-    throw std::runtime_error("reading viewport x position");
+    throw std::runtime_error("reading scy");
     break;
   case 0xff44:
     throw std::runtime_error("reading ly");
@@ -394,11 +394,11 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
   }
   case 0xff42:
     // throw std::runtime_error("writing viewport y position");
-    hardwareRegisters.viewportYPosition = byte;
+    hardwareRegisters.scy = byte;
     break;
   case 0xff43:
-    throw std::runtime_error("writing viewport x position");
-    hardwareRegisters.viewportXPosition = byte;
+    // throw std::runtime_error("writing viewport x position");
+    hardwareRegisters.scx = byte;
     break;
   case 0xff45:
     throw std::runtime_error("writing ly compare");

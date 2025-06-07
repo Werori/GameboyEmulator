@@ -86,6 +86,8 @@ struct CPU {
   void RET();
   // push pc onto stack and set pc to given address
   void Call();
+  // push DE onto stack
+  void PushDE();
   // push PC onto stack and jump to 0x08
   void RST08h();
   // load data to 0xFF00 Plus 8-bit data in the next byte

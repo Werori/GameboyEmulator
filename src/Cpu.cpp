@@ -39,6 +39,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xc5] = {[this]() { CPU::PushBC(); }, 1, 16, 16};
   opcodes[0xc9] = {[this]() { CPU::RET(); }, 1, 16, 16};
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
+  opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xe2] = {[this]() { CPU::LDFF00PlusCA(); }, 1, 8, 8};
@@ -266,6 +267,8 @@ void CPU::Call() {
 
   registers.PC = address;
 }
+
+void CPU::PushDE() { pushToStack(registers.DE); }
 
 void CPU::RST08h() {
   // std::cout << "RST -----------------------------------" << std::endl;

@@ -80,6 +80,8 @@ struct CPU {
   void RetNz();
   // Jump to 16-bit address
   void JPa16();
+  // return from stack
+  void RET();
   // push pc onto stack and set pc to given address
   void Call();
   // push PC onto stack and jump to 0x08

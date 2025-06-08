@@ -109,6 +109,8 @@ struct CPU {
   void LDFF00PlusCA();
   // push HL onto stack
   void PushHL();
+  // A & u8, set flags
+  void AndAu8();
   // load value of A into 16-bit address
   void LDu16A();
   // load value of 0xFF00 plus 8-bit into register A

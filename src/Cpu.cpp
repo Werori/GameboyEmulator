@@ -38,6 +38,11 @@ void CPU::initializeOpcodes() {
   opcodes[0x3c] = {[this]() { CPU::IncA(); }, 1, 4, 4};
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   // opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
+  opcodes[0x77] = {[this]() { CPU::LDHLA(); }, 1, 8, 8};
+  opcodes[0x78] = {[this]() { CPU::LDAB(); }, 1, 4, 4};
+  opcodes[0x7b] = {[this]() { CPU::LDAE(); }, 1, 4, 4};
+  opcodes[0x7f] = {[this]() { CPU::LDAA(); }, 1, 4, 4};
+  opcodes[0xa7] = {[this]() { CPU::AndAA(); }, 1, 4, 4};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   opcodes[0xb1] = {[this]() { CPU::ORAC(); }, 1, 4, 4};
   opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
@@ -47,21 +52,17 @@ void CPU::initializeOpcodes() {
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
   opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
-  opcodes[0xa7] = {[this]() { CPU::AndAA(); }, 1, 4, 4};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xe2] = {[this]() { CPU::LDFF00PlusCA(); }, 1, 8, 8};
   opcodes[0xe5] = {[this]() { CPU::PushHL(); }, 1, 16, 16};
+  opcodes[0xe6] = {[this]() { CPU::AndAu8(); }, 2, 8, 8};
   opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
   // opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
   opcodes[0xf5] = {[this]() { CPU::PushAF(); }, 1, 16, 16};
-  opcodes[0x77] = {[this]() { CPU::LDHLA(); }, 1, 8, 8};
-  opcodes[0x78] = {[this]() { CPU::LDAB(); }, 1, 4, 4};
   opcodes[0xfa] = {[this]() { CPU::LDAu16(); }, 3, 16, 16};
-  opcodes[0x7b] = {[this]() { CPU::LDAE(); }, 1, 4, 4};
   opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
-  opcodes[0x7f] = {[this]() { CPU::LDAA(); }, 1, 4, 4};
   opcodes[0xfb] = {[this]() { CPU::EI(); }, 1, 4, 4};
 };
 
@@ -375,6 +376,17 @@ void CPU::LDFF00PlusCA() {
 }
 
 void CPU::PushHL() { pushToStack(registers.HL); }
+
+void CPU::AndAu8() {
+  uint8_t a = registers.getA();
+  uint8_t value = memory.read(registers.PC + 1);
+  uint8_t result = a & value;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+  registers.setFlag(registers.FLAG_C, false);
+}
 
 void CPU::LDu16A() {
   auto [lowByte, highByte] = getLowByteAndHighByte();

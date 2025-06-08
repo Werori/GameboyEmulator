@@ -53,6 +53,8 @@ struct CPU {
   void LDCu8();
   // load 16-bit address into register DE
   void LDDEu16();
+  // load value at DE into A
+  void LDADE();
   // Load A to address at DE
   void LDDEA();
   // increase E
@@ -69,6 +71,8 @@ struct CPU {
   void LDSPu16();
   // load 8-bit address into register HL
   void LDHLu8();
+  // increase A
+  void IncA();
   // get value from A and load it into address held by HL. Decrease HL.
   void LDHLDecA();
   // load u8 value into A register

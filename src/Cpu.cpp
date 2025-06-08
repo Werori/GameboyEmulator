@@ -25,6 +25,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
   opcodes[0x11] = {[this]() { CPU::LDDEu16(); }, 3, 12, 12};
   // opcodes[0x12] = {[this]() { CPU::LDDEA(); }, 1, 8, 8};
+  opcodes[0x1a] = {[this]() { CPU::LDADE(); }, 1, 8, 8};
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
@@ -33,6 +34,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
   opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
+  opcodes[0x3c] = {[this]() { CPU::IncA(); }, 1, 4, 4};
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   // opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
@@ -79,21 +81,29 @@ void CPU::decodeAndExecute() {
     }
   }
 
+  Instruction *instr = nullptr;
+
   if (opcode != 0xcb) {
-    opcodes[opcode].func();
-    length = opcodes[opcode].length;
+    instr = &opcodes[opcode];
+    instr->func();
+    // opcodes[opcode].func();
+    // length = opcodes[opcode].length;
   } else {
     registers.PC += 1;
     opcode = memory.read(registers.PC);
-    extendedOpcodes[opcode].func();
-    length = extendedOpcodes[opcode].length;
+    instr = &extendedOpcodes[opcode];
+    instr->func();
+    // extendedOpcodes[opcode].func();
+    // length = extendedOpcodes[opcode].length;
   }
 
+  length = instr->length;
+
   if (jumped) {
-    lastInstructionCycles = opcodes[opcode].machine_cycles_branch;
+    lastInstructionCycles = instr->machine_cycles_branch;
     jumped = false;
   } else {
-    lastInstructionCycles = opcodes[opcode].machine_cycles_no_branch;
+    lastInstructionCycles = instr->machine_cycles_no_branch;
     registers.PC += length;
   }
 
@@ -171,6 +181,11 @@ void CPU::LDDEu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
   uint16_t address = toLittleEndian(lowByte, highByte);
   registers.DE = address;
+}
+
+void CPU::LDADE() {
+  auto value = memory.read(registers.DE);
+  registers.setA(value);
 }
 
 void CPU::LDDEA() {
@@ -324,6 +339,8 @@ void CPU::LDHLu8() {
   uint8_t value = memory.read(registers.PC + 1);
   memory.write(registers.HL, value);
 }
+
+void CPU::IncA() { registers.setA(registers.getA() + 1); }
 
 void CPU::LDAu8() { registers.setA(memory.read(registers.PC + 1)); }
 

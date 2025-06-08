@@ -119,6 +119,8 @@ struct CPU {
   void PushAF();
   // load B into A
   void LDAB();
+  // load value at address into A
+  void LDAu16();
   // load E into A
   void LDAE();
   // copy HL value into stack pointer

@@ -57,6 +57,7 @@ void CPU::initializeOpcodes() {
   // opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
   opcodes[0xf5] = {[this]() { CPU::PushAF(); }, 1, 16, 16};
   opcodes[0x78] = {[this]() { CPU::LDAB(); }, 1, 4, 4};
+  opcodes[0xfa] = {[this]() { CPU::LDAu16(); }, 3, 16, 16};
   opcodes[0x7b] = {[this]() { CPU::LDAE(); }, 1, 4, 4};
   opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
   opcodes[0x7f] = {[this]() { CPU::LDAA(); }, 1, 4, 4};
@@ -402,6 +403,13 @@ void CPU::DI() { IME = 0; }
 void CPU::PushAF() { pushToStack(registers.AF); }
 
 void CPU::LDAB() { registers.setA(registers.getB()); }
+
+void CPU::LDAu16() {
+  auto [lowByte, highByte] = getLowByteAndHighByte();
+  uint16_t address = toLittleEndian(lowByte, highByte);
+  auto value = memory.read(address);
+  registers.setA(value);
+}
 
 void CPU::LDAE() { registers.setA(registers.getE()); }
 

@@ -117,6 +117,8 @@ struct CPU {
   void DI();
   // push AF onto stack
   void PushAF();
+  // load a into address at HL
+  void LDHLA();
   // load B into A
   void LDAB();
   // load value at address into A

@@ -86,7 +86,8 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
     throw std::runtime_error("reading serial Transfer control");
     break;
   case 0xff04:
-    throw std::runtime_error("reading divider register");
+    return hardwareRegisters.dividerRegister;
+    // throw std::runtime_error("reading divider register");
     break;
   case 0xff05:
     throw std::runtime_error("reading timer counter");

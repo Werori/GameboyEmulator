@@ -53,6 +53,8 @@ struct CPU {
   void LDCu8();
   // load 16-bit address into register DE
   void LDDEu16();
+  // Jump to pc + offset
+  void JRi8();
   // load value at DE into A
   void LDADE();
   // Load A to address at DE

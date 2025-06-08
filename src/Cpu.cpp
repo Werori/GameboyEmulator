@@ -25,6 +25,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
   opcodes[0x11] = {[this]() { CPU::LDDEu16(); }, 3, 12, 12};
   // opcodes[0x12] = {[this]() { CPU::LDDEA(); }, 1, 8, 8};
+  opcodes[0x18] = {[this]() { CPU::JRi8(); }, 2, 12, 12};
   opcodes[0x1a] = {[this]() { CPU::LDADE(); }, 1, 8, 8};
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
@@ -38,7 +39,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
   opcodes[0x3c] = {[this]() { CPU::IncA(); }, 1, 4, 4};
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
-  // opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
+  opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
   opcodes[0x4f] = {[this]() { CPU::LDCA(); }, 1, 4, 4};
   opcodes[0x77] = {[this]() { CPU::LDHLA(); }, 1, 8, 8};
   opcodes[0x78] = {[this]() { CPU::LDAB(); }, 1, 4, 4};
@@ -187,6 +188,12 @@ void CPU::LDDEu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
   uint16_t address = toLittleEndian(lowByte, highByte);
   registers.DE = address;
+}
+
+void CPU::JRi8() {
+  int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
+  registers.PC = registers.PC + opcodes[opcode].length + offset;
+  jumped = true;
 }
 
 void CPU::LDADE() {

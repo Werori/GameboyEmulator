@@ -99,6 +99,8 @@ struct CPU {
   void XORAA();
   // bitwise A | C, set flags
   void ORAC();
+  // A | D, set flags
+  void ORAD();
   // return from stack if not zero
   void RetNz();
   // Jump to 16-bit address

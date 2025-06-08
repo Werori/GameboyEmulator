@@ -27,6 +27,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x11] = {[this]() { CPU::LDDEu16(); }, 3, 12, 12};
   opcodes[0x12] = {[this]() { CPU::LDDEA(); }, 1, 8, 8};
   opcodes[0x13] = {[this]() { CPU::IncDE(); }, 1, 8, 8};
+  opcodes[0x16] = {[this]() { CPU::LDDu8(); }, 2, 8, 8};
   opcodes[0x18] = {[this]() { CPU::JRi8(); }, 2, 12, 12};
   opcodes[0x1a] = {[this]() { CPU::LDADE(); }, 1, 8, 8};
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
@@ -230,6 +231,11 @@ void CPU::LDDEA() {
 }
 
 void CPU::IncDE() { registers.DE = registers.DE + 1; }
+
+void CPU::LDDu8() {
+  uint8_t value = memory.read(registers.PC + 1);
+  registers.setD(value);
+}
 
 void CPU::IncE() {
   uint8_t e = registers.getE();

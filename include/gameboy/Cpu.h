@@ -63,6 +63,8 @@ struct CPU {
   void LDDEA();
   // increase DE
   void IncDE();
+  // set u8 to D
+  void LDDu8();
   // increase E
   void IncE();
   // relative jump to pc + i8 if N flag is not set

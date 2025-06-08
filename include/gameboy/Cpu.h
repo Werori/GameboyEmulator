@@ -145,6 +145,8 @@ struct CPU {
   void LDAu16();
   // load E into A
   void LDAE();
+  // load L into A
+  void LDAL();
   // copy HL value into stack pointer
   void LDSPHL();
   // subtract u8 from value in A, discard result, set flags

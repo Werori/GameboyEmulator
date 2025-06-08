@@ -17,13 +17,21 @@ struct Registers {
 
   uint8_t getA();
   void setA(uint8_t address);
+
   uint8_t getF();
   void setFlag(uint8_t flag, bool set);
+
   void setC(uint8_t address);
   uint8_t getC();
+
   void setB(uint8_t address);
   uint8_t getB();
+
   bool isFlagSet(uint8_t flag);
+
   uint8_t getE();
   void setE(uint8_t address);
+
+  uint8_t getL();
+  void setL(uint8_t address);
 };

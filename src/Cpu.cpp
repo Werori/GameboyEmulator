@@ -31,6 +31,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   opcodes[0x28] = {[this]() { CPU::JRZi8(); }, 2, 8, 12};
   opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
+  opcodes[0x2c] = {[this]() { CPU::IncL(); }, 1, 4, 4};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
   opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
@@ -318,6 +319,8 @@ void CPU::LDAHLInc() {
   registers.setA(value);
   registers.HL = registers.HL + 1;
 }
+
+void CPU::IncL() { registers.setL(registers.getL() + 1); }
 
 void CPU::LDSPu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();

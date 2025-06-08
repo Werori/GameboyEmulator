@@ -28,3 +28,7 @@ bool Registers::isFlagSet(uint8_t flag) { return (getF() & flag) != 0; }
 uint8_t Registers::getE() { return DE & 0x00ff; }
 
 void Registers::setE(uint8_t address) { DE = (DE & 0xff00) | address; }
+
+uint8_t Registers::getL() { return HL & 0x00ff; }
+
+void Registers::setL(uint8_t address) { HL = (HL & 0xff00) | address; }

@@ -101,6 +101,8 @@ struct CPU {
   void ORAC();
   // A | D, set flags
   void ORAD();
+  // compare A and C
+  void CPAC();
   // return from stack if not zero
   void RetNz();
   // Jump to 16-bit address

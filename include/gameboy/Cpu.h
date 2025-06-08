@@ -79,6 +79,8 @@ struct CPU {
   void LDHLDecA();
   // load u8 value into A register
   void LDAu8();
+  // load value from A into C
+  void LDCA();
   // copy value of register A into B
   void LDBA();
   // Load 16-bit address into register BC

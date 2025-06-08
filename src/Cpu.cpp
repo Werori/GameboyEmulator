@@ -19,6 +19,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x03] = {[this]() { CPU::IncBC(); }, 1, 8, 8};
   opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
   opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
+  opcodes[0x07] = {[this]() { CPU::RLCA(); }, 1, 4, 4};
   opcodes[0x0b] = {[this]() { CPU::DecBC(); }, 1, 8, 8};
   opcodes[0x0c] = {[this]() { CPU::IncC(); }, 1, 4, 4};
   opcodes[0x0d] = {[this]() { CPU::DecC(); }, 1, 4, 4};
@@ -166,6 +167,17 @@ void CPU::DecB() {
 }
 
 void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
+
+void CPU::RLCA() {
+  uint8_t oldA = registers.getA();
+  uint8_t bit7 = (oldA >> 7) & 0x1;
+  registers.setA((oldA << 1) | bit7);
+
+  registers.setFlag(registers.FLAG_Z, false);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, bit7 != 0);
+}
 
 void CPU::DecBC() { registers.BC--; }
 

@@ -43,6 +43,8 @@ struct CPU {
   void DecB();
   // load 8-bit into register B
   void LDBu8();
+  // rotates bit left
+  void RLCA();
   // decrease BC
   void DecBC();
   // increase C and set flags

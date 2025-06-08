@@ -31,6 +31,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   opcodes[0x28] = {[this]() { CPU::JRZi8(); }, 2, 8, 12};
+  opcodes[0x25] = {[this]() { CPU::DecH(); }, 1, 4, 4};
   opcodes[0x26] = {[this]() { CPU::LDHu8(); }, 2, 8, 8};
   opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
   opcodes[0x2c] = {[this]() { CPU::IncL(); }, 1, 4, 4};
@@ -41,8 +42,8 @@ void CPU::initializeOpcodes() {
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
   opcodes[0x4f] = {[this]() { CPU::LDCA(); }, 1, 4, 4};
-  opcodes[0x5f] = {[this]() { CPU::LDEA(); }, 1, 4, 4};
   opcodes[0x57] = {[this]() { CPU::LDDA(); }, 1, 4, 4};
+  opcodes[0x5f] = {[this]() { CPU::LDEA(); }, 1, 4, 4};
   opcodes[0x77] = {[this]() { CPU::LDHLA(); }, 1, 8, 8};
   opcodes[0x78] = {[this]() { CPU::LDAB(); }, 1, 4, 4};
   opcodes[0x7b] = {[this]() { CPU::LDAE(); }, 1, 4, 4};
@@ -226,6 +227,15 @@ void CPU::JRZi8() {
     registers.PC = registers.PC + opcodes[opcode].length + offset;
     jumped = true;
   }
+}
+
+void CPU::DecH() {
+  uint8_t h = registers.getH();
+  uint8_t result = h - 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(h, 1));
 }
 
 void CPU::LDHu8() {

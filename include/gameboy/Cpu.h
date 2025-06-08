@@ -67,6 +67,8 @@ struct CPU {
   void LDHLu16();
   // jump if not zero
   void JRZi8();
+  // decrease H
+  void DecH();
   // load u8 into H
   void LDHu8();
   // load address at HL++ into A

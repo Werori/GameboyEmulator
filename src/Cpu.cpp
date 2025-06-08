@@ -10,6 +10,7 @@
 CPU::CPU(GameboyMemory &memory, PPU &ppu, Timers &timers)
     : memory(memory), ppu(ppu), timers(timers) {
   initializeOpcodes();
+  initializeExtendedOpcodes();
 };
 
 void CPU::initializeOpcodes() {
@@ -22,7 +23,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x0c] = {[this]() { CPU::IncC(); }, 1, 4, 4};
   opcodes[0x0d] = {[this]() { CPU::DecC(); }, 1, 4, 4};
   opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
-  // opcodes[0x11] = {[this]() { CPU::LDDEu16(); }, 3, 12, 12};
+  opcodes[0x11] = {[this]() { CPU::LDDEu16(); }, 3, 12, 12};
   // opcodes[0x12] = {[this]() { CPU::LDDEA(); }, 1, 8, 8};
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
@@ -59,33 +60,29 @@ void CPU::initializeOpcodes() {
   opcodes[0xfb] = {[this]() { CPU::EI(); }, 1, 4, 4};
 };
 
-void CPU::fetchOpcode() {
-  opcode = memory.read(registers.PC);
-  // std::cout << "register A: " << (int)registers.getA() << std::endl;
-  // std::cout << "register B: " << (int)registers.getB() << std::endl;
-  // std::cout << "register C: " << (int)registers.getC() << std::endl;
-  // std::cout << "register F: " << (int)registers.getF() << std::endl;
-  // std::cout << "HL: 0x" << std::hex << registers.HL << std::endl;
+void CPU::initializeExtendedOpcodes() {
+  extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
 }
 
-void CPU::decodeAndExecute() {
-  // std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
-  // std::cout << std::hex << "pc: " << (int)registers.PC << std::endl;
-  // std::cout << std::hex << "pc + 1: " << (int)memory.read(registers.PC +
-  // 1)
-  //           << std::endl;
+void CPU::fetchOpcode() { opcode = memory.read(registers.PC); }
 
-  if (opcodes[opcode].func) {
-    //
+void CPU::decodeAndExecute() {
+  if (opcode != 0xcb) {
+    if (!opcodes[opcode].func) {
+      std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
+    }
   } else {
-    std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
+    if (!extendedOpcodes[memory.read(registers.PC + 1)].func) {
+      std::cout << std::hex
+                << "extended opcode: " << (int)memory.read(registers.PC + 1)
+                << std::endl;
+    }
   }
 
   if (opcode != 0xcb) {
     opcodes[opcode].func();
     length = opcodes[opcode].length;
   } else {
-    std::cout << "Extended opcode!" << std::endl;
     registers.PC += 1;
     opcode = memory.read(registers.PC);
     extendedOpcodes[opcode].func();
@@ -93,11 +90,9 @@ void CPU::decodeAndExecute() {
   }
 
   if (jumped) {
-    // cycles += opcodes[opcode].machine_cycles_branch;
     lastInstructionCycles = opcodes[opcode].machine_cycles_branch;
     jumped = false;
   } else {
-    // cycles += opcodes[opcode].machine_cycles_no_branch;
     lastInstructionCycles = opcodes[opcode].machine_cycles_no_branch;
     registers.PC += length;
   }
@@ -407,6 +402,14 @@ void CPU::LDAA() {
 }
 
 void CPU::EI() { IME = 1; }
+
+// extended opcodes
+void CPU::Bit0A() {
+  bool bit = ((registers.getA() & (1 << 0)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
 
 uint16_t CPU::toLittleEndian(uint8_t lowByte, uint8_t highByte) {
   return (static_cast<uint16_t>(lowByte)) |

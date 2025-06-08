@@ -29,6 +29,7 @@ struct CPU {
   CPU(GameboyMemory &memory, PPU &ppu, Timers &timers);
 
   void initializeOpcodes();
+  void initializeExtendedOpcodes();
   void fetchOpcode();
   void decodeAndExecute();
 
@@ -122,6 +123,9 @@ struct CPU {
   void LDAA();
   // enable interrupt
   void EI();
+
+  // extended opcodes
+  void Bit0A();
 
 private:
   // switch high byte and low byte

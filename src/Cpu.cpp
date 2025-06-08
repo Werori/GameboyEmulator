@@ -46,6 +46,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x5f] = {[this]() { CPU::LDEA(); }, 1, 4, 4};
   opcodes[0x77] = {[this]() { CPU::LDHLA(); }, 1, 8, 8};
   opcodes[0x78] = {[this]() { CPU::LDAB(); }, 1, 4, 4};
+  opcodes[0x7a] = {[this]() { CPU::LDAD(); }, 1, 4, 4};
   opcodes[0x7b] = {[this]() { CPU::LDAE(); }, 1, 4, 4};
   opcodes[0x7f] = {[this]() { CPU::LDAA(); }, 1, 4, 4};
   opcodes[0xa7] = {[this]() { CPU::AndAA(); }, 1, 4, 4};
@@ -489,6 +490,8 @@ void CPU::LDHLA() {
 }
 
 void CPU::LDAB() { registers.setA(registers.getB()); }
+
+void CPU::LDAD() { registers.setA(registers.getD()); }
 
 void CPU::LDAu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();

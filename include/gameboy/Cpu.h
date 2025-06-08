@@ -139,6 +139,8 @@ struct CPU {
   void LDHLA();
   // load B into A
   void LDAB();
+  // load D into A
+  void LDAD();
   // load value at address into A
   void LDAu16();
   // load E into A

@@ -151,6 +151,8 @@ struct CPU {
   void CPAu8();
   // loads A into A
   void LDAA();
+  // add with carry
+  void ADCAA();
   // enable interrupt
   void EI();
 
@@ -165,6 +167,9 @@ private:
 
   bool isHalfCarryAdd(uint8_t a, uint8_t value);
   bool isHalfCarrySub(uint8_t a, uint8_t value);
+
+  bool isHalfCarryAddWithCarry(uint8_t val1, uint8_t val2, uint8_t carry);
+  bool isCarryAddWithCarry(uint8_t val1, uint8_t val2, uint8_t carry);
 
   bool isCarryAdd(uint8_t a, uint8_t value);
   bool isCarrySub(uint8_t a, uint8_t value);

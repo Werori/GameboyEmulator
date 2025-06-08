@@ -49,6 +49,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x7a] = {[this]() { CPU::LDAD(); }, 1, 4, 4};
   opcodes[0x7b] = {[this]() { CPU::LDAE(); }, 1, 4, 4};
   opcodes[0x7f] = {[this]() { CPU::LDAA(); }, 1, 4, 4};
+  opcodes[0x8f] = {[this]() { CPU::ADCAA(); }, 1, 4, 4};
   opcodes[0xa7] = {[this]() { CPU::AndAA(); }, 1, 4, 4};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   opcodes[0xb1] = {[this]() { CPU::ORAC(); }, 1, 4, 4};
@@ -518,6 +519,22 @@ void CPU::LDAA() {
   // do nothing
 }
 
+void CPU::ADCAA() {
+  uint8_t a = registers.getA();
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarryAddWithCarry(a, a, oldCarry);
+  bool carry = isCarryAddWithCarry(a, a, oldCarry);
+
+  registers.setA(a + a + oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
+}
+
 void CPU::EI() { IME = 1; }
 
 // extended opcodes
@@ -543,6 +560,10 @@ bool CPU::isHalfCarryAdd(uint8_t a, uint8_t value) {
   return ((a & 0x0f) + (value & 0x0f) > 0x0f);
 }
 
+bool CPU::isHalfCarryAddWithCarry(uint8_t val1, uint8_t val2, uint8_t carry) {
+  return isHalfCarryAdd(val1, val2) || isHalfCarryAdd(val1 + val2, carry);
+}
+
 bool CPU::isHalfCarrySub(uint8_t a, uint8_t value) {
   return (a & 0x0f) < (value & 0x0f);
 }
@@ -551,6 +572,10 @@ bool CPU::isCarrySub(uint8_t a, uint8_t value) { return a < value; }
 
 bool CPU::isCarryAdd(uint8_t a, uint8_t value) {
   return (uint16_t)a + (uint16_t)value > 0xFF;
+}
+
+bool CPU::isCarryAddWithCarry(uint8_t val1, uint8_t val2, uint8_t carry) {
+  return ((uint16_t)val1 + (uint16_t)val2 + carry) > 0xFF;
 }
 
 void CPU::handleInterrupts() {

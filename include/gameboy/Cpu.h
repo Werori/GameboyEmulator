@@ -140,4 +140,5 @@ private:
   void checkInterrupts();
 
   void pushToStack(uint16_t address);
+  uint16_t popFromStack();
 };

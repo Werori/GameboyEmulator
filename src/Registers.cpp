@@ -32,3 +32,7 @@ void Registers::setE(uint8_t address) { DE = (DE & 0xff00) | address; }
 uint8_t Registers::getL() { return HL & 0x00ff; }
 
 void Registers::setL(uint8_t address) { HL = (HL & 0xff00) | address; }
+
+uint8_t Registers::getH() { return (HL & 0xff00) >> 8; }
+
+void Registers::setH(uint8_t address) { HL = (address << 8) | (HL & 0x00FF); }

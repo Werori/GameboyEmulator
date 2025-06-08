@@ -30,6 +30,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   opcodes[0x28] = {[this]() { CPU::JRZi8(); }, 2, 8, 12};
+  opcodes[0x26] = {[this]() { CPU::LDHu8(); }, 2, 8, 8};
   opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
   opcodes[0x2c] = {[this]() { CPU::IncL(); }, 1, 4, 4};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
@@ -216,6 +217,11 @@ void CPU::JRZi8() {
     registers.PC = registers.PC + opcodes[opcode].length + offset;
     jumped = true;
   }
+}
+
+void CPU::LDHu8() {
+  uint8_t value = memory.read(registers.PC + 1);
+  registers.setH(value);
 }
 
 void CPU::JRNZi8() {

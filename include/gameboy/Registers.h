@@ -34,4 +34,7 @@ struct Registers {
 
   uint8_t getL();
   void setL(uint8_t address);
+
+  uint8_t getH();
+  void setH(uint8_t address);
 };

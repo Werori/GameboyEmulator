@@ -59,6 +59,8 @@ struct CPU {
   void LDADE();
   // Load A to address at DE
   void LDDEA();
+  // increase DE
+  void IncDE();
   // increase E
   void IncE();
   // relative jump to pc + i8 if N flag is not set

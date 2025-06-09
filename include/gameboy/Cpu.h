@@ -180,6 +180,8 @@ struct CPU {
 
   // extended opcodes
   void Bit0A();
+  // check bit 6 of A
+  void Bit6A();
 
 private:
   // switch high byte and low byte

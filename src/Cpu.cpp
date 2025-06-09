@@ -89,6 +89,7 @@ void CPU::initializeOpcodes() {
 
 void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
+  extendedOpcodes[0x77] = {[this]() { CPU::Bit6A(); }, 2, 8, 8};
 }
 
 void CPU::fetchOpcode() { opcode = memory.read(registers.PC); }
@@ -603,6 +604,13 @@ void CPU::EI() { IME = 1; }
 void CPU::Bit0A() {
   bool bit = ((registers.getA() & (1 << 0)) == 0);
   registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit6A() {
+  bool bit = ((registers.getA() & (1 << 6)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
 }

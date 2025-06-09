@@ -57,6 +57,8 @@ struct CPU {
   void LDDEu16();
   // Jump to pc + offset
   void JRi8();
+  // add DE to HL, set flags
+  void AddHLDE();
   // load value at DE into A
   void LDADE();
   // Load A to address at DE
@@ -190,4 +192,7 @@ private:
 
   void pushToStack(uint16_t address);
   uint16_t popFromStack();
+
+  bool isHalfCarryAdd16(uint16_t a, uint16_t b);
+  bool isCarryAdd16(uint16_t a, uint16_t b);
 };

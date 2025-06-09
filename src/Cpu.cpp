@@ -29,6 +29,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x13] = {[this]() { CPU::IncDE(); }, 1, 8, 8};
   opcodes[0x16] = {[this]() { CPU::LDDu8(); }, 2, 8, 8};
   opcodes[0x18] = {[this]() { CPU::JRi8(); }, 2, 12, 12};
+  opcodes[0x19] = {[this]() { CPU::AddHLDE(); }, 1, 8, 8};
   opcodes[0x1a] = {[this]() { CPU::LDADE(); }, 1, 8, 8};
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
@@ -217,6 +218,15 @@ void CPU::JRi8() {
   int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
   registers.PC = registers.PC + opcodes[opcode].length + offset;
   jumped = true;
+}
+
+void CPU::AddHLDE() {
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H,
+                    isHalfCarryAdd16(registers.HL, registers.DE));
+  registers.setFlag(registers.FLAG_C, isCarryAdd16(registers.HL, registers.DE));
+
+  registers.HL += registers.DE;
 }
 
 void CPU::LDADE() {
@@ -663,4 +673,12 @@ uint16_t CPU::popFromStack() {
   registers.SP += 2;
 
   return (high << 8) | low;
+}
+
+bool CPU::isHalfCarryAdd16(uint16_t a, uint16_t b) {
+  return ((a & 0x0FFF) + (b & 0x0FFF)) > 0x0FFF;
+}
+
+bool CPU::isCarryAdd16(uint16_t a, uint16_t b) {
+  return (uint32_t)a + (uint32_t)b > 0xFFFF;
 }

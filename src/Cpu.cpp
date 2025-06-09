@@ -34,9 +34,10 @@ void CPU::initializeOpcodes() {
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
-  opcodes[0x28] = {[this]() { CPU::JRZi8(); }, 2, 8, 12};
+  opcodes[0x23] = {[this]() { CPU::IncHL(); }, 1, 8, 8};
   opcodes[0x25] = {[this]() { CPU::DecH(); }, 1, 4, 4};
   opcodes[0x26] = {[this]() { CPU::LDHu8(); }, 2, 8, 8};
+  opcodes[0x28] = {[this]() { CPU::JRZi8(); }, 2, 8, 12};
   opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
   opcodes[0x2c] = {[this]() { CPU::IncL(); }, 1, 4, 4};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
@@ -404,6 +405,8 @@ void CPU::LDHLu16() {
   // << (int)toLittleEndian(lowByte, highByte) << std::endl;
   registers.HL = toLittleEndian(lowByte, highByte);
 }
+
+void CPU::IncHL() { registers.HL++; }
 
 void CPU::LDAHLInc() {
   auto value = memory.read(registers.HL);

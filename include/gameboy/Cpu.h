@@ -73,6 +73,8 @@ struct CPU {
   void JRNZi8();
   // load 16-bit address into register HL
   void LDHLu16();
+  // increase HL
+  void IncHL();
   // jump if not zero
   void JRZi8();
   // decrease H

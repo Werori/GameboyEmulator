@@ -101,6 +101,8 @@ struct CPU {
   void LDDHL();
   // load A into E
   void LDEA();
+  // load A into L
+  void LDLA();
   // load A into D
   void LDDA();
   // load value at address HL int o E

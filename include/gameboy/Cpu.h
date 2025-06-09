@@ -135,6 +135,8 @@ struct CPU {
   void PushDE();
   // A & A, set flags
   void AndAA();
+  // subtract B from A
+  void SubAB();
   // push PC onto stack and jump to 0x08
   void RST08h();
   // load data to 0xFF00 Plus 8-bit data in the next byte

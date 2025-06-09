@@ -62,6 +62,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x7f] = {[this]() { CPU::LDAA(); }, 1, 4, 4};
   opcodes[0x8f] = {[this]() { CPU::ADCAA(); }, 1, 4, 4};
   opcodes[0xa7] = {[this]() { CPU::AndAA(); }, 1, 4, 4};
+  opcodes[0x90] = {[this]() { CPU::SubAB(); }, 1, 4, 4};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   opcodes[0xb1] = {[this]() { CPU::ORAC(); }, 1, 4, 4};
   opcodes[0xb2] = {[this]() { CPU::ORAD(); }, 1, 4, 4};
@@ -387,6 +388,19 @@ void CPU::AndAA() {
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
   registers.setFlag(registers.FLAG_C, false);
+}
+
+void CPU::SubAB() {
+  uint8_t a = registers.getA();
+  uint8_t b = registers.getB();
+  uint8_t result = a - b;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, b));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, b));
+
+  registers.setA(result);
 }
 
 void CPU::RST08h() {

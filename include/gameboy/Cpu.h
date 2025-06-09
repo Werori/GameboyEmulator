@@ -99,6 +99,8 @@ struct CPU {
   void LDEA();
   // load A into D
   void LDDA();
+  // load value at address HL int o E
+  void LDEHL();
   // copy value of register A into B
   void LDBA();
   // Load 16-bit address into register BC

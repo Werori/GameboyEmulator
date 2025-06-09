@@ -175,6 +175,8 @@ struct CPU {
   void CPAu8();
   // loads A into A
   void LDAA();
+  // add A and B
+  void AddAB();
   // add with carry
   void ADCAA();
   // enable interrupt

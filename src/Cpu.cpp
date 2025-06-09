@@ -60,6 +60,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x7d] = {[this]() { CPU::LDAL(); }, 1, 4, 4};
   opcodes[0x7e] = {[this]() { CPU::LDAHL(); }, 1, 8, 8};
   opcodes[0x7f] = {[this]() { CPU::LDAA(); }, 1, 4, 4};
+  opcodes[0x80] = {[this]() { CPU::AddAB(); }, 1, 4, 4};
   opcodes[0x8f] = {[this]() { CPU::ADCAA(); }, 1, 4, 4};
   opcodes[0xa7] = {[this]() { CPU::AndAA(); }, 1, 4, 4};
   opcodes[0x90] = {[this]() { CPU::SubAB(); }, 1, 4, 4};
@@ -594,6 +595,19 @@ void CPU::CPAu8() {
 
 void CPU::LDAA() {
   // do nothing
+}
+
+void CPU::AddAB() {
+  uint8_t a = registers.getA();
+  uint8_t b = registers.getB();
+  uint16_t result = a + b;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, isHalfCarryAdd(a, b));
+  registers.setFlag(registers.FLAG_C, isCarryAdd(a, b));
+
+  registers.setA(result);
 }
 
 void CPU::ADCAA() {

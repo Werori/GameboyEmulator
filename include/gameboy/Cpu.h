@@ -89,6 +89,8 @@ struct CPU {
   void LDSPu16();
   // load 8-bit address into register HL
   void LDHLu8();
+  // jump if carry set
+  void JRCi8();
   // increase A
   void IncA();
   // get value from A and load it into address held by HL. Decrease HL.

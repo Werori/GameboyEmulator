@@ -69,6 +69,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x90] = {[this]() { CPU::SubAB(); }, 1, 4, 4};
   opcodes[0x91] = {[this]() { CPU::SubAC(); }, 1, 4, 4};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
+  opcodes[0xb0] = {[this]() { CPU::ORAB(); }, 1, 4, 4};
   opcodes[0xb1] = {[this]() { CPU::ORAC(); }, 1, 4, 4};
   opcodes[0xb2] = {[this]() { CPU::ORAD(); }, 1, 4, 4};
   opcodes[0xb9] = {[this]() { CPU::CPAC(); }, 1, 4, 4};
@@ -311,6 +312,15 @@ void CPU::XORAA() {
   registers.setFlag(registers.FLAG_C, false);
 
   registers.setA(result);
+}
+
+void CPU::ORAB() {
+  registers.setA((registers.getA() | registers.getB()));
+
+  registers.setFlag(registers.FLAG_Z, registers.getA() == 0);
+  registers.setFlag(registers.FLAG_C, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_N, false);
 }
 
 void CPU::ORAC() {

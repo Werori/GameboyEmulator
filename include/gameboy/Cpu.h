@@ -119,6 +119,8 @@ struct CPU {
   void LDBCn16();
   // XOR A register with A register and set Z flag if result = 0
   void XORAA();
+  // bitwise A | B, set flags
+  void ORAB();
   // bitwise A | C, set flags
   void ORAC();
   // A | D, set flags

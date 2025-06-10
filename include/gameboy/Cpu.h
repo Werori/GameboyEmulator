@@ -173,6 +173,8 @@ struct CPU {
   void LDAu16();
   // load E into A
   void LDAE();
+  // load H into A
+  void LDAH();
   // load L into A
   void LDAL();
   // load value at address HL into A

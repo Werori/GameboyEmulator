@@ -87,9 +87,12 @@ void PPU::tick(int cycles) {
       ly = 0;
     memory.setLy(ly);
 
+    std::cout << "ly: " << (int)ly << std::endl;
+
     if (ly == startOfVBlank) {
       mode = 1;
       frameReady = true;
+      std::cout << "frame ready" << std::endl;
       memory.requestInterrupt(InterruptFlag::VBlank);
     } else if (ly > startOfVBlank && ly <= endOfVBlank) {
       mode = 1;

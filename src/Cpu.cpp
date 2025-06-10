@@ -34,6 +34,7 @@ void CPU::initializeOpcodes() {
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
+  opcodes[0x22] = {[this]() { CPU::LDHLPlusA(); }, 1, 8, 8};
   opcodes[0x23] = {[this]() { CPU::IncHL(); }, 1, 8, 8};
   opcodes[0x25] = {[this]() { CPU::DecH(); }, 1, 4, 4};
   opcodes[0x26] = {[this]() { CPU::LDHu8(); }, 2, 8, 8};
@@ -422,6 +423,12 @@ void CPU::LDHLu16() {
   // std::cout << "HL address: " << std::hex
   // << (int)toLittleEndian(lowByte, highByte) << std::endl;
   registers.HL = toLittleEndian(lowByte, highByte);
+}
+
+void CPU::LDHLPlusA() {
+  uint8_t a = registers.getA();
+  memory.write(registers.HL, a);
+  registers.HL++;
 }
 
 void CPU::IncHL() { registers.HL++; }

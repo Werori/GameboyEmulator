@@ -49,24 +49,15 @@ void PPU::tick(int cycles) {
   bool wasOn = (lastLcdc & 0x80);
   bool isOn = (lcdc & 0x80);
 
-  // if (isOn) {
-  //   std::cout << "lcd is on:" << std::endl;
-  //   throw std::runtime_error("lcd on");
-  // } else {
-  //   std::cout << "lcd is off" << std::endl;
-  // }
-
   if (wasOn && !isOn) {
     lcdEnabled = false;
     memory.setLy(0);
     cycleCounter = 0;
     mode = 0;
-    std::cout << "Screen turned off" << std::endl;
   } else if (!wasOn && isOn) {
     lcdEnabled = true;
     cycleCounter = 0;
     mode = 2;
-    std::cout << "screen turned on" << std::endl;
   }
 
   lastLcdc = lcdc;
@@ -87,12 +78,9 @@ void PPU::tick(int cycles) {
       ly = 0;
     memory.setLy(ly);
 
-    std::cout << "ly: " << (int)ly << std::endl;
-
     if (ly == startOfVBlank) {
       mode = 1;
       frameReady = true;
-      std::cout << "frame ready" << std::endl;
       memory.requestInterrupt(InterruptFlag::VBlank);
     } else if (ly > startOfVBlank && ly <= endOfVBlank) {
       mode = 1;

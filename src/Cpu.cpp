@@ -82,6 +82,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
+  opcodes[0xe1] = {[this]() { CPU::PopHL(); }, 1, 12, 12};
   opcodes[0xe2] = {[this]() { CPU::LDFF00PlusCA(); }, 1, 8, 8};
   opcodes[0xe5] = {[this]() { CPU::PushHL(); }, 1, 16, 16};
   opcodes[0xe6] = {[this]() { CPU::AndAu8(); }, 2, 8, 8};
@@ -539,14 +540,11 @@ void CPU::LDBA() {
 void CPU::LDFF00Plusu8A() {
   auto a = registers.getA();
   auto byte = memory.read(registers.PC + 1);
-  // auto byte = registers.PC + 1;
-  // std::cout << std::hex << "byte: " << (int)byte << std::endl;
   uint16_t address = 0xff00 + byte;
-
-  // std::cout << "io address: " << std::hex << (int)address << std::endl;
-
   memory.write(address, a);
 }
+
+void CPU::PopHL() { registers.HL = popFromStack(); }
 
 void CPU::LDFF00PlusCA() {
   uint8_t a = registers.getA();

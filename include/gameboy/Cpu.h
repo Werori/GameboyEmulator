@@ -149,6 +149,8 @@ struct CPU {
   void RST08h();
   // load data to 0xFF00 Plus 8-bit data in the next byte
   void LDFF00Plusu8A();
+  // pop from stack
+  void PopHL();
   // load value of A into ff00 + C
   void LDFF00PlusCA();
   // push HL onto stack

@@ -190,6 +190,8 @@ struct CPU {
 
   // extended opcodes
   void Bit0A();
+  // check bit 5 of A
+  void Bit5A();
   // check bit 6 of A
   void Bit6A();
 

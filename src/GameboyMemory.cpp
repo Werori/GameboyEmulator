@@ -51,7 +51,7 @@ uint8_t GameboyMemory::read(uint16_t address) {
     // std::cout << "Reading from wram2..." << std::endl;
     return wram2[address - wRam2Range.start];
   } else if (echoRamRange.contains(address)) {
-    throw std::runtime_error("reading echo ");
+    // throw std::runtime_error("reading echo ");
     // std::cout << "Reading echo ram" << std::endl;
     return wram1[address - echoRamRange.start];
   } else if (oamRange.contains(address)) {

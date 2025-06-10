@@ -78,6 +78,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   opcodes[0xc5] = {[this]() { CPU::PushBC(); }, 1, 16, 16};
+  opcodes[0xc8] = {[this]() { CPU::RetZ(); }, 1, 8, 20};
   opcodes[0xc9] = {[this]() { CPU::RET(); }, 1, 16, 16};
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
   opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
@@ -372,6 +373,13 @@ void CPU::JPa16() {
 };
 
 void CPU::PushBC() { pushToStack(registers.BC); }
+
+void CPU::RetZ() {
+  if (registers.isFlagSet(registers.FLAG_Z) == 1) {
+    registers.PC = popFromStack();
+    jumped = true;
+  }
+}
 
 void CPU::RET() {
   uint8_t low = memory.read(registers.SP);

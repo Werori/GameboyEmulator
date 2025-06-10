@@ -135,6 +135,8 @@ struct CPU {
   void JPa16();
   // push BC onto stack
   void PushBC();
+  // jump to address from stack if Zero flag is set
+  void RetZ();
   // return from stack
   void RET();
   // push pc onto stack and set pc to given address

@@ -46,6 +46,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
   opcodes[0x38] = {[this]() { CPU::JRCi8(); }, 2, 8, 12};
   opcodes[0x3c] = {[this]() { CPU::IncA(); }, 1, 4, 4};
+  opcodes[0x3d] = {[this]() { CPU::DecA(); }, 1, 4, 4};
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
   opcodes[0x4f] = {[this]() { CPU::LDCA(); }, 1, 4, 4};
@@ -170,7 +171,6 @@ void CPU::LDBCu16() {
 void CPU::IncBC() { registers.BC = registers.BC++; }
 
 void CPU::DecB() {
-  // std::cout << "B before: " << (int)registers.getB();
   uint8_t b = registers.getB();
   uint8_t result = b - 1;
 
@@ -180,8 +180,6 @@ void CPU::DecB() {
   registers.setFlag(registers.FLAG_N, true);
 
   registers.setB(result);
-  // std::cout << std::hex << "FLAG H: " << (int)registers.FLAG_H << std::endl;
-  // std::cout << "B after: " << (int)registers.getB();
 }
 
 void CPU::LDBu8() { registers.setB(memory.read(registers.PC + 1)); }
@@ -500,6 +498,19 @@ void CPU::JRCi8() {
 }
 
 void CPU::IncA() { registers.setA(registers.getA() + 1); }
+
+void CPU::DecA() {
+
+  uint8_t a = registers.getA();
+  uint8_t result = a - 1;
+
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, 1));
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+
+  registers.setA(result);
+}
 
 void CPU::LDAu8() { registers.setA(memory.read(registers.PC + 1)); }
 

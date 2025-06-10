@@ -95,6 +95,8 @@ struct CPU {
   void JRCi8();
   // increase A
   void IncA();
+  // decrease A
+  void DecA();
   // get value from A and load it into address held by HL. Decrease HL.
   void LDHLDecA();
   // load u8 value into A register

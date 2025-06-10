@@ -183,6 +183,8 @@ struct CPU {
   void AddAB();
   // add with carry
   void ADCAA();
+  // add C to A with carry
+  void ADCAC();
   // enable interrupt
   void EI();
 

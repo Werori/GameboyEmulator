@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <iostream>
 #include <stdexcept>
 #include <vector>
 
@@ -403,7 +402,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.scx = byte;
     break;
   case 0xff45:
-    throw std::runtime_error("writing ly compare");
+    // throw std::runtime_error("writing ly compare");
     hardwareRegisters.lyc = byte;
     break;
   case 0xff46:
@@ -423,8 +422,8 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.objPallete1 = byte;
     break;
   case 0xff4a:
-    throw std::runtime_error("writing wY");
-    std::cout << "wy: " << (int)byte << std::endl;
+    // throw std::runtime_error("writing wY");
+    // std::cout << "wy: " << (int)byte << std::endl;
     hardwareRegisters.windowY = byte;
     break;
   case 0xff4b:

@@ -34,6 +34,7 @@ void CPU::initializeOpcodes() {
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
+  opcodes[0x22] = {[this]() { CPU::LDHLPlusA(); }, 1, 8, 8};
   opcodes[0x23] = {[this]() { CPU::IncHL(); }, 1, 8, 8};
   opcodes[0x25] = {[this]() { CPU::DecH(); }, 1, 4, 4};
   opcodes[0x26] = {[this]() { CPU::LDHu8(); }, 2, 8, 8};
@@ -43,6 +44,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
   opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
+  opcodes[0x38] = {[this]() { CPU::JRCi8(); }, 2, 8, 12};
   opcodes[0x3c] = {[this]() { CPU::IncA(); }, 1, 4, 4};
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
   opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
@@ -290,8 +292,6 @@ void CPU::LDHu8() {
 
 void CPU::JRNZi8() {
   int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
-  // std::cout << "offset: " << std::dec << static_cast<int>(offset) <<
-  // std::endl;
 
   if (!registers.isFlagSet(registers.FLAG_Z)) {
     registers.PC = registers.PC + opcodes[opcode].length + offset;
@@ -425,6 +425,12 @@ void CPU::LDHLu16() {
   registers.HL = toLittleEndian(lowByte, highByte);
 }
 
+void CPU::LDHLPlusA() {
+  uint8_t a = registers.getA();
+  memory.write(registers.HL, a);
+  registers.HL++;
+}
+
 void CPU::IncHL() { registers.HL++; }
 
 void CPU::LDAHLInc() {
@@ -454,6 +460,15 @@ void CPU::LDHLDecA() {
 void CPU::LDHLu8() {
   uint8_t value = memory.read(registers.PC + 1);
   memory.write(registers.HL, value);
+}
+
+void CPU::JRCi8() {
+  int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
+
+  if (registers.isFlagSet(registers.FLAG_C)) {
+    registers.PC = registers.PC + opcodes[opcode].length + offset;
+    jumped = true;
+  }
 }
 
 void CPU::IncA() { registers.setA(registers.getA() + 1); }

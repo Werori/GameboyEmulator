@@ -37,6 +37,8 @@ struct CPU {
   static void nop();
   // load 16-bit into BC
   void LDBCu16();
+  // load A into address at BC
+  void LDBCA();
   // increase BC
   void IncBC();
   // decrease register B | set N flag, H&Z dependent

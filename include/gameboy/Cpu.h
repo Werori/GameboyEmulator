@@ -125,6 +125,8 @@ struct CPU {
   void LDEA();
   // load A into H
   void LDHA();
+  // load E into L
+  void LDLE();
   // load A into L
   void LDLA();
   // load A into D

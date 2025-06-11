@@ -91,6 +91,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xc9] = {[this]() { CPU::RET(); }, 1, 16, 16};
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
   opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
+  opcodes[0xde] = {[this]() { CPU::SBCAu8(); }, 2, 8, 8};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xe1] = {[this]() { CPU::PopHL(); }, 1, 12, 12};
@@ -425,6 +426,20 @@ void CPU::Call() {
 }
 
 void CPU::PushDE() { pushToStack(registers.DE); }
+
+void CPU::SBCAu8() {
+  uint8_t a = registers.getA();
+  uint8_t value = memory.read(registers.PC + 1);
+  uint8_t carry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+  uint16_t result = registers.getA() - value - carry;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySubWithCarry(a, value, carry));
+  registers.setFlag(registers.FLAG_C, isCarrySubWithCarry(a, value, carry));
+
+  registers.setA(result & 0xff);
+}
 
 void CPU::AndAA() {
   uint8_t a = registers.getA();
@@ -830,6 +845,14 @@ bool CPU::isCarryAdd(uint8_t a, uint8_t value) {
 
 bool CPU::isCarryAddWithCarry(uint8_t val1, uint8_t val2, uint8_t carry) {
   return ((uint16_t)val1 + (uint16_t)val2 + carry) > 0xFF;
+}
+
+bool CPU::isCarrySubWithCarry(uint8_t val1, uint8_t val2, uint8_t carry) {
+  return (uint16_t)val1 < ((uint16_t)val2 + carry);
+}
+
+bool CPU::isHalfCarrySubWithCarry(uint8_t val1, uint8_t val2, uint8_t carry) {
+  return ((val1 & 0x0F) < ((val2 & 0x0F) + carry));
 }
 
 void CPU::handleInterrupts() {

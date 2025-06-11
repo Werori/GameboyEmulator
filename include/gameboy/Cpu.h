@@ -159,6 +159,8 @@ struct CPU {
   void Call();
   // push DE onto stack
   void PushDE();
+  // subtract with carry
+  void SBCAu8();
   // A & A, set flags
   void AndAA();
   // subtract B from A
@@ -253,4 +255,7 @@ private:
 
   bool isHalfCarryAdd16(uint16_t a, uint16_t b);
   bool isCarryAdd16(uint16_t a, uint16_t b);
+
+  bool isCarrySubWithCarry(uint8_t val1, uint8_t val2, uint8_t carry);
+  bool isHalfCarrySubWithCarry(uint8_t val1, uint8_t val2, uint8_t carry);
 };

@@ -93,6 +93,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xe2] = {[this]() { CPU::LDFF00PlusCA(); }, 1, 8, 8};
   opcodes[0xe5] = {[this]() { CPU::PushHL(); }, 1, 16, 16};
   opcodes[0xe6] = {[this]() { CPU::AndAu8(); }, 2, 8, 8};
+  opcodes[0xe8] = {[this]() { CPU::AddSPi8(); }, 2, 16, 16};
   opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   opcodes[0xee] = {[this]() { CPU::XORAu8(); }, 2, 8, 8};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
@@ -614,6 +615,18 @@ void CPU::AndAu8() {
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
   registers.setFlag(registers.FLAG_C, false);
+}
+
+void CPU::AddSPi8() {
+  int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
+
+  registers.setFlag(registers.FLAG_Z, false);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H,
+                    isHalfCarryAdd(registers.SP & 0xff, offset));
+  registers.setFlag(registers.FLAG_C, isCarryAdd(registers.SP & 0xff, offset));
+
+  registers.SP += offset;
 }
 
 void CPU::LDu16A() {

@@ -57,6 +57,8 @@ struct CPU {
   void DecC();
   // load 8-bit into register C
   void LDCu8();
+  // stop and wait for input
+  void STOP();
   // load 16-bit address into register DE
   void LDDEu16();
   // Jump to pc + offset
@@ -163,6 +165,8 @@ struct CPU {
   void SubAB();
   // subtract C from A
   void SubAC();
+  // A and L
+  void ANDAL();
   // push PC onto stack and jump to 0x08
   void RST08h();
   // load data to 0xFF00 Plus 8-bit data in the next byte

@@ -51,11 +51,13 @@ void PPU::tick(int cycles) {
 
   if (wasOn && !isOn) {
     lcdEnabled = false;
+    std::cout << "lcd off" << std::endl;
     memory.setLy(0);
     cycleCounter = 0;
     mode = 0;
   } else if (!wasOn && isOn) {
     lcdEnabled = true;
+    std::cout << "lcd on" << std::endl;
     cycleCounter = 0;
     mode = 2;
   }

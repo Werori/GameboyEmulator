@@ -26,6 +26,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x0c] = {[this]() { CPU::IncC(); }, 1, 4, 4};
   opcodes[0x0d] = {[this]() { CPU::DecC(); }, 1, 4, 4};
   opcodes[0x0e] = {[this]() { CPU::LDCu8(); }, 2, 8, 8};
+  opcodes[0x10] = {[this]() { CPU::STOP(); }, 2, 4, 4};
   opcodes[0x11] = {[this]() { CPU::LDDEu16(); }, 3, 12, 12};
   opcodes[0x12] = {[this]() { CPU::LDDEA(); }, 1, 8, 8};
   opcodes[0x13] = {[this]() { CPU::IncDE(); }, 1, 8, 8};
@@ -77,6 +78,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xa7] = {[this]() { CPU::AndAA(); }, 1, 4, 4};
   opcodes[0x90] = {[this]() { CPU::SubAB(); }, 1, 4, 4};
   opcodes[0x91] = {[this]() { CPU::SubAC(); }, 1, 4, 4};
+  opcodes[0xa5] = {[this]() { CPU::ANDAL(); }, 1, 4, 4};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
   opcodes[0xb0] = {[this]() { CPU::ORAB(); }, 1, 4, 4};
   opcodes[0xb1] = {[this]() { CPU::ORAC(); }, 1, 4, 4};
@@ -237,6 +239,8 @@ void CPU::DecC() {
 }
 
 void CPU::LDCu8() { registers.setC(memory.read(registers.PC + 1)); }
+
+void CPU::STOP() {}
 
 void CPU::LDDEu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
@@ -555,6 +559,15 @@ void CPU::DecA() {
   registers.setFlag(registers.FLAG_N, true);
 
   registers.setA(result);
+}
+
+void CPU::ANDAL() {
+  registers.setA(registers.getA() & registers.getL());
+
+  registers.setFlag(registers.FLAG_Z, registers.getA() == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+  registers.setFlag(registers.FLAG_C, false);
 }
 
 void CPU::LDAu8() { registers.setA(memory.read(registers.PC + 1)); }

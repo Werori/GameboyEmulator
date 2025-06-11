@@ -39,6 +39,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x25] = {[this]() { CPU::DecH(); }, 1, 4, 4};
   opcodes[0x26] = {[this]() { CPU::LDHu8(); }, 2, 8, 8};
   opcodes[0x28] = {[this]() { CPU::JRZi8(); }, 2, 8, 12};
+  opcodes[0x29] = {[this]() { CPU::AddHLHL(); }, 1, 8, 8};
   opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
   opcodes[0x2c] = {[this]() { CPU::IncL(); }, 1, 4, 4};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
@@ -468,6 +469,16 @@ void CPU::LDHLPlusA() {
 }
 
 void CPU::IncHL() { registers.HL++; }
+
+void CPU::AddHLHL() {
+
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H,
+                    isHalfCarryAdd16(registers.HL, registers.HL));
+  registers.setFlag(registers.FLAG_C, isCarryAdd16(registers.HL, registers.HL));
+
+  registers.HL = registers.HL + registers.HL;
+}
 
 void CPU::LDAHLInc() {
   auto value = memory.read(registers.HL);

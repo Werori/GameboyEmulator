@@ -83,6 +83,8 @@ struct CPU {
   void DecH();
   // load u8 into H
   void LDHu8();
+  // add HL to HL, set flags
+  void AddHLHL();
   // load address at HL++ into A
   void LDAHLInc();
   // increase L

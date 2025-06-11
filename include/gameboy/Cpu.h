@@ -163,6 +163,8 @@ struct CPU {
   void AndAu8();
   // load value of A into 16-bit address
   void LDu16A();
+  // A ^ u8
+  void XORAu8();
   // load value of 0xFF00 plus 8-bit into register A
   void LDAFF00Plusu8();
   // disable interrupt

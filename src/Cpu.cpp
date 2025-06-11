@@ -89,6 +89,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xe5] = {[this]() { CPU::PushHL(); }, 1, 16, 16};
   opcodes[0xe6] = {[this]() { CPU::AndAu8(); }, 2, 8, 8};
   opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
+  opcodes[0xee] = {[this]() { CPU::XORAu8(); }, 2, 8, 8};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
   // opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
@@ -592,19 +593,25 @@ void CPU::LDu16A() {
 
   uint8_t value = registers.getA();
   memory.write(address, value);
-  // auto add = memory.read(address);
-  // std::cout << "value: " << std::hex << (int)value << std::endl;
-  // std::cout << "add: " << std::hex << (int)add << std::endl;
-  // throw std::runtime_error("reading....");
+}
+
+void CPU::XORAu8() {
+  uint8_t a = registers.getA();
+  uint8_t value = memory.read(registers.PC + 1);
+  uint8_t result = a ^ value;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, false);
+
+  registers.setA(result);
 }
 
 void CPU::LDAFF00Plusu8() {
   auto byte = memory.read(registers.PC + 1);
-  // std::cout << std::hex << "byte: " << (int)byte << std::endl;
-  // auto address = memory.read(0xff00 + byte);
   auto address = 0xff00 + byte;
   uint8_t value = memory.read(address);
-  // std::cout << std::hex << "address: " << address << std::endl;
 
   registers.setA(value);
 }

@@ -33,6 +33,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x19] = {[this]() { CPU::AddHLDE(); }, 1, 8, 8};
   opcodes[0x1a] = {[this]() { CPU::LDADE(); }, 1, 8, 8};
   // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
+  opcodes[0x1e] = {[this]() { CPU::LDEu8(); }, 2, 8, 8};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   opcodes[0x22] = {[this]() { CPU::LDHLPlusA(); }, 1, 8, 8};
@@ -277,6 +278,11 @@ void CPU::IncE() {
   registers.setFlag(registers.FLAG_H, isHalfCarryAdd(e, 1));
 
   registers.setE(result);
+}
+
+void CPU::LDEu8() {
+  uint8_t value = memory.read(registers.PC + 1);
+  registers.setE(value);
 }
 
 void CPU::JRZi8() {

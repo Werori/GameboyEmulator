@@ -113,6 +113,8 @@ struct CPU {
   void LDHLDecA();
   // load u8 value into A register
   void LDAu8();
+  // load D into B
+  void LDBD();
   // load value from A into C
   void LDCA();
   // load value at HL into D

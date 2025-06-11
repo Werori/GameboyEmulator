@@ -91,6 +91,8 @@ struct CPU {
   void AddHLHL();
   // load address at HL++ into A
   void LDAHLInc();
+  // decrease HL
+  void DecHL();
   // increase L
   void IncL();
   // load 16-bit valu into SP

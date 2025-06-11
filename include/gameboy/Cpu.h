@@ -93,6 +93,8 @@ struct CPU {
   void LDHLu8();
   // jump if carry set
   void JRCi8();
+  // load from address at HL into A, decrease HL
+  void LDAHLDec();
   // increase A
   void IncA();
   // decrease A

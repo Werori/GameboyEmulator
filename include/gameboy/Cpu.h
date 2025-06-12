@@ -113,6 +113,8 @@ struct CPU {
   void DecA();
   // get value from A and load it into address held by HL. Decrease HL.
   void LDHLDecA();
+  // decrease value at HL
+  void DecAddrHL();
   // load u8 value into A register
   void LDAu8();
   // load D into B

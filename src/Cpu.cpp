@@ -49,6 +49,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x2c] = {[this]() { CPU::IncL(); }, 1, 4, 4};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
+  opcodes[0x35] = {[this]() { CPU::DecAddrHL(); }, 1, 12, 12};
   opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
   opcodes[0x38] = {[this]() { CPU::JRCi8(); }, 2, 8, 12};
   opcodes[0x3a] = {[this]() { CPU::LDAHLDec(); }, 1, 8, 8};
@@ -539,8 +540,18 @@ void CPU::LDHLDecA() {
   auto address = registers.HL;
 
   memory.write(address, a);
-  // std::cout << "HL: " << std::hex << (int)address << std::endl;
   registers.HL--;
+}
+
+void CPU::DecAddrHL() {
+  uint8_t value = memory.read(registers.HL);
+  uint8_t result = value - 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(value, 1));
+
+  memory.write(registers.HL, result);
 }
 
 void CPU::LDHLu8() {

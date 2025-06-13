@@ -1,6 +1,8 @@
 #include "GameboyMemory.h"
 #include "InterruptFlag.h"
 #include "Timers.h"
+#include <iostream>
+#include <ostream>
 
 Timers::Timers(GameboyMemory &memory) : memory(memory) {}
 
@@ -42,6 +44,8 @@ void Timers::tick(int cycles) {
 
 void Timers::onRegisterWrite(uint16_t address, uint8_t byte) {
   switch (address) {
+  case 0xff06:
+    timerModulo = byte;
   case 0xff07:
     uint8_t newTimerControl = byte & 0x07;
     bool oldEnable = timerControl & 0b100;

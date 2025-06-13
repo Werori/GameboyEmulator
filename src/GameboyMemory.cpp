@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <iostream>
 #include <stdexcept>
 #include <vector>
 
@@ -53,7 +54,7 @@ uint8_t GameboyMemory::read(uint16_t address) {
   } else if (address == 0xffff) {
     return interruptEnable;
   } else {
-    return 0x00;
+    throw std::runtime_error("out of range read");
   }
 }
 
@@ -64,7 +65,8 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
 
   switch (address) {
   case 0xff00:
-    throw std::runtime_error("reading joypad");
+    return hardwareRegisters.joypad;
+    // throw std::runtime_error("reading joypad");
     break;
   case 0xff01:
     throw std::runtime_error("reading serial transfer data");

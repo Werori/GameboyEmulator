@@ -423,13 +423,8 @@ void CPU::RetZ() {
 }
 
 void CPU::RET() {
-  uint8_t low = memory.read(registers.SP);
-  registers.SP += 1;
-
-  uint8_t high = memory.read(registers.SP);
-  registers.SP += 1;
-
-  registers.PC = toLittleEndian(low, high);
+  registers.PC = popFromStack();
+  jumped = true;
 }
 
 void CPU::JPZu16() {

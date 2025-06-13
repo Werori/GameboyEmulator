@@ -255,6 +255,8 @@ struct CPU {
   void LDAA();
   // add A and B
   void AddAB();
+  // Add A and A
+  void AddAA();
   // add with carry
   void ADCAA();
   // add C to A with carry

@@ -255,6 +255,9 @@ struct CPU {
   void EI();
 
   // extended opcodes
+  // swap bits in A
+  void SwapA();
+  // check bit 0 of A
   void Bit0A();
   // check bit 5 of A
   void Bit5A();

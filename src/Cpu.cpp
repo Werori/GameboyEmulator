@@ -126,6 +126,7 @@ void CPU::initializeOpcodes() {
 };
 
 void CPU::initializeExtendedOpcodes() {
+  extendedOpcodes[0x37] = {[this]() { CPU::SwapA(); }, 2, 8, 8};
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
   extendedOpcodes[0x6f] = {[this]() { CPU::Bit5A(); }, 2, 8, 8};
   extendedOpcodes[0x77] = {[this]() { CPU::Bit6A(); }, 2, 8, 8};
@@ -889,6 +890,18 @@ void CPU::ADCAC() {
 void CPU::EI() { IME = 1; }
 
 // extended opcodes
+void CPU::SwapA() {
+  uint8_t a = registers.getA();
+  uint8_t result = (a << 4) | (a >> 4);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, false);
+
+  registers.setA(result);
+}
+
 void CPU::Bit0A() {
   bool bit = ((registers.getA() & (1 << 0)) == 0);
   registers.setFlag(registers.FLAG_Z, bit == 0);

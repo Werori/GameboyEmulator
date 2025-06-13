@@ -95,6 +95,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xc5] = {[this]() { CPU::PushBC(); }, 1, 16, 16};
   opcodes[0xc8] = {[this]() { CPU::RetZ(); }, 1, 8, 20};
   opcodes[0xc9] = {[this]() { CPU::RET(); }, 1, 16, 16};
+  opcodes[0xcc] = {[this]() { CPU::CallZu16(); }, 3, 12, 24};
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
@@ -434,6 +435,17 @@ void CPU::RET() {
   registers.PC = toLittleEndian(low, high);
 }
 
+void CPU::CallZu16() {
+  if (registers.isFlagSet(registers.FLAG_Z)) {
+    auto [lowByte, highByte] = getLowByteAndHighByte();
+    uint16_t address = toLittleEndian(lowByte, highByte);
+    pushToStack(registers.PC + 3);
+
+    registers.PC = address;
+    jumped = true;
+  }
+}
+
 void CPU::Call() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
   uint16_t address = toLittleEndian(lowByte, highByte);
@@ -441,6 +453,7 @@ void CPU::Call() {
   pushToStack(registers.PC + 3);
 
   registers.PC = address;
+  jumped = true;
 }
 
 void CPU::PushDE() { pushToStack(registers.DE); }

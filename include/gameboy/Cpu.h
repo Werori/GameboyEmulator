@@ -213,6 +213,8 @@ struct CPU {
   void XORAu8();
   // load value of 0xFF00 plus 8-bit into register A
   void LDAFF00Plusu8();
+  // pop address into AF
+  void PopAF();
   // disable interrupt
   void DI();
   // push AF onto stack

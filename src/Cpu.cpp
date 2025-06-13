@@ -114,6 +114,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   opcodes[0xee] = {[this]() { CPU::XORAu8(); }, 2, 8, 8};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
+  opcodes[0xf1] = {[this]() { CPU::PopAF(); }, 1, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
   // opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
   opcodes[0xf5] = {[this]() { CPU::PushAF(); }, 1, 16, 16};
@@ -773,6 +774,8 @@ void CPU::LDAFF00Plusu8() {
 
   registers.setA(value);
 }
+
+void CPU::PopAF() { registers.AF = popFromStack(); }
 
 void CPU::DI() { IME = 0; }
 

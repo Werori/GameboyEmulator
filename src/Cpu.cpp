@@ -51,6 +51,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x2e] = {[this]() { CPU::LDLu8(); }, 2, 8, 8};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
+  opcodes[0x34] = {[this]() { CPU::IncHLAddr(); }, 1, 12, 12};
   opcodes[0x35] = {[this]() { CPU::DecAddrHL(); }, 1, 12, 12};
   opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
   opcodes[0x38] = {[this]() { CPU::JRCi8(); }, 2, 8, 12};
@@ -588,6 +589,17 @@ void CPU::LDHLDecA() {
 
   memory.write(address, a);
   registers.HL--;
+}
+
+void CPU::IncHLAddr() {
+  uint8_t value = memory.read(registers.HL);
+  uint8_t result = value + 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, isHalfCarryAdd(value, 1));
+
+  memory.write(registers.HL, result);
 }
 
 void CPU::DecAddrHL() {

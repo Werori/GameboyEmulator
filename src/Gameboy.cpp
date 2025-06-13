@@ -53,9 +53,7 @@ void Gameboy::run() {
     }
     ppu.drawFrame();
     EndDrawing();
-    // BeginDrawing();
-    // EndDrawing();
-    cpu.cycles = 0; // used by last opcode
+    cpu.cycles = 0;
   }
 
   ppu.close();

@@ -195,6 +195,8 @@ struct CPU {
   void SubAC();
   // A and L
   void ANDAL();
+  // xor AC, set flags
+  void XORAC();
   // push PC onto stack and jump to 0x08
   void RST08h();
   // pop address into DE

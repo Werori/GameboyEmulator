@@ -18,6 +18,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x01] = {[this]() { CPU::LDBCu16(); }, 3, 12, 12};
   opcodes[0x02] = {[this]() { CPU::LDBCA(); }, 1, 8, 8};
   opcodes[0x03] = {[this]() { CPU::IncBC(); }, 1, 8, 8};
+  opcodes[0x04] = {[this]() { CPU::IncB(); }, 1, 4, 4};
   opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
   opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
   opcodes[0x07] = {[this]() { CPU::RLCA(); }, 1, 4, 4};
@@ -188,6 +189,17 @@ void CPU::LDBCA() {
 }
 
 void CPU::IncBC() { registers.BC = registers.BC++; }
+
+void CPU::IncB() {
+  uint8_t b = registers.getB();
+  uint8_t result = b + 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, isHalfCarryAdd(b, 1));
+
+  registers.setB(result);
+}
 
 void CPU::DecB() {
   uint8_t b = registers.getB();

@@ -41,6 +41,8 @@ struct CPU {
   void LDBCA();
   // increase BC
   void IncBC();
+  // increase B
+  void IncB();
   // decrease register B | set N flag, H&Z dependent
   void DecB();
   // load 8-bit into register B

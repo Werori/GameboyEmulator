@@ -35,7 +35,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x18] = {[this]() { CPU::JRi8(); }, 2, 12, 12};
   opcodes[0x19] = {[this]() { CPU::AddHLDE(); }, 1, 8, 8};
   opcodes[0x1a] = {[this]() { CPU::LDADE(); }, 1, 8, 8};
-  // opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
+  opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x1e] = {[this]() { CPU::LDEu8(); }, 2, 8, 8};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
@@ -96,9 +96,10 @@ void CPU::initializeOpcodes() {
   opcodes[0xc8] = {[this]() { CPU::RetZ(); }, 1, 8, 20};
   opcodes[0xc9] = {[this]() { CPU::RET(); }, 1, 16, 16};
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
-  opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
-  opcodes[0xde] = {[this]() { CPU::SBCAu8(); }, 2, 8, 8};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
+  opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
+  opcodes[0xd6] = {[this]() { CPU::SubAu8(); }, 2, 8, 8};
+  opcodes[0xde] = {[this]() { CPU::SBCAu8(); }, 2, 8, 8};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xe1] = {[this]() { CPU::PopHL(); }, 1, 12, 12};
   opcodes[0xe2] = {[this]() { CPU::LDFF00PlusCA(); }, 1, 8, 8};
@@ -443,6 +444,19 @@ void CPU::Call() {
 }
 
 void CPU::PushDE() { pushToStack(registers.DE); }
+
+void CPU::SubAu8() {
+  uint8_t value = memory.read(registers.PC + 1);
+  uint8_t a = registers.getA();
+  uint8_t result = a - value;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, value));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, value));
+
+  registers.setA(result);
+}
 
 void CPU::SBCAu8() {
   uint8_t a = registers.getA();

@@ -171,6 +171,8 @@ struct CPU {
   void Call();
   // push DE onto stack
   void PushDE();
+  // subtract u8 from A
+  void SubAu8();
   // subtract with carry
   void SBCAu8();
   // A & A, set flags

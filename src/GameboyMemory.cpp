@@ -188,7 +188,7 @@ void GameboyMemory::write(uint16_t address, uint8_t byte) {
   } else if (wRam2Range.contains(address)) {
     wram2[address - wRam2Range.start] = byte;
   } else if (echoRamRange.contains(address)) {
-    throw std::runtime_error("writing echo ram");
+    wram1[address - echoRamRange.start] = byte;
   } else if (oamRange.contains(address)) {
     oam[address - oamRange.start] = byte;
   } else if (ioRange.contains(address)) {

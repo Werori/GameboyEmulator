@@ -219,6 +219,8 @@ struct CPU {
   void LDu16A();
   // A ^ u8
   void XORAu8();
+  // push pc to stack and jump to 0x28
+  void RST28h();
   // load value of 0xFF00 plus 8-bit into register A
   void LDAFF00Plusu8();
   // pop address into AF

@@ -118,6 +118,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xe8] = {[this]() { CPU::AddSPi8(); }, 2, 16, 16};
   opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   opcodes[0xee] = {[this]() { CPU::XORAu8(); }, 2, 8, 8};
+  opcodes[0xef] = {[this]() { CPU::RST28h(); }, 1, 16, 16};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf1] = {[this]() { CPU::PopAF(); }, 1, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
@@ -804,6 +805,12 @@ void CPU::XORAu8() {
   registers.setFlag(registers.FLAG_C, false);
 
   registers.setA(result);
+}
+
+void CPU::RST28h() {
+  pushToStack(registers.PC + 1);
+  registers.PC = 0x28;
+  jumped = true;
 }
 
 void CPU::LDAFF00Plusu8() {

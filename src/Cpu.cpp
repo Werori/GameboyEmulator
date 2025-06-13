@@ -95,6 +95,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xc5] = {[this]() { CPU::PushBC(); }, 1, 16, 16};
   opcodes[0xc8] = {[this]() { CPU::RetZ(); }, 1, 8, 20};
   opcodes[0xc9] = {[this]() { CPU::RET(); }, 1, 16, 16};
+  opcodes[0xca] = {[this]() { CPU::JPZu16(); }, 3, 12, 16};
   opcodes[0xcc] = {[this]() { CPU::CallZu16(); }, 3, 12, 24};
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
@@ -433,6 +434,14 @@ void CPU::RET() {
   registers.SP += 1;
 
   registers.PC = toLittleEndian(low, high);
+}
+
+void CPU::JPZu16() {
+  if (registers.isFlagSet(registers.FLAG_Z)) {
+    auto [lowByte, highByte] = getLowByteAndHighByte();
+    registers.PC = toLittleEndian(lowByte, highByte);
+    jumped = true;
+  }
 }
 
 void CPU::CallZu16() {

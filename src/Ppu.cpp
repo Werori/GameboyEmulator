@@ -92,9 +92,9 @@ void PPU::tick(int cycles) {
   }
 
   if (ly < startOfVBlank) {
-    if (cycleCounter < 80) {
+    if (cycleCounter < MODE_2) {
       mode = 2;
-    } else if (cycleCounter < 252) {
+    } else if (cycleCounter < MODE_3) {
       if (mode != 3) {
         mode = 3;
         if (lcdc & 0x1) {

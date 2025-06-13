@@ -167,6 +167,8 @@ struct CPU {
   void RetZ();
   // return from stack
   void RET();
+  // Jump to u16 if zero flag set
+  void JPZu16();
   // push pc to stack if zero flag is set and jump to address
   void CallZu16();
   // push pc onto stack and set pc to given address

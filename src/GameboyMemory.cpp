@@ -36,7 +36,7 @@ uint8_t GameboyMemory::read(uint16_t address) {
   } else if (vRAMRange.contains(address)) {
     return vram[address - vRAMRange.start];
   } else if (externalRAMRange.contains(address)) {
-    throw std::runtime_error("reading external RAM");
+    // throw std::runtime_error("reading external RAM");
     return externalRam[address - externalRAMRange.start];
   } else if (wRam1Range.contains(address)) {
     return wram1[address - wRam1Range.start];

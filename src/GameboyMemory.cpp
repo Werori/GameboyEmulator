@@ -371,7 +371,6 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.lyc = byte;
     break;
   case 0xff46:
-    throw std::runtime_error("writing oam dma");
     startOamDmaTransfer(byte);
     break;
   case 0xff47:

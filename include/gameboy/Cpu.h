@@ -101,6 +101,8 @@ struct CPU {
   void DecHL();
   // increase L
   void IncL();
+  // load u8 into L
+  void LDLu8();
   // load 16-bit valu into SP
   void LDSPu16();
   // load 8-bit address into register HL

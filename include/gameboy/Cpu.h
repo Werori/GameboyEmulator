@@ -161,6 +161,8 @@ struct CPU {
   void CPAC();
   // return from stack if not zero
   void RetNz();
+  // pop address into BC
+  void PopBC();
   // Jump to 16-bit address
   void JPa16();
   // push BC onto stack

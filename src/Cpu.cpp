@@ -92,6 +92,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xb2] = {[this]() { CPU::ORAD(); }, 1, 4, 4};
   opcodes[0xb9] = {[this]() { CPU::CPAC(); }, 1, 4, 4};
   opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
+  opcodes[0xc1] = {[this]() { CPU::PopBC(); }, 1, 12, 12};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   opcodes[0xc5] = {[this]() { CPU::PushBC(); }, 1, 16, 16};
   opcodes[0xc8] = {[this]() { CPU::RetZ(); }, 1, 8, 20};
@@ -409,6 +410,8 @@ void CPU::RetNz() {
   }
 }
 
+void CPU::PopBC() { registers.BC = popFromStack(); }
+
 void CPU::JPa16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
   registers.PC = toLittleEndian(lowByte, highByte);
@@ -540,8 +543,6 @@ void CPU::PopDE() { registers.DE = popFromStack(); }
 
 void CPU::LDHLu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
-  // std::cout << "HL address: " << std::hex
-  // << (int)toLittleEndian(lowByte, highByte) << std::endl;
   registers.HL = toLittleEndian(lowByte, highByte);
 }
 

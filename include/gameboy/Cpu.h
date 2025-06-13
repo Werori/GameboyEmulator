@@ -265,6 +265,8 @@ struct CPU {
   void ADCAC();
   // enable interrupt
   void EI();
+  // jump to 0x38
+  void RST38h();
 
   // extended opcodes
   // swap bits in A

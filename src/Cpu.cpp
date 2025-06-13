@@ -129,6 +129,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xfa] = {[this]() { CPU::LDAu16(); }, 3, 16, 16};
   opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
   opcodes[0xfb] = {[this]() { CPU::EI(); }, 1, 4, 4};
+  opcodes[0xff] = {[this]() { CPU::RST38h(); }, 1, 16, 16};
 };
 
 void CPU::initializeExtendedOpcodes() {
@@ -552,14 +553,7 @@ void CPU::AndAC() {
 }
 
 void CPU::RST08h() {
-  uint16_t pc = registers.PC + 1;
-
-  registers.SP -= 1;
-  memory.write(registers.SP, pc & 0xff);
-
-  registers.SP -= 1;
-  memory.write(registers.SP, (pc >> 8) & 0xff);
-
+  pushToStack(registers.PC + 1);
   registers.PC = 0x08;
   jumped = true;
 }
@@ -942,6 +936,12 @@ void CPU::ADCAC() {
 }
 
 void CPU::EI() { IME = 1; }
+
+void CPU::RST38h() {
+  pushToStack(registers.PC + 1);
+  registers.PC = 0x38;
+  jumped = true;
+}
 
 // extended opcodes
 void CPU::SwapA() {

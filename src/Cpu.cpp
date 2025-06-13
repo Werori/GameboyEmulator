@@ -86,6 +86,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xa7] = {[this]() { CPU::AndAA(); }, 1, 4, 4};
   opcodes[0x90] = {[this]() { CPU::SubAB(); }, 1, 4, 4};
   opcodes[0x91] = {[this]() { CPU::SubAC(); }, 1, 4, 4};
+  opcodes[0xa1] = {[this]() { CPU::AndAC(); }, 1, 4, 4};
   opcodes[0xa5] = {[this]() { CPU::ANDAL(); }, 1, 4, 4};
   opcodes[0xa9] = {[this]() { CPU::XORAC(); }, 1, 4, 4};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
@@ -534,6 +535,15 @@ void CPU::SubAC() {
   registers.setFlag(registers.FLAG_C, isCarrySub(a, c));
 
   registers.setA(result);
+}
+
+void CPU::AndAC() {
+  registers.setA(registers.getA() & registers.getC());
+
+  registers.setFlag(registers.FLAG_Z, registers.getA() == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+  registers.setFlag(registers.FLAG_C, false);
 }
 
 void CPU::RST08h() {

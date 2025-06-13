@@ -193,6 +193,8 @@ struct CPU {
   void SubAB();
   // subtract C from A
   void SubAC();
+  // A and C
+  void AndAC();
   // A and L
   void ANDAL();
   // xor AC, set flags

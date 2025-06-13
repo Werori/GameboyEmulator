@@ -104,6 +104,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xd1] = {[this]() { CPU::PopDE(); }, 1, 12, 12};
   opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
   opcodes[0xd6] = {[this]() { CPU::SubAu8(); }, 2, 8, 8};
+  opcodes[0xd9] = {[this]() { CPU::Reti(); }, 1, 16, 16};
   opcodes[0xde] = {[this]() { CPU::SBCAu8(); }, 2, 8, 8};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xe1] = {[this]() { CPU::PopHL(); }, 1, 12, 12};
@@ -475,6 +476,11 @@ void CPU::SubAu8() {
   registers.setFlag(registers.FLAG_C, isCarrySub(a, value));
 
   registers.setA(result);
+}
+
+void CPU::Reti() {
+  registers.PC = popFromStack();
+  IME = 1;
 }
 
 void CPU::SBCAu8() {

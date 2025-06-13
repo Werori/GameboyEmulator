@@ -181,6 +181,8 @@ struct CPU {
   void PushDE();
   // subtract u8 from A
   void SubAu8();
+  // set pc to stack and enable IME
+  void Reti();
   // subtract with carry
   void SBCAu8();
   // A & A, set flags

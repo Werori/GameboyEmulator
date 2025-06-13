@@ -103,6 +103,8 @@ struct CPU {
   void IncL();
   // load u8 into L
   void LDLu8();
+  // negate A, set flags
+  void CPL();
   // load 16-bit valu into SP
   void LDSPu16();
   // load 8-bit address into register HL

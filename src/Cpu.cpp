@@ -49,6 +49,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x2b] = {[this]() { CPU::DecHL(); }, 1, 8, 8};
   opcodes[0x2c] = {[this]() { CPU::IncL(); }, 1, 4, 4};
   opcodes[0x2e] = {[this]() { CPU::LDLu8(); }, 2, 8, 8};
+  opcodes[0x2f] = {[this]() { CPU::CPL(); }, 1, 4, 4};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
   opcodes[0x34] = {[this]() { CPU::IncHLAddr(); }, 1, 12, 12};
@@ -584,6 +585,12 @@ void CPU::IncL() { registers.setL(registers.getL() + 1); }
 void CPU::LDLu8() {
   uint8_t value = memory.read(registers.PC + 1);
   registers.setL(value);
+}
+
+void CPU::CPL() {
+  registers.setA(~registers.getA());
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, true);
 }
 
 void CPU::LDSPu16() {

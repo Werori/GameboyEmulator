@@ -111,6 +111,8 @@ struct CPU {
   void JRCi8();
   // load from address at HL into A, decrease HL
   void LDAHLDec();
+  // decrease stack pointer
+  void DecSP();
   // increase A
   void IncA();
   // decrease A

@@ -139,6 +139,8 @@ struct CPU {
   void LDLA();
   // load A into D
   void LDDA();
+  // load C into E
+  void LDEC();
   // load value at address HL int o E
   void LDEHL();
   // copy value of register A into B

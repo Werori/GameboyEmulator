@@ -191,6 +191,8 @@ struct CPU {
   void ANDAL();
   // push PC onto stack and jump to 0x08
   void RST08h();
+  // pop address into DE
+  void PopDE();
   // load data to 0xFF00 Plus 8-bit data in the next byte
   void LDFF00Plusu8A();
   // pop from stack

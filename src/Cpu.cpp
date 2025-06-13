@@ -100,6 +100,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xcc] = {[this]() { CPU::CallZu16(); }, 3, 12, 24};
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
+  opcodes[0xd1] = {[this]() { CPU::PopDE(); }, 1, 12, 12};
   opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
   opcodes[0xd6] = {[this]() { CPU::SubAu8(); }, 2, 8, 8};
   opcodes[0xde] = {[this]() { CPU::SBCAu8(); }, 2, 8, 8};
@@ -523,7 +524,6 @@ void CPU::SubAC() {
 }
 
 void CPU::RST08h() {
-  // std::cout << "RST -----------------------------------" << std::endl;
   uint16_t pc = registers.PC + 1;
 
   registers.SP -= 1;
@@ -535,6 +535,8 @@ void CPU::RST08h() {
   registers.PC = 0x08;
   jumped = true;
 }
+
+void CPU::PopDE() { registers.DE = popFromStack(); }
 
 void CPU::LDHLu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();

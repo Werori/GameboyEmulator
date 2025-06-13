@@ -53,7 +53,7 @@ uint8_t GameboyMemory::read(uint16_t address) {
   } else if (address == 0xffff) {
     return interruptEnable;
   } else {
-    throw std::runtime_error("out of range address");
+    return 0x00;
   }
 }
 

@@ -145,15 +145,11 @@ void CPU::decodeAndExecute() {
   if (opcode != 0xcb) {
     instr = &opcodes[opcode];
     instr->func();
-    // opcodes[opcode].func();
-    // length = opcodes[opcode].length;
   } else {
     registers.PC += 1;
     opcode = memory.read(registers.PC);
     instr = &extendedOpcodes[opcode];
     instr->func();
-    // extendedOpcodes[opcode].func();
-    // length = extendedOpcodes[opcode].length;
   }
 
   length = instr->length;

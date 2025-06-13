@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <iostream>
 #include <stdexcept>
 #include <vector>
 
@@ -210,7 +209,9 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
 
   switch (address) {
   case 0xff00:
-    throw std::runtime_error("writing joypad");
+    hardwareRegisters.joypad = byte;
+    // std::cout << "byte: " << std::hex << (int)byte << std::endl;
+    // throw std::runtime_error("writing joypad");
     break;
   case 0xff01:
     hardwareRegisters.serialTransferData = byte;

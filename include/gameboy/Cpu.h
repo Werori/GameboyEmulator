@@ -215,6 +215,8 @@ struct CPU {
   void AndAu8();
   // add signed offset to SP, set flags
   void AddSPi8();
+  // jump to address in HL
+  void JPHL();
   // load value of A into 16-bit address
   void LDu16A();
   // A ^ u8

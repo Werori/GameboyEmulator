@@ -39,8 +39,6 @@ void PPU::close() {
   CloseWindow();
 }
 
-uint8_t PPU::getLy() { return memory.getLy(); }
-
 void PPU::tick(int cycles) {
   cycleCounter += cycles;
   uint8_t ly = memory.getLy();
@@ -52,7 +50,7 @@ void PPU::tick(int cycles) {
   if (wasOn && !isOn) {
     lcdEnabled = false;
     std::cout << "lcd off" << std::endl;
-    memory.setLy(0);
+    ly = 0;
     cycleCounter = 0;
     mode = 0;
   } else if (!wasOn && isOn) {
@@ -64,11 +62,14 @@ void PPU::tick(int cycles) {
 
   lastLcdc = lcdc;
 
-  if (!lcdEnabled)
+  if (!lcdEnabled) {
+    ly = 0;
+    cycleCounter = 0;
     return;
+  }
 
   if (!(lcdc & 0x80)) {
-    memory.setLy(0);
+    ly = 0;
     cycleCounter = 0;
     return;
   }
@@ -78,7 +79,6 @@ void PPU::tick(int cycles) {
 
     if (ly > endOfVBlank)
       ly = 0;
-    memory.setLy(ly);
 
     if (ly == startOfVBlank) {
       mode = 1;
@@ -129,6 +129,9 @@ void PPU::tick(int cycles) {
     stat &= ~0x04;
   }
   memory.write(0xFF41, stat);
+  std::cout << "[PPU] setLy: " << std::hex << (int)ly
+            << " at cycle: " << cycleCounter << std::endl;
+  memory.setLy(ly);
 }
 
 uint32_t PPU::colorToUint32(Color c) {

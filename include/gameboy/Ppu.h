@@ -17,7 +17,6 @@ struct PPU : IRegisterObserver {
   uint8_t obPallete0Data[NUMBER_OF_COLORS_IN_PALLETE];
   uint8_t obPallete1Data[NUMBER_OF_COLORS_IN_PALLETE];
   void tick(int cycles);
-  uint8_t getLy();
   bool frameReady = false;
 
   PPU(GameboyMemory &memory);

@@ -167,6 +167,8 @@ struct CPU {
   void ORAC();
   // A | D, set flags
   void ORAD();
+  // A | A, set flags
+  void ORAA();
   // compare A and C
   void CPAC();
   // return from stack if not zero

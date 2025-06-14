@@ -99,6 +99,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xb0] = {[this]() { CPU::ORAB(); }, 1, 4, 4};
   opcodes[0xb1] = {[this]() { CPU::ORAC(); }, 1, 4, 4};
   opcodes[0xb2] = {[this]() { CPU::ORAD(); }, 1, 4, 4};
+  opcodes[0xb7] = {[this]() { CPU::ORAA(); }, 1, 4, 4};
   opcodes[0xb9] = {[this]() { CPU::CPAC(); }, 1, 4, 4};
   opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc1] = {[this]() { CPU::PopBC(); }, 1, 12, 12};
@@ -165,14 +166,13 @@ void CPU::decodeAndExecute() {
 
   if (opcode != 0xcb) {
     instr = &opcodes[opcode];
-    instr->func();
   } else {
     registers.PC += 1;
     opcode = memory.read(registers.PC);
     instr = &extendedOpcodes[opcode];
-    instr->func();
   }
 
+  instr->func();
   length = instr->length;
 
   if (jumped) {
@@ -421,6 +421,18 @@ void CPU::ORAD() {
   uint8_t a = registers.getA();
   uint8_t d = registers.getD();
   uint8_t result = a | d;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_C, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_N, false);
+
+  registers.setA(result);
+}
+
+void CPU::ORAA() {
+  uint8_t a = registers.getA();
+  uint8_t result = a | a;
 
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_C, false);

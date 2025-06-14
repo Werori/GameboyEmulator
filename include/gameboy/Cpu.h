@@ -8,6 +8,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <fstream>
 
 struct CPU {
   GameboyMemory &memory;
@@ -25,6 +26,7 @@ struct CPU {
   int lastInstructionCycles = 0;
 
   const uint8_t LOWER_NIBBLE_MASK = 0x0f;
+  std::ofstream logfile;
 
   CPU(GameboyMemory &memory, PPU &ppu, Timers &timers);
 
@@ -281,6 +283,10 @@ struct CPU {
   void Bit6A();
   // reset bit 0 of A
   void Res0A();
+
+  void openLogFile(const std::string &filename);
+  void closeLogFile();
+  void logCPUState();
 
 private:
   // switch high byte and low byte

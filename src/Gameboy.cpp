@@ -33,6 +33,7 @@ bool Gameboy::loadROMFromFile(std::string_view filename) {
 }
 
 void Gameboy::run() {
+  cpu.openLogFile("cpu_log.txt");
   const int CYCLES_PER_FRAME = 70224;
   // const int CYCLES_PER_FRAME = 1;
   ppu.init();
@@ -40,6 +41,7 @@ void Gameboy::run() {
   while (!WindowShouldClose()) {
     // Run CPU instructions until enough cycles for one frame
     while (cpu.cycles < CYCLES_PER_FRAME) {
+      cpu.logCPUState();
       cpu.fetchOpcode();
       cpu.decodeAndExecute();
     }
@@ -57,4 +59,5 @@ void Gameboy::run() {
   }
 
   ppu.close();
+  cpu.closeLogFile();
 }

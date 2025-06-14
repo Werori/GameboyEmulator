@@ -1,11 +1,12 @@
 #include "Cpu.h"
 #include "GameboyMemory.h"
-
 #include <array>
 #include <cstdint>
 #include <functional>
+#include <iomanip>
 #include <ios>
 #include <iostream>
+#include <sstream>
 
 CPU::CPU(GameboyMemory &memory, PPU &ppu, Timers &timers)
     : memory(memory), ppu(ppu), timers(timers) {
@@ -1114,4 +1115,48 @@ bool CPU::isHalfCarryAdd16(uint16_t a, uint16_t b) {
 
 bool CPU::isCarryAdd16(uint16_t a, uint16_t b) {
   return (uint32_t)a + (uint32_t)b > 0xFFFF;
+}
+
+void CPU::openLogFile(const std::string &filename) { logfile.open(filename); }
+void CPU::closeLogFile() { logfile.close(); }
+
+void CPU::logCPUState() {
+  // Read registers and PC
+  uint8_t A = registers.getA();
+  uint8_t F = registers.getF();
+  uint8_t B = registers.getB();
+  uint8_t C = registers.getC();
+  uint8_t D = registers.getD();
+  uint8_t E = registers.getE();
+  uint8_t H = registers.getH();
+  uint8_t L = registers.getL();
+  uint16_t SP = registers.SP;
+  uint16_t PC = registers.PC;
+
+  // Read memory bytes near PC (pc, pc+1, pc+2, pc+3)
+  uint8_t mem0 = memory.read(PC);
+  uint8_t mem1 = memory.read(PC + 1);
+  uint8_t mem2 = memory.read(PC + 2);
+  uint8_t mem3 = memory.read(PC + 3);
+
+  // Format the line:
+  std::ostringstream line;
+  line << std::uppercase << std::hex << std::setfill('0')
+       << "A:" << std::setw(2) << (int)A << " "
+       << "F:" << std::setw(2) << (int)F << " "
+       << "B:" << std::setw(2) << (int)B << " "
+       << "C:" << std::setw(2) << (int)C << " "
+       << "D:" << std::setw(2) << (int)D << " "
+       << "E:" << std::setw(2) << (int)E << " "
+       << "H:" << std::setw(2) << (int)H << " "
+       << "L:" << std::setw(2) << (int)L << " "
+       << "SP:" << std::setw(4) << SP << " "
+       << "PC:" << std::setw(4) << PC << " "
+       << "PCMEM:" << std::setw(2) << (int)mem0 << "," << std::setw(2)
+       << (int)mem1 << "," << std::setw(2) << (int)mem2 << "," << std::setw(2)
+       << (int)mem3;
+
+  // Write to file and flush
+  logfile << line.str() << "\n";
+  logfile.flush();
 }

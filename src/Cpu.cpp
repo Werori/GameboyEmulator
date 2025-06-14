@@ -44,6 +44,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   opcodes[0x22] = {[this]() { CPU::LDHLPlusA(); }, 1, 8, 8};
   opcodes[0x23] = {[this]() { CPU::IncHL(); }, 1, 8, 8};
+  opcodes[0x24] = {[this]() { CPU::IncH(); }, 1, 4, 4};
   opcodes[0x25] = {[this]() { CPU::DecH(); }, 1, 4, 4};
   opcodes[0x26] = {[this]() { CPU::LDHu8(); }, 2, 8, 8};
   opcodes[0x28] = {[this]() { CPU::JRZi8(); }, 2, 8, 12};
@@ -609,6 +610,17 @@ void CPU::LDHLPlusA() {
 }
 
 void CPU::IncHL() { registers.HL++; }
+
+void CPU::IncH() {
+  uint8_t h = registers.getH();
+  uint8_t result = h + 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, isHalfCarryAdd(h, 1));
+
+  registers.setH(result);
+}
 
 void CPU::AddHLHL() {
 

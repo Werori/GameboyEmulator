@@ -344,6 +344,8 @@ void CPU::DecH() {
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, true);
   registers.setFlag(registers.FLAG_H, isHalfCarrySub(h, 1));
+
+  registers.setH(result);
 }
 
 void CPU::LDHu8() {
@@ -591,7 +593,16 @@ void CPU::LDAHLInc() {
 
 void CPU::DecHL() { registers.HL--; }
 
-void CPU::IncL() { registers.setL(registers.getL() + 1); }
+void CPU::IncL() {
+  uint8_t l = registers.getL();
+  uint8_t result = l + 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, isHalfCarryAdd(l, 1));
+
+  registers.setL(result);
+}
 
 void CPU::LDLu8() {
   uint8_t value = memory.read(registers.PC + 1);
@@ -662,7 +673,16 @@ void CPU::LDAHLDec() {
 
 void CPU::DecSP() { registers.SP--; }
 
-void CPU::IncA() { registers.setA(registers.getA() + 1); }
+void CPU::IncA() {
+  uint8_t a = registers.getA();
+  uint8_t result = a + 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, isHalfCarryAdd(a, 1));
+
+  registers.setA(result);
+}
 
 void CPU::DecA() {
 
@@ -769,6 +789,8 @@ void CPU::AndAu8() {
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
   registers.setFlag(registers.FLAG_C, false);
+
+  registers.setA(result);
 }
 
 void CPU::AddSPi8() {

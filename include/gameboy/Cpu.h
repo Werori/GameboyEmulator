@@ -137,6 +137,8 @@ struct CPU {
   void LDAu8();
   // load D into B
   void LDBD();
+  // load value in address HL into B
+  void LDBHL();
   // load value from A into C
   void LDCA();
   // load value at HL into D

@@ -486,7 +486,7 @@ void CPU::PushBC() { pushToStack(registers.BC); }
 void CPU::AddAu8() {
   uint8_t a = registers.getA();
   uint8_t value = memory.read(registers.PC + 1);
-  uint16_t result = a + value;
+  uint8_t result = a + value;
 
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, false);

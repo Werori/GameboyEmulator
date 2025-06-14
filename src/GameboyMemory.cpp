@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <iostream>
 #include <stdexcept>
 #include <vector>
 
@@ -149,7 +150,11 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
     throw std::runtime_error("reading scy");
     break;
   case 0xff44:
-    return hardwareRegisters.ly;
+    // std::cout << "ly returned: " << std::hex << (int)hardwareRegisters.ly
+    //           << std::endl;
+    // return hardwareRegisters.ly;
+    return 0x90;
+    break;
   case 0xff45:
     return hardwareRegisters.lyc;
     break;

@@ -49,6 +49,8 @@ struct CPU {
   void LDBu8();
   // rotates bit left
   void RLCA();
+  // Add HL + BC, set flags
+  void AddHLBC();
   // load value at address BC into A
   void LDABC();
   // decrease BC

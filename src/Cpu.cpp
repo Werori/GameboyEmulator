@@ -211,7 +211,7 @@ void CPU::LDBCA() {
   memory.write(registers.BC, a);
 }
 
-void CPU::IncBC() { registers.BC = registers.BC++; }
+void CPU::IncBC() { registers.BC++; }
 
 void CPU::IncB() {
   uint8_t b = registers.getB();
@@ -321,7 +321,7 @@ void CPU::LDDEA() {
   memory.write(address, a);
 }
 
-void CPU::IncDE() { registers.DE = registers.DE + 1; }
+void CPU::IncDE() { registers.DE++; }
 
 void CPU::IncD() {
   uint8_t d = registers.getD();

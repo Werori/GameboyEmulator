@@ -22,6 +22,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
   opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
   opcodes[0x07] = {[this]() { CPU::RLCA(); }, 1, 4, 4};
+  opcodes[0x09] = {[this]() { CPU::AddHLBC(); }, 1, 8, 8};
   opcodes[0x0a] = {[this]() { CPU::LDABC(); }, 1, 8, 8};
   opcodes[0x0b] = {[this]() { CPU::DecBC(); }, 1, 8, 8};
   opcodes[0x0c] = {[this]() { CPU::IncC(); }, 1, 4, 4};
@@ -99,6 +100,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc1] = {[this]() { CPU::PopBC(); }, 1, 12, 12};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
+  opcodes[0xc4] = {[this]() { CPU::CallNZu16(); }, 3, 12, 24};
   opcodes[0xc5] = {[this]() { CPU::PushBC(); }, 1, 16, 16};
   opcodes[0xc8] = {[this]() { CPU::RetZ(); }, 1, 8, 20};
   opcodes[0xc9] = {[this]() { CPU::RET(); }, 1, 16, 16};
@@ -143,6 +145,8 @@ void CPU::initializeExtendedOpcodes() {
 void CPU::fetchOpcode() { opcode = memory.read(registers.PC); }
 
 void CPU::decodeAndExecute() {
+  // std::cout << "opcode: " << std::hex << (int)opcode << std::endl;
+  // std::cout << "B: " << std::hex << (int)registers.getB() << std::endl;
   if (opcode != 0xcb) {
     if (!opcodes[opcode].func) {
       std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
@@ -243,6 +247,20 @@ void CPU::RLCA() {
   registers.setFlag(registers.FLAG_C, bit7 != 0);
 }
 
+void CPU::AddHLBC() {
+  // std::cout << "lcdc : " << std::hex << (int)memory.read(0xff40) <<
+  // std::endl;
+  uint16_t hl = registers.HL;
+  uint16_t bc = registers.BC;
+  uint16_t result = hl + bc;
+
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, isHalfCarryAdd16(hl, bc));
+  registers.setFlag(registers.FLAG_C, isCarryAdd16(hl, bc));
+
+  registers.HL = result;
+}
+
 void CPU::LDABC() { registers.setA(memory.read(registers.BC)); }
 
 void CPU::DecBC() { registers.BC--; }
@@ -331,8 +349,11 @@ void CPU::LDEu8() {
 
 void CPU::JRZi8() {
   int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
+  // std::cout << "is flag Z set: " << registers.isFlagSet(registers.FLAG_Z)
+  //           << std::endl;
   if (registers.isFlagSet(registers.FLAG_Z)) {
     registers.PC = registers.PC + opcodes[opcode].length + offset;
+    // std::cout << "pc from jrzi8 " << std::hex << registers.PC << std::endl;
     jumped = true;
   }
 }
@@ -425,15 +446,28 @@ void CPU::RetNz() {
 void CPU::PopBC() { registers.BC = popFromStack(); }
 
 void CPU::JPa16() {
+  // std::cout << "jump 16" << std::endl;
   auto [lowByte, highByte] = getLowByteAndHighByte();
   registers.PC = toLittleEndian(lowByte, highByte);
+  // std::cout << "addr from JPA16: " << std::hex << registers.PC << std::endl;
   jumped = true;
 };
+
+void CPU::CallNZu16() {
+  if (!registers.isFlagSet(registers.FLAG_Z)) {
+    auto [lowByte, highByte] = getLowByteAndHighByte();
+    uint16_t address = toLittleEndian(lowByte, highByte);
+    pushToStack(registers.PC + opcodes[opcode].length);
+
+    registers.PC = address;
+    jumped = true;
+  }
+}
 
 void CPU::PushBC() { pushToStack(registers.BC); }
 
 void CPU::RetZ() {
-  if (registers.isFlagSet(registers.FLAG_Z) == 1) {
+  if (registers.isFlagSet(registers.FLAG_Z)) {
     registers.PC = popFromStack();
     jumped = true;
   }
@@ -491,6 +525,7 @@ void CPU::SubAu8() {
 void CPU::Reti() {
   registers.PC = popFromStack();
   IME = 1;
+  jumped = true;
 }
 
 void CPU::SBCAu8() {
@@ -608,7 +643,6 @@ void CPU::LDSPu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();
   uint16_t address = toLittleEndian(lowByte, highByte);
   registers.SP = address;
-  // std::cout << "SP: " << registers.SP << std::endl;
 }
 
 void CPU::LDHLDecA() {
@@ -662,15 +696,22 @@ void CPU::LDAHLDec() {
 
 void CPU::DecSP() { registers.SP--; }
 
-void CPU::IncA() { registers.setA(registers.getA() + 1); }
+void CPU::IncA() {
+  uint8_t a = registers.getA();
+  uint8_t result = a + 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, isHalfCarryAdd(a, 1));
+
+  registers.setA(result);
+}
 
 void CPU::DecA() {
-
   uint8_t a = registers.getA();
   uint8_t result = a - 1;
 
   registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, 1));
-
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, true);
 
@@ -769,6 +810,8 @@ void CPU::AndAu8() {
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
   registers.setFlag(registers.FLAG_C, false);
+
+  registers.setA(result);
 }
 
 void CPU::AddSPi8() {
@@ -810,7 +853,7 @@ void CPU::XORAu8() {
 }
 
 void CPU::RST28h() {
-  pushToStack(registers.PC + 1);
+  pushToStack(registers.PC + opcodes[opcode].length);
   registers.PC = 0x28;
   jumped = true;
 }
@@ -827,7 +870,10 @@ void CPU::PopAF() { registers.AF = popFromStack(); }
 
 void CPU::DI() { IME = 0; }
 
-void CPU::PushAF() { pushToStack(registers.AF); }
+void CPU::PushAF() {
+  std::cout << "push AF" << std::endl;
+  pushToStack(registers.AF);
+}
 
 void CPU::LDHLA() {
   uint8_t a = registers.getA();
@@ -886,7 +932,7 @@ void CPU::AddAB() {
   registers.setFlag(registers.FLAG_H, isHalfCarryAdd(a, b));
   registers.setFlag(registers.FLAG_C, isCarryAdd(a, b));
 
-  registers.setA(result);
+  registers.setA(static_cast<uint8_t>(result));
 }
 
 void CPU::AddAA() {
@@ -898,7 +944,7 @@ void CPU::AddAA() {
   registers.setFlag(registers.FLAG_H, isHalfCarryAdd(a, a));
   registers.setFlag(registers.FLAG_C, isCarryAdd(a, a));
 
-  registers.setA(result);
+  registers.setA(static_cast<uint8_t>(result));
 }
 
 void CPU::ADCAA() {
@@ -938,7 +984,7 @@ void CPU::ADCAC() {
 void CPU::EI() { IME = 1; }
 
 void CPU::RST38h() {
-  pushToStack(registers.PC + 1);
+  pushToStack(registers.PC + opcodes[opcode].length);
   registers.PC = 0x38;
   jumped = true;
 }
@@ -1055,6 +1101,8 @@ void CPU::handleInterrupts() {
       pushToStack(registers.PC);
 
       registers.PC = interruptVectors[i]; // jump to interrupt handler
+      std::cout << "pc from handler: " << std::hex << (int)registers.PC
+                << std::endl;
 
       break; // handle one interrupt per call
     }

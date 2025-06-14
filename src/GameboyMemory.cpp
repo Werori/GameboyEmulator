@@ -236,7 +236,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     // throw std::runtime_error("writing timer modulo");
     break;
   case 0xff07:
-    throw std::runtime_error("writing timerControl");
+    // throw std::runtime_error("writing timerControl");
     break;
   case 0xff0f:
     // throw std::runtime_error("writing interrupt flag");

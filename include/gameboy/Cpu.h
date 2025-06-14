@@ -16,7 +16,7 @@ struct CPU {
   uint8_t opcode;
   std::array<Instruction, 256> opcodes;
   std::array<Instruction, 256> extendedOpcodes;
-  uint8_t IME = 1;
+  uint8_t IME = 0;
 
   Registers registers;
   bool jumped = false;
@@ -49,6 +49,8 @@ struct CPU {
   void LDBu8();
   // rotates bit left
   void RLCA();
+  // Add BC to HL
+  void AddHLBC();
   // load value at address BC into A
   void LDABC();
   // decrease BC
@@ -167,6 +169,8 @@ struct CPU {
   void PopBC();
   // Jump to 16-bit address
   void JPa16();
+  // call if zero flag not set
+  void CallNZu16();
   // push BC onto stack
   void PushBC();
   // jump to address from stack if Zero flag is set

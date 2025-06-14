@@ -89,6 +89,8 @@ struct CPU {
   void LDHLPlusA();
   // increase HL
   void IncHL();
+  // increase H
+  void IncH();
   // jump if not zero
   void JRZi8();
   // decrease H

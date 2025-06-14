@@ -52,6 +52,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
   opcodes[0x2b] = {[this]() { CPU::DecHL(); }, 1, 8, 8};
   opcodes[0x2c] = {[this]() { CPU::IncL(); }, 1, 4, 4};
+  opcodes[0x2d] = {[this]() { CPU::DecL(); }, 1, 4, 4};
   opcodes[0x2e] = {[this]() { CPU::LDLu8(); }, 2, 8, 8};
   opcodes[0x2f] = {[this]() { CPU::CPL(); }, 1, 4, 4};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
@@ -674,6 +675,17 @@ void CPU::IncL() {
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, isHalfCarryAdd(l, 1));
+
+  registers.setL(result);
+}
+
+void CPU::DecL() {
+  uint8_t l = registers.getL();
+  uint8_t result = l - 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(l, 1));
 
   registers.setL(result);
 }

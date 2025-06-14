@@ -109,6 +109,8 @@ struct CPU {
   void DecHL();
   // increase L
   void IncL();
+  // decrease L
+  void DecL();
   // load u8 into L
   void LDLu8();
   // negate A, set flags

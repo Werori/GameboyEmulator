@@ -105,6 +105,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   opcodes[0xc4] = {[this]() { CPU::CallNZu16(); }, 3, 12, 24};
   opcodes[0xc5] = {[this]() { CPU::PushBC(); }, 1, 16, 16};
+  opcodes[0xc6] = {[this]() { CPU::AddAu8(); }, 2, 8, 8};
   opcodes[0xc8] = {[this]() { CPU::RetZ(); }, 1, 8, 20};
   opcodes[0xc9] = {[this]() { CPU::RET(); }, 1, 16, 16};
   opcodes[0xca] = {[this]() { CPU::JPZu16(); }, 3, 12, 16};
@@ -469,6 +470,19 @@ void CPU::CallNZu16() {
 }
 
 void CPU::PushBC() { pushToStack(registers.BC); }
+
+void CPU::AddAu8() {
+  uint8_t a = registers.getA();
+  uint8_t value = memory.read(registers.PC + 1);
+  uint16_t result = a + value;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, isHalfCarryAdd(a, value));
+  registers.setFlag(registers.FLAG_C, isCarryAdd(a, value));
+
+  registers.setA(result);
+}
 
 void CPU::RetZ() {
   if (registers.isFlagSet(registers.FLAG_Z) == 1) {

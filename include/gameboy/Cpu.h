@@ -179,6 +179,8 @@ struct CPU {
   void CallNZu16();
   // push BC onto stack
   void PushBC();
+  // Add A + u8, set flags
+  void AddAu8();
   // jump to address from stack if Zero flag is set
   void RetZ();
   // return from stack

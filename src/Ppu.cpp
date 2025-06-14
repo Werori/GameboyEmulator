@@ -91,33 +91,33 @@ void PPU::tick(int cycles) {
     } else {
       mode = 2;
     }
-
-    if (scanlines < startOfVBlank) {
-      if (cycleCounter < MODE_2) {
-        mode = 2;
-      } else if (cycleCounter < MODE_3) {
-        if (mode != 3) {
-          mode = 3;
-          if (lcdc & 0x1) {
-            std::cout << "rendering scanlines..." << std::endl;
-            renderScanline(scanlines);
-            if ((lcdc & 0x20) && scanlines >= memory.getWindowY() &&
-                memory.getWindowX() <= SCREEN_WIDTH) {
-              std::cout << "lcdc is: " << (int)lcdc << std::endl;
-              throw std::runtime_error("window is enabled");
-            }
-          } else if (lcdc & (1 << 1)) {
-            throw std::runtime_error("obj enable");
+  }
+  if (scanlines < startOfVBlank) {
+    if (cycleCounter < MODE_2) {
+      mode = 2;
+    } else if (cycleCounter < MODE_3) {
+      if (mode != 3) {
+        mode = 3;
+        if (lcdc & 0x1) {
+          std::cout << "rendering scanlines..." << std::endl;
+          renderScanline(scanlines);
+          if ((lcdc & 0x20) && scanlines >= memory.getWindowY() &&
+              memory.getWindowX() <= SCREEN_WIDTH) {
+            std::cout << "lcdc is: " << (int)lcdc << std::endl;
+            throw std::runtime_error("window is enabled");
           }
+        } else if (lcdc & (1 << 1)) {
+          throw std::runtime_error("obj enable");
         }
-      } else {
-        mode = 0;
       }
     } else {
-      mode = 1;
+      mode = 0;
     }
-    memory.setLy(scanlines);
+  } else {
+    mode = 1;
   }
+  memory.setLy(scanlines);
+
   uint8_t stat = memory.read(0xFF41);
   stat = (stat & 0xFC) | (mode & 0x3); // Clear bits 0-1 and set new mode
   memory.write(0xFF41, stat);

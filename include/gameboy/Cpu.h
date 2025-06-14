@@ -77,6 +77,8 @@ struct CPU {
   void LDDEA();
   // increase DE
   void IncDE();
+  // increase D
+  void IncD();
   // set u8 to D
   void LDDu8();
   // increase E

@@ -293,6 +293,8 @@ struct CPU {
   // extended opcodes
   // swap bits in A
   void SwapA();
+  // shift b >> 1, set carry
+  void SrlB();
   // check bit 0 of A
   void Bit0A();
   // check bit 5 of A

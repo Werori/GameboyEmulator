@@ -145,6 +145,7 @@ void CPU::initializeOpcodes() {
 
 void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x37] = {[this]() { CPU::SwapA(); }, 2, 8, 8};
+  extendedOpcodes[0x38] = {[this]() { CPU::SrlB(); }, 2, 8, 8};
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
   extendedOpcodes[0x6f] = {[this]() { CPU::Bit5A(); }, 2, 8, 8};
   extendedOpcodes[0x77] = {[this]() { CPU::Bit6A(); }, 2, 8, 8};
@@ -171,8 +172,7 @@ void CPU::decodeAndExecute() {
   if (opcode != 0xcb) {
     instr = &opcodes[opcode];
   } else {
-    registers.PC += 1;
-    opcode = memory.read(registers.PC);
+    opcode = memory.read(registers.PC + 1);
     instr = &extendedOpcodes[opcode];
   }
 
@@ -1087,6 +1087,19 @@ void CPU::SwapA() {
   registers.setFlag(registers.FLAG_C, false);
 
   registers.setA(result);
+}
+
+void CPU::SrlB() {
+  uint8_t b = registers.getB();
+  bool carry = (b & 0x01);
+  uint8_t result = b >> 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, carry);
+
+  registers.setB(result);
 }
 
 void CPU::Bit0A() {

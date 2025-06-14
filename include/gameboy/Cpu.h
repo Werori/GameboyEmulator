@@ -161,6 +161,8 @@ struct CPU {
   void LDEHL();
   // copy value of register A into B
   void LDBA();
+  // load value at address HL into C
+  void LDCHL();
   // Load 16-bit address into register BC
   void LDBCn16();
   // XOR A register with A register and set Z flag if result = 0

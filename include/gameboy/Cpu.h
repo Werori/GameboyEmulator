@@ -173,6 +173,8 @@ struct CPU {
   void PopBC();
   // Jump to 16-bit address
   void JPa16();
+  // Call u16 if not Zero
+  void CallNZu16();
   // push BC onto stack
   void PushBC();
   // jump to address from stack if Zero flag is set

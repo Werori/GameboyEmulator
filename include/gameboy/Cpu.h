@@ -20,6 +20,7 @@ struct CPU {
   uint8_t IME = 1;
   bool IME_scheduled = false;
 
+  bool halted = false;
   Registers registers;
   bool jumped = false;
   int cycles = 0;

@@ -42,8 +42,20 @@ void Gameboy::run() {
     // Run CPU instructions until enough cycles for one frame
     while (cpu.cycles < CYCLES_PER_FRAME) {
       cpu.logCPUState();
-      cpu.fetchOpcode();
-      cpu.decodeAndExecute();
+      if (cpu.halted) {
+        uint8_t interruptFlag = memory.read(0xFF0F);
+        uint8_t interruptEnable = memory.read(0xFFFF);
+        uint8_t firedInterrupts = interruptFlag & interruptEnable;
+
+        if (firedInterrupts) {
+          cpu.halted = false; // Wake CPU from HALT
+        }
+        ppu.tick(1);
+        timers.tick(1);
+      } else {
+        cpu.fetchOpcode();
+        cpu.decodeAndExecute();
+      }
     }
     BeginDrawing();
     ClearBackground(WHITE);

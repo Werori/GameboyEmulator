@@ -182,7 +182,9 @@ void CPU::fetchOpcode() {
     std::cout << "IME now enabled" << std::endl;
   }
 
-  opcode = memory.read(registers.PC);
+  if (!halted) {
+    opcode = memory.read(registers.PC);
+  }
 }
 
 void CPU::decodeAndExecute() {
@@ -1057,7 +1059,7 @@ void CPU::LDHLE() {
   memory.write(registers.HL, e);
 }
 
-void CPU::HALT() {}
+void CPU::HALT() { halted = true; }
 
 void CPU::LDDA() {
   uint8_t a = registers.getA();

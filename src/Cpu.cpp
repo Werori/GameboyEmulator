@@ -757,9 +757,9 @@ void CPU::SBCAu8() {
   uint8_t a = registers.getA();
   uint8_t value = memory.read(registers.PC + 1);
   uint8_t carry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
-  uint16_t result = registers.getA() - value - carry;
+  uint16_t result = a - value - carry;
 
-  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_Z, (result & 0xff) == 0);
   registers.setFlag(registers.FLAG_N, true);
   registers.setFlag(registers.FLAG_H, isHalfCarrySubWithCarry(a, value, carry));
   registers.setFlag(registers.FLAG_C, isCarrySubWithCarry(a, value, carry));

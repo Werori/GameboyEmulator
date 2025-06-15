@@ -152,6 +152,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xf1] = {[this]() { CPU::PopAF(); }, 1, 12, 12};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
   // opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
+  opcodes[0xf8] = {[this]() { CPU::LDHLSPi8(); }, 2, 12, 12};
   opcodes[0xf5] = {[this]() { CPU::PushAF(); }, 1, 16, 16};
   opcodes[0xfa] = {[this]() { CPU::LDAu16(); }, 3, 16, 16};
   opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
@@ -196,7 +197,6 @@ void CPU::decodeAndExecute() {
 
   instr->func();
   length = instr->length;
-  handleInterrupts(instr->length);
 
   if (jumped) {
     lastInstructionCycles = instr->machine_cycles_branch;
@@ -217,6 +217,7 @@ void CPU::decodeAndExecute() {
   }
 
   cycles += lastInstructionCycles;
+  handleInterrupts(instr->length);
 
   if (IME_scheduled) {
     IME = 1;
@@ -1151,6 +1152,20 @@ void CPU::LDAFF00Plusu8() {
 void CPU::PopAF() { registers.AF = popFromStack(); }
 
 void CPU::DI() { IME = 0; }
+
+void CPU::LDHLSPi8() {
+  int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
+  uint16_t result = registers.SP + offset;
+  uint8_t uoffset = static_cast<uint8_t>(offset);
+
+  registers.setFlag(registers.FLAG_Z, false);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H,
+                    isHalfCarryAdd(registers.SP & 0xff, uoffset));
+  registers.setFlag(registers.FLAG_C, isCarryAdd(registers.SP & 0xff, uoffset));
+
+  registers.HL = result;
+}
 
 void CPU::PushAF() {
   uint16_t af = (registers.getA() << 8) | (registers.getF() & 0xF0);

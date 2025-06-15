@@ -284,6 +284,7 @@ struct CPU {
   void PopAF();
   // disable interrupt
   void DI();
+  void LDHLSPi8();
   // push AF onto stack
   void PushAF();
   // load a into address at HL

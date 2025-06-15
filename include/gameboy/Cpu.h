@@ -155,6 +155,8 @@ struct CPU {
   void DecAddrHL();
   // load u8 value into A register
   void LDAu8();
+  // load B into B
+  void LDBB();
   // load D into B
   void LDBD();
   // load value in address HL into B

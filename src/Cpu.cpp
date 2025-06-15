@@ -123,6 +123,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
   opcodes[0xce] = {[this]() { CPU::ADCAu8(); }, 2, 8, 8};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
+  opcodes[0xd0] = {[this]() { CPU::RetNc(); }, 1, 8, 20};
   opcodes[0xd1] = {[this]() { CPU::PopDE(); }, 1, 12, 12};
   opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
   opcodes[0xd6] = {[this]() { CPU::SubAu8(); }, 2, 8, 8};
@@ -579,6 +580,15 @@ void CPU::ADCAu8() {
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, halfCarry);
   registers.setFlag(registers.FLAG_C, carry);
+}
+
+void CPU::RetNc() {
+  if (!registers.isFlagSet(registers.FLAG_C)) {
+    registers.PC = popFromStack();
+    jumped = true;
+  } else {
+    jumped = false;
+  }
 }
 
 void CPU::PushDE() { pushToStack(registers.DE); }

@@ -211,6 +211,8 @@ struct CPU {
   void Call();
   // add witch carry A u8
   void ADCAu8();
+  // pop from stack if not carry
+  void RetNc();
   // push DE onto stack
   void PushDE();
   // subtract u8 from A

@@ -195,6 +195,8 @@ struct CPU {
   void ORAA();
   // compare A and C
   void CPAC();
+  // compare A and D
+  void CPAD();
   // compare A and E
   void CPAE();
   // return from stack if not zero

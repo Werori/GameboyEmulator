@@ -77,6 +77,8 @@ struct CPU {
   void AddHLDE();
   // load value at DE into A
   void LDADE();
+  // decrease DE
+  void DecDE();
   // Load A to address at DE
   void LDDEA();
   // increase DE

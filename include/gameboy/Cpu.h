@@ -193,6 +193,8 @@ struct CPU {
   void ORAA();
   // compare A and C
   void CPAC();
+  // compare A and E
+  void CPAE();
   // return from stack if not zero
   void RetNz();
   // pop address into BC

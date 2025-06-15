@@ -113,6 +113,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xb6] = {[this]() { CPU::ORAHLaddr(); }, 1, 8, 8};
   opcodes[0xb7] = {[this]() { CPU::ORAA(); }, 1, 4, 4};
   opcodes[0xb9] = {[this]() { CPU::CPAC(); }, 1, 4, 4};
+  opcodes[0xbb] = {[this]() { CPU::CPAE(); }, 1, 4, 4};
   opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc1] = {[this]() { CPU::PopBC(); }, 1, 12, 12};
   opcodes[0xc2] = {[this]() { CPU::JPNzu16(); }, 3, 12, 16};
@@ -506,6 +507,17 @@ void CPU::CPAC() {
   registers.setFlag(registers.FLAG_N, true);
   registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, c));
   registers.setFlag(registers.FLAG_C, isCarrySub(a, c));
+}
+
+void CPU::CPAE() {
+  uint8_t a = registers.getA();
+  uint8_t e = registers.getE();
+  uint8_t result = a - e;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, e));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, e));
 }
 
 void CPU::RetNz() {

@@ -222,6 +222,7 @@ void CPU::decodeAndExecute() {
   if (IME_scheduled) {
     IME = 1;
     IME_scheduled = false;
+    std::cout << "IME now enabled" << std::endl;
   }
 }
 
@@ -1278,7 +1279,10 @@ void CPU::ADCAC() {
   registers.setFlag(registers.FLAG_C, carry);
 }
 
-void CPU::EI() { IME_scheduled = true; }
+void CPU::EI() {
+  IME_scheduled = true;
+  std::cout << "Executed EI, scheduling IME" << std::endl;
+}
 
 void CPU::RST38h() {
   pushToStack(registers.PC + 1);
@@ -1405,10 +1409,19 @@ bool CPU::isHalfCarrySubWithCarry(uint8_t val1, uint8_t val2, uint8_t carry) {
 }
 
 void CPU::handleInterrupts(int instructionLength) {
-  if (!IME || memory.interruptsWritten) {
+  if (memory.interruptsWritten) {
+    std::cout << "Delaying interrupt due to recent IF write" << std::endl;
+
+    std::cout << "interrupts Written: " << std::hex
+              << (int)memory.interruptsWritten << std::endl;
     memory.interruptsWritten = false;
     return;
   }
+
+  if (!IME) {
+    return;
+  }
+
   uint8_t interruptFlag = memory.read(0xFF0F);
   uint8_t interruptEnable = memory.read(0xFFFF);
 

@@ -117,6 +117,8 @@ struct CPU {
   void LDLu8();
   // negate A, set flags
   void CPL();
+  // jump if not carry
+  void JRNCi8();
   // load 16-bit valu into SP
   void LDSPu16();
   // load 8-bit address into register HL

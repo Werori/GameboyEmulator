@@ -56,6 +56,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x2d] = {[this]() { CPU::DecL(); }, 1, 4, 4};
   opcodes[0x2e] = {[this]() { CPU::LDLu8(); }, 2, 8, 8};
   opcodes[0x2f] = {[this]() { CPU::CPL(); }, 1, 4, 4};
+  opcodes[0x30] = {[this]() { CPU::JRNCi8(); }, 2, 8, 12};
   opcodes[0x31] = {[this]() { CPU::LDSPu16(); }, 3, 12, 12};
   opcodes[0x32] = {[this]() { CPU::LDHLDecA(); }, 1, 8, 8};
   opcodes[0x34] = {[this]() { CPU::IncHLAddr(); }, 1, 12, 12};
@@ -718,6 +719,15 @@ void CPU::CPL() {
   registers.setA(~registers.getA());
   registers.setFlag(registers.FLAG_N, true);
   registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::JRNCi8() {
+  int8_t offset = static_cast<int8_t>(memory.read(registers.PC + 1));
+
+  if (!registers.isFlagSet(registers.FLAG_C)) {
+    registers.PC = registers.PC + opcodes[opcode].length + offset;
+    jumped = true;
+  }
 }
 
 void CPU::LDSPu16() {

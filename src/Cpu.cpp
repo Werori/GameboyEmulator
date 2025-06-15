@@ -80,6 +80,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x5f] = {[this]() { CPU::LDEA(); }, 1, 4, 4};
   opcodes[0x67] = {[this]() { CPU::LDHA(); }, 1, 4, 4};
   opcodes[0x6b] = {[this]() { CPU::LDLE(); }, 1, 4, 4};
+  opcodes[0x6e] = {[this]() { CPU::LDLHL(); }, 1, 8, 8};
   opcodes[0x6f] = {[this]() { CPU::LDLA(); }, 1, 4, 4};
   opcodes[0x70] = {[this]() { CPU::LDHLaddrB(); }, 1, 8, 8};
   opcodes[0x71] = {[this]() { CPU::LDHLaddrC(); }, 1, 8, 8};
@@ -920,6 +921,8 @@ void CPU::LDEA() {
 void CPU::LDHA() { registers.setH(registers.getA()); }
 
 void CPU::LDLE() { registers.setL(registers.getE()); }
+
+void CPU::LDLHL() { registers.setL(memory.read(registers.HL)); }
 
 void CPU::LDLA() { registers.setL(registers.getA()); }
 

@@ -305,6 +305,8 @@ struct CPU {
   void LDHLSPi8();
   // push AF onto stack
   void PushAF();
+  // A | u8
+  void OrAu8();
   // load a into address at HL
   void LDHLA();
   // load B into A

@@ -163,6 +163,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
   opcodes[0xf8] = {[this]() { CPU::LDHLSPi8(); }, 2, 12, 12};
   opcodes[0xf5] = {[this]() { CPU::PushAF(); }, 1, 16, 16};
+  opcodes[0xf6] = {[this]() { CPU::OrAu8(); }, 2, 8, 8};
   opcodes[0xfa] = {[this]() { CPU::LDAu16(); }, 3, 16, 16};
   opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
   opcodes[0xfb] = {[this]() { CPU::EI(); }, 1, 4, 4};
@@ -1236,6 +1237,19 @@ void CPU::LDHLSPi8() {
 void CPU::PushAF() {
   uint16_t af = (registers.getA() << 8) | (registers.getF() & 0xF0);
   pushToStack(af);
+}
+
+void CPU::OrAu8() {
+  uint8_t a = registers.getA();
+  uint8_t value = memory.read(registers.PC + 1);
+  uint8_t result = a | value;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_C, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_N, false);
+
+  registers.setA(result);
 }
 
 void CPU::LDHLA() {

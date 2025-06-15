@@ -244,8 +244,8 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     // throw std::runtime_error("writing timerControl");
     break;
   case 0xff0f:
-    // throw std::runtime_error("writing interrupt flag");
     hardwareRegisters.interruptFlag = byte;
+    interruptsWritten = true;
     break;
   case 0xff10:
     // throw std::runtime_error("writing sound channel 1 sweep");

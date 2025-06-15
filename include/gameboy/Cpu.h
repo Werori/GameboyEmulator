@@ -18,6 +18,7 @@ struct CPU {
   std::array<Instruction, 256> opcodes;
   std::array<Instruction, 256> extendedOpcodes;
   uint8_t IME = 1;
+  bool IME_scheduled = false;
 
   Registers registers;
   bool jumped = false;

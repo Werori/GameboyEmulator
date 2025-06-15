@@ -58,6 +58,7 @@ private:
 
 public:
   int dividerCounter = 0;
+  bool interruptsWritten = false;
   GameboyMemory();
 
   void requestInterrupt(InterruptFlag flag) override;

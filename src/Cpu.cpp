@@ -217,6 +217,11 @@ void CPU::decodeAndExecute() {
 
   cycles += lastInstructionCycles;
   handleInterrupts();
+
+  if (IME_scheduled) {
+    IME = 1;
+    IME_scheduled = false;
+  }
 }
 
 void CPU::nop() {
@@ -720,7 +725,7 @@ void CPU::RetC() {
 
 void CPU::Reti() {
   registers.PC = popFromStack();
-  IME = 1;
+  IME_scheduled = 1;
 }
 
 void CPU::SBCAu8() {
@@ -1259,7 +1264,7 @@ void CPU::ADCAC() {
   registers.setFlag(registers.FLAG_C, carry);
 }
 
-void CPU::EI() { IME = 1; }
+void CPU::EI() { IME_scheduled = true; }
 
 void CPU::RST38h() {
   pushToStack(registers.PC + 1);
@@ -1386,7 +1391,8 @@ bool CPU::isHalfCarrySubWithCarry(uint8_t val1, uint8_t val2, uint8_t carry) {
 }
 
 void CPU::handleInterrupts() {
-  if (!IME) {
+  if (!IME || memory.interruptsWritten) {
+    memory.interruptsWritten = false;
     return;
   }
   uint8_t interruptFlag = memory.read(0xFF0F);

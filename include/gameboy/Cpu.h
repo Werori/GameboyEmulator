@@ -170,6 +170,8 @@ struct CPU {
   void LDHLaddrC();
   // load D into address at HL
   void LDHLaddrD();
+  // load E into value at HL
+  void LDHLE();
   // load A into D
   void LDDA();
   // load C into E

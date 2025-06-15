@@ -266,6 +266,8 @@ struct CPU {
   void ANDAL();
   // xor AC, set flags
   void XORAC();
+  // A ^ L
+  void XORAL();
   // A ^ (HL)
   void XORAHL();
   // push PC onto stack and jump to 0x08

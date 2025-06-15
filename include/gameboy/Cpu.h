@@ -143,6 +143,8 @@ struct CPU {
   void DecA();
   // get value from A and load it into address held by HL. Decrease HL.
   void LDHLDecA();
+  // increase SP
+  void IncSP();
   // increase value at HL and write to address HL
   void IncHLAddr();
   // decrease value at HL

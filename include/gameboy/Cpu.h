@@ -208,6 +208,8 @@ struct CPU {
   void LDBA();
   // load B into C
   void LDCB();
+  // load C into C
+  void LDCC();
   // load value at address HL into C
   void LDCHL();
   // Load 16-bit address into register BC

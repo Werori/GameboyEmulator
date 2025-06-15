@@ -157,6 +157,8 @@ struct CPU {
   void LDLE();
   // load A into L
   void LDLA();
+  // load B into address at HL
+  void LDHLaddrB();
   // load C into address at HL
   void LDHLaddrC();
   // load D into address at HL
@@ -207,6 +209,8 @@ struct CPU {
   void CallZu16();
   // push pc onto stack and set pc to given address
   void Call();
+  // add witch carry A u8
+  void ADCAu8();
   // push DE onto stack
   void PushDE();
   // subtract u8 from A

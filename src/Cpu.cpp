@@ -81,6 +81,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x67] = {[this]() { CPU::LDHA(); }, 1, 4, 4};
   opcodes[0x6b] = {[this]() { CPU::LDLE(); }, 1, 4, 4};
   opcodes[0x6f] = {[this]() { CPU::LDLA(); }, 1, 4, 4};
+  opcodes[0x70] = {[this]() { CPU::LDHLaddrB(); }, 1, 8, 8};
   opcodes[0x71] = {[this]() { CPU::LDHLaddrC(); }, 1, 8, 8};
   opcodes[0x72] = {[this]() { CPU::LDHLaddrD(); }, 1, 8, 8};
   opcodes[0x77] = {[this]() { CPU::LDHLA(); }, 1, 8, 8};
@@ -120,6 +121,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xca] = {[this]() { CPU::JPZu16(); }, 3, 12, 16};
   opcodes[0xcc] = {[this]() { CPU::CallZu16(); }, 3, 12, 24};
   opcodes[0xcd] = {[this]() { CPU::Call(); }, 3, 24, 24};
+  opcodes[0xce] = {[this]() { CPU::ADCAu8(); }, 2, 8, 8};
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xd1] = {[this]() { CPU::PopDE(); }, 1, 12, 12};
   opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
@@ -561,6 +563,24 @@ void CPU::Call() {
   jumped = true;
 }
 
+void CPU::ADCAu8() {
+  uint8_t a = registers.getA();
+  uint8_t value = memory.read(registers.PC + 1);
+
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarryAddWithCarry(a, value, oldCarry);
+  bool carry = isCarryAddWithCarry(a, value, oldCarry);
+
+  registers.setA(a + value + oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
+}
+
 void CPU::PushDE() { pushToStack(registers.DE); }
 
 void CPU::SubAu8() {
@@ -878,6 +898,11 @@ void CPU::LDHA() { registers.setH(registers.getA()); }
 void CPU::LDLE() { registers.setL(registers.getE()); }
 
 void CPU::LDLA() { registers.setL(registers.getA()); }
+
+void CPU::LDHLaddrB() {
+  uint8_t b = registers.getB();
+  memory.write(registers.HL, b);
+}
 
 void CPU::LDHLaddrC() {
   uint8_t c = registers.getC();

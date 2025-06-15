@@ -40,6 +40,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x1a] = {[this]() { CPU::LDADE(); }, 1, 8, 8};
   opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
   opcodes[0x1e] = {[this]() { CPU::LDEu8(); }, 2, 8, 8};
+  opcodes[0x1f] = {[this]() { CPU::RRAn(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
   opcodes[0x21] = {[this]() { CPU::LDHLu16(); }, 3, 12, 12};
   opcodes[0x22] = {[this]() { CPU::LDHLPlusA(); }, 1, 8, 8};
@@ -359,6 +360,20 @@ void CPU::IncE() {
 void CPU::LDEu8() {
   uint8_t value = memory.read(registers.PC + 1);
   registers.setE(value);
+}
+
+void CPU::RRAn() {
+  bool oldCarry = registers.isFlagSet(registers.FLAG_C);
+  uint8_t a = registers.getA();
+  bool newCarry = (a & 0x01) == 1;
+  uint8_t result = (a >> 1) | (oldCarry ? 0x80 : 0x00);
+
+  registers.setFlag(registers.FLAG_Z, false);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, newCarry);
+
+  registers.setA(result);
 }
 
 void CPU::JRZi8() {

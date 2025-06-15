@@ -85,6 +85,8 @@ struct CPU {
   void IncE();
   // load u8 into E
   void LDEu8();
+  // rotate A right, only carry flag
+  void RRAn();
   // relative jump to pc + i8 if N flag is not set
   void JRNZi8();
   // load 16-bit address into register HL

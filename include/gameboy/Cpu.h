@@ -360,7 +360,7 @@ private:
   bool isCarryAdd(uint8_t a, uint8_t value);
   bool isCarrySub(uint8_t a, uint8_t value);
 
-  void handleInterrupts();
+  void handleInterrupts(int instructionLength);
 
   void checkInterrupts();
 

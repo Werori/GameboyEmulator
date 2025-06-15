@@ -196,6 +196,7 @@ void CPU::decodeAndExecute() {
 
   instr->func();
   length = instr->length;
+  handleInterrupts(instr->length);
 
   if (jumped) {
     lastInstructionCycles = instr->machine_cycles_branch;
@@ -216,7 +217,6 @@ void CPU::decodeAndExecute() {
   }
 
   cycles += lastInstructionCycles;
-  handleInterrupts();
 
   if (IME_scheduled) {
     IME = 1;
@@ -255,10 +255,9 @@ void CPU::DecB() {
   uint8_t b = registers.getB();
   uint8_t result = b - 1;
 
-  registers.setFlag(registers.FLAG_H, isHalfCarrySub(b, 1));
-
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(b, 1));
 
   registers.setB(result);
 }
@@ -725,7 +724,7 @@ void CPU::RetC() {
 
 void CPU::Reti() {
   registers.PC = popFromStack();
-  IME_scheduled = 1;
+  IME = 1;
 }
 
 void CPU::SBCAu8() {
@@ -1390,7 +1389,7 @@ bool CPU::isHalfCarrySubWithCarry(uint8_t val1, uint8_t val2, uint8_t carry) {
   return ((val1 & 0x0F) < ((val2 & 0x0F) + carry));
 }
 
-void CPU::handleInterrupts() {
+void CPU::handleInterrupts(int instructionLength) {
   if (!IME || memory.interruptsWritten) {
     memory.interruptsWritten = false;
     return;
@@ -1423,7 +1422,7 @@ void CPU::handleInterrupts() {
       memory.write(0xFF0F, interruptFlag);
 
       // push current PC onto stack (16-bit)
-      pushToStack(registers.PC);
+      pushToStack(registers.PC + instructionLength);
 
       registers.PC = interruptVectors[i]; // jump to interrupt handler
 

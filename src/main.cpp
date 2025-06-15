@@ -2,8 +2,8 @@
 
 int main() {
   Gameboy gameboy;
-  gameboy.loadROMFromFile("games/02-interrupts.gb");
-  // gameboy.loadROMFromFile("games/03-op sp,hl.gb");
+  // gameboy.loadROMFromFile("games/02-interrupts.gb");
+  gameboy.loadROMFromFile("games/03-op sp,hl.gb");
 
   // gameboy.loadROMFromFile("games/dmg-acid2.gb");
   // gameboy.loadROMFromFile("games/hello-world.gb");

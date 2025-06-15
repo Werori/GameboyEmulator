@@ -23,6 +23,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x05] = {[this]() { CPU::DecB(); }, 1, 4, 4};
   opcodes[0x06] = {[this]() { CPU::LDBu8(); }, 2, 8, 8};
   opcodes[0x07] = {[this]() { CPU::RLCA(); }, 1, 4, 4};
+  opcodes[0x08] = {[this]() { CPU::LDu16SP(); }, 3, 20, 20};
   opcodes[0x09] = {[this]() { CPU::AddHLBC(); }, 1, 8, 8};
   opcodes[0x0a] = {[this]() { CPU::LDABC(); }, 1, 8, 8};
   opcodes[0x0b] = {[this]() { CPU::DecBC(); }, 1, 8, 8};
@@ -285,6 +286,13 @@ void CPU::RLCA() {
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, false);
   registers.setFlag(registers.FLAG_C, bit7 != 0);
+}
+
+void CPU::LDu16SP() {
+  auto [lowByte, highByte] = getLowByteAndHighByte();
+  uint16_t address = toLittleEndian(lowByte, highByte);
+  memory.write(address, registers.SP & 0xff);
+  memory.write(address + 1, (registers.SP >> 8));
 }
 
 void CPU::AddHLBC() {

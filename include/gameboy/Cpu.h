@@ -53,6 +53,8 @@ struct CPU {
   void LDBu8();
   // rotates bit left
   void RLCA();
+  // load SP into u16
+  void LDu16SP();
   // Add HL + BC, set flags
   void AddHLBC();
   // load value at address BC into A

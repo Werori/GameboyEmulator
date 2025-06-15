@@ -329,6 +329,8 @@ struct CPU {
   void RRC();
   // rotate bits in C to the right
   void RRD();
+  // rotate bits in E to the right
+  void RRE();
 
   // extended opcodes
   // swap bits in A

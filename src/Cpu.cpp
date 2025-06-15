@@ -164,6 +164,7 @@ void CPU::initializeOpcodes() {
 void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x19] = {[this]() { CPU::RRC(); }, 2, 8, 8};
   extendedOpcodes[0x1a] = {[this]() { CPU::RRD(); }, 2, 8, 8};
+  extendedOpcodes[0x1b] = {[this]() { CPU::RRE(); }, 2, 8, 8};
   extendedOpcodes[0x37] = {[this]() { CPU::SwapA(); }, 2, 8, 8};
   extendedOpcodes[0x38] = {[this]() { CPU::SrlB(); }, 2, 8, 8};
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
@@ -1058,6 +1059,8 @@ void CPU::LDEHL() {
 }
 
 void CPU::LDEL() { registers.setE(registers.getL()); }
+// rotate bits in E to the right
+void RRE();
 
 void CPU::LDBA() {
   uint8_t a = registers.getA();
@@ -1319,6 +1322,20 @@ void CPU::RRD() {
   registers.setFlag(registers.FLAG_C, newCarry);
 
   registers.setD(result);
+}
+
+void CPU::RRE() {
+  bool oldCarry = registers.isFlagSet(registers.FLAG_C);
+  uint8_t e = registers.getE();
+  bool newCarry = (e & 0x01) == 1;
+  uint8_t result = (e >> 1) | (oldCarry ? 0x80 : 0x00);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, newCarry);
+
+  registers.setE(result);
 }
 
 // extended opcodes

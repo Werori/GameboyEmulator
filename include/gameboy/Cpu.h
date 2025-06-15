@@ -183,6 +183,8 @@ struct CPU {
   void ORAC();
   // A | D, set flags
   void ORAD();
+  // A | value at HL
+  void ORAHLaddr();
   // A | A, set flags
   void ORAA();
   // compare A and C

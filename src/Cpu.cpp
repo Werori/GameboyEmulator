@@ -49,6 +49,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x24] = {[this]() { CPU::IncH(); }, 1, 4, 4};
   opcodes[0x25] = {[this]() { CPU::DecH(); }, 1, 4, 4};
   opcodes[0x26] = {[this]() { CPU::LDHu8(); }, 2, 8, 8};
+  opcodes[0x27] = {[this]() { CPU::DAA(); }, 1, 4, 4};
   opcodes[0x28] = {[this]() { CPU::JRZi8(); }, 2, 8, 12};
   opcodes[0x29] = {[this]() { CPU::AddHLHL(); }, 1, 8, 8};
   opcodes[0x2a] = {[this]() { CPU::LDAHLInc(); }, 1, 8, 8};
@@ -421,6 +422,32 @@ void CPU::DecH() {
 void CPU::LDHu8() {
   uint8_t value = memory.read(registers.PC + 1);
   registers.setH(value);
+}
+
+void CPU::DAA() {
+  uint8_t a = registers.getA();
+  bool n = registers.isFlagSet(registers.FLAG_N);
+  bool h = registers.isFlagSet(registers.FLAG_H);
+  bool c = registers.isFlagSet(registers.FLAG_C);
+
+  if (!n) {
+    if (c || a > 0x99) {
+      a += 0x60;
+      registers.setFlag(registers.FLAG_C, true);
+    }
+    if (h || (a & 0x0f) > 0x09) {
+      a += 0x06;
+    }
+  } else {
+    if (c)
+      a -= 0x60;
+    if (h)
+      a -= 0x06;
+  }
+
+  registers.setFlag(registers.FLAG_Z, a == 0);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setA(a);
 }
 
 void CPU::JRNZi8() {

@@ -105,6 +105,8 @@ struct CPU {
   void DecH();
   // load u8 into H
   void LDHu8();
+  // convert to BCD
+  void DAA();
   // add HL to HL, set flags
   void AddHLHL();
   // load address at HL++ into A

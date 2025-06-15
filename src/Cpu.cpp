@@ -113,6 +113,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xb2] = {[this]() { CPU::ORAD(); }, 1, 4, 4};
   opcodes[0xb6] = {[this]() { CPU::ORAHLaddr(); }, 1, 8, 8};
   opcodes[0xb7] = {[this]() { CPU::ORAA(); }, 1, 4, 4};
+  opcodes[0xb8] = {[this]() { CPU::CPAB(); }, 1, 4, 4};
   opcodes[0xb9] = {[this]() { CPU::CPAC(); }, 1, 4, 4};
   opcodes[0xba] = {[this]() { CPU::CPAD(); }, 1, 4, 4};
   opcodes[0xbb] = {[this]() { CPU::CPAE(); }, 1, 4, 4};
@@ -525,6 +526,17 @@ void CPU::ORAA() {
   registers.setFlag(registers.FLAG_N, false);
 
   registers.setA(result);
+}
+
+void CPU::CPAB() {
+  uint8_t a = registers.getA();
+  uint8_t b = registers.getB();
+  uint8_t result = a - b;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, b));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, b));
 }
 
 void CPU::CPAC() {

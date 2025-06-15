@@ -214,6 +214,8 @@ struct CPU {
   void LDCD();
   // load E into C
   void LDCE();
+  // load H into C
+  void LDCH();
   // load value at address HL into C
   void LDCHL();
   // Load 16-bit address into register BC

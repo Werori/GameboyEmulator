@@ -115,6 +115,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xb9] = {[this]() { CPU::CPAC(); }, 1, 4, 4};
   opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc1] = {[this]() { CPU::PopBC(); }, 1, 12, 12};
+  opcodes[0xc2] = {[this]() { CPU::JPNzu16(); }, 3, 12, 16};
   opcodes[0xc3] = {[this]() { CPU::JPa16(); }, 3, 16, 16};
   opcodes[0xc4] = {[this]() { CPU::CallNZu16(); }, 3, 12, 24};
   opcodes[0xc5] = {[this]() { CPU::PushBC(); }, 1, 16, 16};
@@ -517,6 +518,14 @@ void CPU::RetNz() {
 }
 
 void CPU::PopBC() { registers.BC = popFromStack(); }
+
+void CPU::JPNzu16() {
+  if (!registers.isFlagSet(registers.FLAG_Z)) {
+    auto [lowByte, highByte] = getLowByteAndHighByte();
+    registers.PC = toLittleEndian(lowByte, highByte);
+    jumped = true;
+  }
+}
 
 void CPU::JPa16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();

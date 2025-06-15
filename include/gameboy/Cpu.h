@@ -197,6 +197,8 @@ struct CPU {
   void RetNz();
   // pop address into BC
   void PopBC();
+  // jump to addr if not zero
+  void JPNzu16();
   // Jump to 16-bit address
   void JPa16();
   // Call u16 if not Zero

@@ -157,6 +157,8 @@ struct CPU {
   void LDLE();
   // load A into L
   void LDLA();
+  // load D into address at HL
+  void LDHLaddrD();
   // load A into D
   void LDDA();
   // load C into E

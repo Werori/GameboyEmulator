@@ -179,6 +179,8 @@ struct CPU {
   void LDDD();
   // load E into D
   void LDDE();
+  // load H into D
+  void LDDH();
   // load value at HL into D
   void LDDHL();
   // load A into E

@@ -289,6 +289,8 @@ struct CPU {
   void EI();
   // jump to 0x38
   void RST38h();
+  // rotate bits in C one to the right
+  void RRC();
 
   // extended opcodes
   // swap bits in A

@@ -144,6 +144,7 @@ void CPU::initializeOpcodes() {
 };
 
 void CPU::initializeExtendedOpcodes() {
+  extendedOpcodes[0x19] = {[this]() { CPU::RRC(); }, 2, 8, 8};
   extendedOpcodes[0x37] = {[this]() { CPU::SwapA(); }, 2, 8, 8};
   extendedOpcodes[0x38] = {[this]() { CPU::SrlB(); }, 2, 8, 8};
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
@@ -1074,6 +1075,20 @@ void CPU::RST38h() {
   pushToStack(registers.PC + 1);
   registers.PC = 0x38;
   jumped = true;
+}
+
+void CPU::RRC() {
+  bool oldCarry = registers.isFlagSet(registers.FLAG_C);
+  uint8_t c = registers.getC();
+  bool newCarry = (c & 0x01) == 1;
+  uint8_t result = (c >> 1) | (oldCarry ? 0x80 : 0x00);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, newCarry);
+
+  registers.setC(result);
 }
 
 // extended opcodes

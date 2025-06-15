@@ -83,6 +83,8 @@ struct CPU {
   void LDDu8();
   // increase E
   void IncE();
+  // decrease E
+  void DecE();
   // load u8 into E
   void LDEu8();
   // rotate A right, only carry flag

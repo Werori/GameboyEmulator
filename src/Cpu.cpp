@@ -39,6 +39,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x19] = {[this]() { CPU::AddHLDE(); }, 1, 8, 8};
   opcodes[0x1a] = {[this]() { CPU::LDADE(); }, 1, 8, 8};
   opcodes[0x1c] = {[this]() { CPU::IncE(); }, 1, 4, 4};
+  opcodes[0x1d] = {[this]() { CPU::DecE(); }, 1, 4, 4};
   opcodes[0x1e] = {[this]() { CPU::LDEu8(); }, 2, 8, 8};
   opcodes[0x1f] = {[this]() { CPU::RRAn(); }, 1, 4, 4};
   opcodes[0x20] = {[this]() { CPU::JRNZi8(); }, 2, 8, 12};
@@ -361,6 +362,17 @@ void CPU::IncE() {
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, isHalfCarryAdd(e, 1));
+
+  registers.setE(result);
+}
+
+void CPU::DecE() {
+  uint8_t e = registers.getE();
+  uint8_t result = e - 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(e, 1));
 
   registers.setE(result);
 }

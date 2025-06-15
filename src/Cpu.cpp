@@ -67,6 +67,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x35] = {[this]() { CPU::DecAddrHL(); }, 1, 12, 12};
   opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
   opcodes[0x38] = {[this]() { CPU::JRCi8(); }, 2, 8, 12};
+  opcodes[0x39] = {[this]() { CPU::AddHLSP(); }, 1, 8, 8};
   opcodes[0x3a] = {[this]() { CPU::LDAHLDec(); }, 1, 8, 8};
   opcodes[0x3b] = {[this]() { CPU::DecSP(); }, 1, 8, 8};
   opcodes[0x3c] = {[this]() { CPU::IncA(); }, 1, 4, 4};
@@ -953,6 +954,15 @@ void CPU::JRCi8() {
     registers.PC = registers.PC + opcodes[opcode].length + offset;
     jumped = true;
   }
+}
+
+void CPU::AddHLSP() {
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H,
+                    isHalfCarryAdd16(registers.HL, registers.SP));
+  registers.setFlag(registers.FLAG_C, isCarryAdd16(registers.HL, registers.SP));
+
+  registers.HL += registers.SP;
 }
 
 void CPU::LDAHLDec() {

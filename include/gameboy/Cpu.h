@@ -133,6 +133,8 @@ struct CPU {
   void LDHLu8();
   // jump if carry set
   void JRCi8();
+  // Add HL + SP
+  void AddHLSP();
   // load from address at HL into A, decrease HL
   void LDAHLDec();
   // decrease stack pointer

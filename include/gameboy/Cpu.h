@@ -172,6 +172,7 @@ struct CPU {
   void LDHLaddrD();
   // load E into value at HL
   void LDHLE();
+  void HALT();
   // load A into D
   void LDDA();
   // load C into E
@@ -367,7 +368,7 @@ private:
   bool isCarryAdd(uint8_t a, uint8_t value);
   bool isCarrySub(uint8_t a, uint8_t value);
 
-  void handleInterrupts(int instructionLength);
+  void handleInterrupts();
 
   void checkInterrupts();
 

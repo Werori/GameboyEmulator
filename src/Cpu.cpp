@@ -89,6 +89,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x71] = {[this]() { CPU::LDHLaddrC(); }, 1, 8, 8};
   opcodes[0x72] = {[this]() { CPU::LDHLaddrD(); }, 1, 8, 8};
   opcodes[0x73] = {[this]() { CPU::LDHLE(); }, 1, 8, 8};
+  opcodes[0x76] = {[this]() { CPU::HALT(); }, 1, 4, 4};
   opcodes[0x77] = {[this]() { CPU::LDHLA(); }, 1, 8, 8};
   opcodes[0x78] = {[this]() { CPU::LDAB(); }, 1, 4, 4};
   opcodes[0x79] = {[this]() { CPU::LDAC(); }, 1, 4, 4};
@@ -174,9 +175,18 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x87] = {[this]() { CPU::Res0A(); }, 2, 8, 8};
 }
 
-void CPU::fetchOpcode() { opcode = memory.read(registers.PC); }
+void CPU::fetchOpcode() {
+  if (IME_scheduled) {
+    IME = 1;
+    IME_scheduled = false;
+    std::cout << "IME now enabled" << std::endl;
+  }
+
+  opcode = memory.read(registers.PC);
+}
 
 void CPU::decodeAndExecute() {
+
   if (opcode != 0xcb) {
     if (!opcodes[opcode].func) {
       std::cout << std::hex << "opcode: " << (int)opcode << std::endl;
@@ -220,13 +230,8 @@ void CPU::decodeAndExecute() {
   }
 
   cycles += lastInstructionCycles;
-  handleInterrupts(instr->length);
 
-  if (IME_scheduled) {
-    IME = 1;
-    IME_scheduled = false;
-    std::cout << "IME now enabled" << std::endl;
-  }
+  handleInterrupts();
 }
 
 void CPU::nop() {
@@ -1052,6 +1057,8 @@ void CPU::LDHLE() {
   memory.write(registers.HL, e);
 }
 
+void CPU::HALT() {}
+
 void CPU::LDDA() {
   uint8_t a = registers.getA();
   registers.setD(a);
@@ -1434,7 +1441,7 @@ bool CPU::isHalfCarrySubWithCarry(uint8_t val1, uint8_t val2, uint8_t carry) {
   return ((val1 & 0x0F) < ((val2 & 0x0F) + carry));
 }
 
-void CPU::handleInterrupts(int instructionLength) {
+void CPU::handleInterrupts() {
   if (memory.interruptsWritten) {
     std::cout << "Delaying interrupt due to recent IF write" << std::endl;
 
@@ -1452,12 +1459,14 @@ void CPU::handleInterrupts(int instructionLength) {
   uint8_t interruptEnable = memory.read(0xFFFF);
 
   uint8_t firedInterrupts = interruptFlag & interruptEnable;
-  // throw std::runtime_error("interrupts off fired");
+  // // throw std::runtime_error("interrupts off fired");
 
   if (firedInterrupts == 0) {
-    return; // no interrupt requested or enabled
+    memory.interruptsWritten = false;
+    return; // no interrupt requestedsetInterruptsor enabled
   }
 
+  std::cout << "interrupts fired" << std::endl;
   // Interrupts have priority from bit 0 to 4:
   const uint16_t interruptVectors[5] = {
       0x40, // V-Blank
@@ -1476,7 +1485,7 @@ void CPU::handleInterrupts(int instructionLength) {
       memory.write(0xFF0F, interruptFlag);
 
       // push current PC onto stack (16-bit)
-      pushToStack(registers.PC + instructionLength);
+      pushToStack(registers.PC);
 
       registers.PC = interruptVectors[i]; // jump to interrupt handler
 

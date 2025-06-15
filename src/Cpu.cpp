@@ -145,6 +145,7 @@ void CPU::initializeOpcodes() {
 
 void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x19] = {[this]() { CPU::RRC(); }, 2, 8, 8};
+  extendedOpcodes[0x1a] = {[this]() { CPU::RRD(); }, 2, 8, 8};
   extendedOpcodes[0x37] = {[this]() { CPU::SwapA(); }, 2, 8, 8};
   extendedOpcodes[0x38] = {[this]() { CPU::SrlB(); }, 2, 8, 8};
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
@@ -1089,6 +1090,20 @@ void CPU::RRC() {
   registers.setFlag(registers.FLAG_C, newCarry);
 
   registers.setC(result);
+}
+
+void CPU::RRD() {
+  bool oldCarry = registers.isFlagSet(registers.FLAG_C);
+  uint8_t d = registers.getD();
+  bool newCarry = (d & 0x01) == 1;
+  uint8_t result = (d >> 1) | (oldCarry ? 0x80 : 0x00);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, newCarry);
+
+  registers.setD(result);
 }
 
 // extended opcodes

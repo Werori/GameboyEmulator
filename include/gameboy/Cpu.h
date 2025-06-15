@@ -291,6 +291,8 @@ struct CPU {
   void RST38h();
   // rotate bits in C one to the right
   void RRC();
+  // rotate bits in C to the right
+  void RRD();
 
   // extended opcodes
   // swap bits in A

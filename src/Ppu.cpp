@@ -99,7 +99,7 @@ void PPU::tick(int cycles) {
       if (mode != 3) {
         mode = 3;
         if (lcdc & 0x1) {
-          std::cout << "rendering scanlines..." << std::endl;
+          // std::cout << "rendering scanlines..." << std::endl;
           renderScanline(scanlines);
           if ((lcdc & 0x20) && scanlines >= memory.getWindowY() &&
               memory.getWindowX() <= SCREEN_WIDTH) {

@@ -557,7 +557,10 @@ void CPU::CallNZu16() {
   }
 }
 
-void CPU::PushBC() { pushToStack(registers.BC); }
+void CPU::PushBC() {
+  pushToStack(registers.BC);
+  // std::cout << "push BC: " << std::hex << (int)registers.BC << std::endl;
+}
 
 void CPU::AddAu8() {
   uint8_t a = registers.getA();
@@ -1094,7 +1097,10 @@ void CPU::PopAF() { registers.AF = popFromStack(); }
 
 void CPU::DI() { IME = 0; }
 
-void CPU::PushAF() { pushToStack(registers.AF); }
+void CPU::PushAF() {
+  uint16_t af = (registers.getA() << 8) | (registers.getF() & 0xF0);
+  pushToStack(af);
+}
 
 void CPU::LDHLA() {
   uint8_t a = registers.getA();
@@ -1379,9 +1385,10 @@ void CPU::pushToStack(uint16_t address) {
 uint16_t CPU::popFromStack() {
   uint8_t low = memory.read(registers.SP);
   uint8_t high = memory.read(registers.SP + 1);
+  uint16_t value = (high << 8) | low;
   registers.SP += 2;
 
-  return (high << 8) | low;
+  return value;
 }
 
 bool CPU::isHalfCarryAdd16(uint16_t a, uint16_t b) {

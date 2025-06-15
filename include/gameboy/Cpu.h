@@ -206,6 +206,8 @@ struct CPU {
   void LDEL();
   // copy value of register A into B
   void LDBA();
+  // load B into C
+  void LDCB();
   // load value at address HL into C
   void LDCHL();
   // Load 16-bit address into register BC

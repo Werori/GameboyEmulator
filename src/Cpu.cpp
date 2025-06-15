@@ -82,6 +82,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x45] = {[this]() { CPU::LDBL(); }, 1, 4, 4};
   opcodes[0x46] = {[this]() { CPU::LDBHL(); }, 1, 8, 8};
   opcodes[0x47] = {[this]() { CPU::LDBA(); }, 1, 4, 4};
+  opcodes[0x48] = {[this]() { CPU::LDCB(); }, 1, 4, 4};
   opcodes[0x4e] = {[this]() { CPU::LDCHL(); }, 1, 8, 8};
   opcodes[0x4f] = {[this]() { CPU::LDCA(); }, 1, 4, 4};
   opcodes[0x56] = {[this]() { CPU::LDDHL(); }, 1, 8, 8};
@@ -1146,6 +1147,8 @@ void CPU::LDBA() {
   uint8_t a = registers.getA();
   registers.setB(a);
 }
+
+void CPU::LDCB() { registers.setC(registers.getB()); }
 
 void CPU::LDCHL() {
   uint8_t value = memory.read(registers.HL);

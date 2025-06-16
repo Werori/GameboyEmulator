@@ -466,6 +466,7 @@ struct CPU {
   // shift b >> 1, set carry
   void SrlB();
   void SRLA();
+  void RLCB();
   // check bit 0 of A
   void Bit0A();
   void Bit0B();

@@ -258,6 +258,7 @@ void CPU::initializeOpcodes() {
 };
 
 void CPU::initializeExtendedOpcodes() {
+  extendedOpcodes[0x00] = {[this]() { CPU::RLCB(); }, 2, 8, 8};
   extendedOpcodes[0x18] = {[this]() { CPU::RRB(); }, 2, 8, 8};
   extendedOpcodes[0x19] = {[this]() { CPU::RRC(); }, 2, 8, 8};
   extendedOpcodes[0x1a] = {[this]() { CPU::RRD(); }, 2, 8, 8};
@@ -2395,6 +2396,19 @@ void CPU::Bit7HL() {
   registers.setFlag(registers.FLAG_Z, bit);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::RLCB() {
+  uint8_t b = registers.getB();
+  bool bit7 = (b & 0x80) != 0;
+
+  uint8_t result = (b << 1) | (bit7 ? 1 : 0);
+  registers.setB(result);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, bit7);
 }
 
 void CPU::Res0A() { registers.setA(registers.getA() & ~(1 << 0)); }

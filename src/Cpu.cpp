@@ -219,6 +219,7 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x27] = {[this]() { CPU::SLAA(); }, 2, 8, 8};
   extendedOpcodes[0x37] = {[this]() { CPU::SwapA(); }, 2, 8, 8};
   extendedOpcodes[0x38] = {[this]() { CPU::SrlB(); }, 2, 8, 8};
+  extendedOpcodes[0x3f] = {[this]() { CPU::SRLA(); }, 2, 8, 8};
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
   extendedOpcodes[0x5f] = {[this]() { CPU::Bit3A(); }, 2, 8, 8};
   extendedOpcodes[0x6f] = {[this]() { CPU::Bit5A(); }, 2, 8, 8};
@@ -1730,6 +1731,19 @@ void CPU::SrlB() {
   registers.setFlag(registers.FLAG_C, carry);
 
   registers.setB(result);
+}
+
+void CPU::SRLA() {
+  uint8_t a = registers.getA();
+  bool carry = (a & 0x01);
+  uint8_t result = a >> 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, carry);
+
+  registers.setA(result);
 }
 
 void CPU::Bit0A() {

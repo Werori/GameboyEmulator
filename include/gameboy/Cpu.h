@@ -263,6 +263,7 @@ struct CPU {
   void CPAD();
   // compare A and E
   void CPAE();
+  void CPAHL();
   // return from stack if not zero
   void RetNz();
   // pop address into BC

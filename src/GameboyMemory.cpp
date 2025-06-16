@@ -268,7 +268,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     // throw std::runtime_error("writing sound channel 1 period high");
     break;
   case 0xff16:
-    throw std::runtime_error("writing sound channel 2 length timer");
+    // throw std::runtime_error("writing sound channel 2 length timer");
     break;
     // std::cout << "writing sound channel 2 length timer" << std::endl;
     hardwareRegisters.soundChannel2LengthTimer = byte;
@@ -278,7 +278,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     break;
     // std::cout << "writing sound channel 2 volume and envelope" << std::endl;
   case 0xff18:
-    throw std::runtime_error("writing sound channel 2 period low");
+    // throw std::runtime_error("writing sound channel 2 period low");
     hardwareRegisters.soundChannel2PeriodLow = byte;
     break;
   case 0xff19:

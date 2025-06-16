@@ -209,7 +209,7 @@ void GameboyMemory::write(uint16_t address, uint8_t byte) {
 
 void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
   if (address >= 0xff30 && address <= 0xff3f) {
-    throw std::runtime_error("writing storage");
+    // throw std::runtime_error("writing wave pattern");
   }
 
   switch (address) {
@@ -377,7 +377,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.windowX = byte;
     break;
   case 0xff50:
-    throw std::runtime_error("boot rom disable!");
+    // throw std::runtime_error("boot rom disable!");
     // throw std::runtime_error("out of range io write");
   }
   for (auto *observer : observers) {

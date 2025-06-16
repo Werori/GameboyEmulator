@@ -180,8 +180,6 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   for (auto *observer : observers) {
     joypadSet = false;
     uint8_t value = observer->onRegisterRead(address);
-    // value != defaultKey
-    // std::cout << "value: " << std::hex << (int)value << std::endl;
     if (joypadSet) {
       return value;
     }

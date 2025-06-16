@@ -24,10 +24,6 @@ uint8_t Joypad::read() {
   }
 
   result = (result & 0xCF) | (selectBits & 0x30);
-  // std::cout << "selectBits: " << std::bitset<8>(selectBits) << std::endl;
-  //           << " result: " << std::hex << (int)result << std::endl;
-  // std::cout << "button state in read: " << std::hex << (int)buttonState
-  // << std::endl;
   memory.joypadSet = true;
   return result;
 }
@@ -37,44 +33,31 @@ void Joypad::update() {
   // direction buttons
   if (IsKeyDown(KEY_RIGHT)) {
     newState &= ~0x01;
-    // std::cout << "RIGHT KEY PRESSED" << std::endl;
   }
   if (IsKeyDown(KEY_LEFT)) {
-    std::cout << "buttonState: " << std::hex << (int)buttonState
-              << " newState: " << std::hex << (int)newState << std::endl;
     newState &= ~0x02;
-    // std::cout << "LEFT KEY PRESSED" << std::endl;
   }
   if (IsKeyDown(KEY_UP)) {
     newState &= ~0x04;
-    std::cout << "UP KEY PRESSED" << std::endl;
   }
   if (IsKeyDown(KEY_DOWN)) {
     newState &= ~0x08;
-    std::cout << "DOWN KEY PRESSED" << std::endl;
   }
 
   // action buttons
   if (IsKeyDown(KEY_Z)) {
     newState &= ~0x01;
-    std::cout << "Z KEY PRESSED" << std::endl;
   }
   if (IsKeyDown(KEY_X)) {
     newState &= ~0x02;
-    std::cout << "X KEY PRESSED" << std::endl;
   }
   if (IsKeyDown(KEY_BACKSPACE)) {
     newState &= ~0x04;
-    std::cout << "BACKSPACE KEY PRESSED" << std::endl;
   }
   if (IsKeyDown(KEY_ENTER)) {
     newState &= ~0x08;
-    std::cout << "ENTER KEY PRESSED" << std::endl;
   }
-  if (newState != buttonState) {
-    std::cout << "Button state changed from 0x" << std::hex << (int)buttonState
-              << " to 0x" << std::hex << (int)newState << std::endl;
-  }
+
   if ((buttonState & ~newState) != 0) {
     std::cout << "INTERRUPT REQUESTED" << std::endl;
     memory.requestInterrupt(InterruptFlag::Joypad);

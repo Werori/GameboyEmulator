@@ -55,10 +55,6 @@ void Gameboy::run() {
         timers.tick(1);
       } else {
         joypad.update();
-        if (IsKeyDown(KEY_E)) {
-          std::cout << "button state: " << std::hex << (int)joypad.buttonState
-                    << std::endl;
-        }
         cpu.fetchOpcode();
         cpu.decodeAndExecute();
       }

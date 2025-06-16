@@ -8,7 +8,8 @@
 #include <string_view>
 
 Gameboy::Gameboy()
-    : memory(), ppu(memory), cpu(memory, ppu, timers), timers(memory) {
+    : memory(), ppu(memory), cpu(memory, ppu, timers), timers(memory),
+      joypad(memory) {
   memory.addObserver(&ppu);
   memory.addObserver(&timers);
 };

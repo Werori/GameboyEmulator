@@ -1,8 +1,24 @@
+#include "GameboyMemory.h"
+#include "InterruptFlag.h"
 #include "Joypad.h"
 #include "raylib.h"
 #include <iostream>
 
-Joypad::Joypad() : selectBits(0x30), buttonState(0x0f), lastState(0x0f) {}
+Joypad::Joypad(GameboyMemory &memory)
+    : memory(memory), selectBits(0x30), buttonState(0x0f), lastState(0x0f) {}
+
+void Joypad::write(uint8_t value) { selectBits = value & 0x30; }
+
+uint8_t Joypad::read() {
+  uint8_t result = 0xCF;
+
+  result &= ~0x30;
+  result |= selectBits;
+
+  result |= buttonState;
+
+  return result;
+}
 
 void Joypad::update() {
   uint8_t newState = 0x0f;
@@ -46,4 +62,11 @@ void Joypad::update() {
       std::cout << "ENTER KEY PRESSED" << std::endl;
     }
   }
+
+  if ((buttonState & ~newState) != 0) {
+    memory.requestInterrupt(InterruptFlag::Joypad);
+  }
+
+  lastState = buttonState;
+  buttonState = newState;
 }

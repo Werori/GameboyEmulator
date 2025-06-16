@@ -150,7 +150,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   case 0xff44:
     // std::cout << "ly returned: " << std::hex << (int)hardwareRegisters.ly
     //           << std::endl;
-    // return hardwareRegisters.ly;
+    return hardwareRegisters.ly;
     return 0x90;
     break;
   case 0xff45:
@@ -181,7 +181,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
     joypadSet = false;
     uint8_t value = observer->onRegisterRead(address);
     // value != defaultKey
-    std::cout << "value: " << std::hex << (int)value << std::endl;
+    // std::cout << "value: " << std::hex << (int)value << std::endl;
     if (joypadSet) {
       return value;
     }

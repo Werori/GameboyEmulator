@@ -425,6 +425,8 @@ struct CPU {
   void Res0A();
   void Res0HL();
 
+  void Set7HL();
+
   void openLogFile(const std::string &filename);
   void closeLogFile();
   void logCPUState();

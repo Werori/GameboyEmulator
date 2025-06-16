@@ -220,6 +220,7 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x7f] = {[this]() { CPU::Bit7A(); }, 2, 8, 8};
   extendedOpcodes[0x86] = {[this]() { CPU::Res0HL(); }, 2, 16, 16};
   extendedOpcodes[0x87] = {[this]() { CPU::Res0A(); }, 2, 8, 8};
+  extendedOpcodes[0xfe] = {[this]() { CPU::Set7HL(); }, 2, 16, 16};
 }
 
 void CPU::fetchOpcode() {
@@ -1715,6 +1716,12 @@ void CPU::Res0HL() {
   uint8_t value = memory.read(registers.HL);
   uint8_t result = value & ~(1 << 0);
   memory.write(registers.HL, result);
+}
+
+void CPU::Set7HL() {
+  uint8_t value = memory.read(registers.HL);
+  value |= (1 << 7);
+  memory.write(registers.HL, value);
 }
 
 uint16_t CPU::toLittleEndian(uint8_t lowByte, uint8_t highByte) {

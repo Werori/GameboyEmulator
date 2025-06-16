@@ -353,6 +353,7 @@ struct CPU {
   void XORAB();
   void XORAD();
   void XORAH();
+  void RLA();
   void XORAE();
   // A ^ L
   void XORAL();

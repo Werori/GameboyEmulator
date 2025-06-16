@@ -416,6 +416,7 @@ struct CPU {
   void SLAA();
   // swap bits in A
   void SwapA();
+  void SwapE();
   // shift b >> 1, set carry
   void SrlB();
   void SRLA();

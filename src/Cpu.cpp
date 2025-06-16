@@ -217,6 +217,7 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x1a] = {[this]() { CPU::RRD(); }, 2, 8, 8};
   extendedOpcodes[0x1b] = {[this]() { CPU::RRE(); }, 2, 8, 8};
   extendedOpcodes[0x27] = {[this]() { CPU::SLAA(); }, 2, 8, 8};
+  extendedOpcodes[0x33] = {[this]() { CPU::SwapE(); }, 2, 8, 8};
   extendedOpcodes[0x37] = {[this]() { CPU::SwapA(); }, 2, 8, 8};
   extendedOpcodes[0x38] = {[this]() { CPU::SrlB(); }, 2, 8, 8};
   extendedOpcodes[0x3f] = {[this]() { CPU::SRLA(); }, 2, 8, 8};
@@ -1719,6 +1720,18 @@ void CPU::SwapA() {
   registers.setFlag(registers.FLAG_C, false);
 
   registers.setA(result);
+}
+
+void CPU::SwapE() {
+  uint8_t e = registers.getE();
+  uint8_t result = (e << 4) | (e >> 4);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, false);
+
+  registers.setE(result);
 }
 
 void CPU::SrlB() {

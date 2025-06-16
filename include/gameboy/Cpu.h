@@ -410,6 +410,10 @@ struct CPU {
   void LDAA();
   // add A and B
   void AddAB();
+  void AddAC();
+  void AddAD();
+  void AddAE();
+  void AddAH();
   void AddAL();
   // Add A and A
   void AddAA();
@@ -417,6 +421,8 @@ struct CPU {
   void ADCAA();
   // add C to A with carry
   void ADCAC();
+  void ADCAB();
+  void ADCAD();
   // enable interrupt
   void EI();
   // jump to 0x38

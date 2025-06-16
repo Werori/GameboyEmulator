@@ -332,6 +332,7 @@ struct CPU {
   void SubAE();
   void SubAH();
   void SubAL();
+  void SubAA();
   // A and C
   void AndAC();
   // A and L

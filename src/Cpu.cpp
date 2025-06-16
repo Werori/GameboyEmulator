@@ -164,6 +164,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x93] = {[this]() { CPU::SubAE(); }, 1, 4, 4};
   opcodes[0x94] = {[this]() { CPU::SubAH(); }, 1, 4, 4};
   opcodes[0x95] = {[this]() { CPU::SubAL(); }, 1, 4, 4};
+  opcodes[0x97] = {[this]() { CPU::SubAA(); }, 1, 4, 4};
   opcodes[0xa1] = {[this]() { CPU::AndAC(); }, 1, 4, 4};
   opcodes[0xa5] = {[this]() { CPU::ANDAL(); }, 1, 4, 4};
   opcodes[0xa9] = {[this]() { CPU::XORAC(); }, 1, 4, 4};
@@ -1081,6 +1082,18 @@ void CPU::SubAL() {
   registers.setFlag(registers.FLAG_N, true);
   registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, l));
   registers.setFlag(registers.FLAG_C, isCarrySub(a, l));
+
+  registers.setA(result);
+}
+
+void CPU::SubAA() {
+  uint8_t a = registers.getA();
+  uint8_t result = a - a;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, a));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, a));
 
   registers.setA(result);
 }

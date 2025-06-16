@@ -1575,7 +1575,7 @@ void CPU::XORAE() {
   registers.setFlag(registers.FLAG_H, false);
   registers.setFlag(registers.FLAG_C, false);
 
-  registers.setE(result);
+  registers.setA(result);
 }
 
 void CPU::XORAL() {

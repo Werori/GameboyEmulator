@@ -388,6 +388,7 @@ struct CPU {
   void LDAA();
   // add A and B
   void AddAB();
+  void AddAL();
   // Add A and A
   void AddAA();
   // add with carry

@@ -72,7 +72,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
     // throw std::runtime_error("reading joypad");
     break;
   case 0xff01:
-    throw std::runtime_error("reading serial transfer data");
+    return hardwareRegisters.serialTransferData;
     break;
   case 0xff02:
     throw std::runtime_error("reading serial Transfer control");

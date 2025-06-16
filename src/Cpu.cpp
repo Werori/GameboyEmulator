@@ -278,6 +278,12 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x45] = {[this]() { CPU::Bit0L(); }, 2, 8, 8};
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
   extendedOpcodes[0x48] = {[this]() { CPU::Bit1B(); }, 2, 8, 8};
+  extendedOpcodes[0x49] = {[this]() { CPU::Bit1C(); }, 2, 8, 8};
+  extendedOpcodes[0x4a] = {[this]() { CPU::Bit1D(); }, 2, 8, 8};
+  extendedOpcodes[0x4b] = {[this]() { CPU::Bit1E(); }, 2, 8, 8};
+  extendedOpcodes[0x4c] = {[this]() { CPU::Bit1H(); }, 2, 8, 8};
+  extendedOpcodes[0x4d] = {[this]() { CPU::Bit1L(); }, 2, 8, 8};
+  extendedOpcodes[0x4f] = {[this]() { CPU::Bit1A(); }, 2, 8, 8};
   extendedOpcodes[0x58] = {[this]() { CPU::Bit3B(); }, 2, 8, 8};
   extendedOpcodes[0x5f] = {[this]() { CPU::Bit3A(); }, 2, 8, 8};
   extendedOpcodes[0x60] = {[this]() { CPU::Bit4B(); }, 2, 8, 8};
@@ -2380,6 +2386,48 @@ void CPU::Bit7B() {
 
 void CPU::Bit0C() {
   bool bit = ((registers.getC() & (1 << 0)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit1C() {
+  bool bit = ((registers.getC() & (1 << 1)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit1E() {
+  bool bit = ((registers.getE() & (1 << 1)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit1H() {
+  bool bit = ((registers.getH() & (1 << 1)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit1L() {
+  bool bit = ((registers.getL() & (1 << 1)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit1D() {
+  bool bit = ((registers.getD() & (1 << 1)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit1A() {
+  bool bit = ((registers.getA() & (1 << 1)) == 0);
   registers.setFlag(registers.FLAG_Z, bit);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);

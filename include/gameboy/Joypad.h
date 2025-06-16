@@ -15,12 +15,8 @@ public:
   void onRegisterWrite(uint16_t address, uint8_t byte);
   uint8_t onRegisterRead(uint16_t address);
 
-private:
   GameboyMemory &memory;
-
   uint8_t selectBits = 0x30;
   uint8_t buttonState = memory.defaultKey;
   uint8_t lastState = memory.defaultKey;
-
-  uint8_t pollButtons();
 };

@@ -328,6 +328,10 @@ struct CPU {
   void SubAB();
   // subtract C from A
   void SubAC();
+  void SubAD();
+  void SubAE();
+  void SubAH();
+  void SubAL();
   // A and C
   void AndAC();
   // A and L

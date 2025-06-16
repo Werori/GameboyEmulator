@@ -160,6 +160,10 @@ void CPU::initializeOpcodes() {
   opcodes[0xa7] = {[this]() { CPU::AndAA(); }, 1, 4, 4};
   opcodes[0x90] = {[this]() { CPU::SubAB(); }, 1, 4, 4};
   opcodes[0x91] = {[this]() { CPU::SubAC(); }, 1, 4, 4};
+  opcodes[0x92] = {[this]() { CPU::SubAD(); }, 1, 4, 4};
+  opcodes[0x93] = {[this]() { CPU::SubAE(); }, 1, 4, 4};
+  opcodes[0x94] = {[this]() { CPU::SubAH(); }, 1, 4, 4};
+  opcodes[0x95] = {[this]() { CPU::SubAL(); }, 1, 4, 4};
   opcodes[0xa1] = {[this]() { CPU::AndAC(); }, 1, 4, 4};
   opcodes[0xa5] = {[this]() { CPU::ANDAL(); }, 1, 4, 4};
   opcodes[0xa9] = {[this]() { CPU::XORAC(); }, 1, 4, 4};
@@ -1025,6 +1029,58 @@ void CPU::SubAC() {
   registers.setFlag(registers.FLAG_N, true);
   registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, c));
   registers.setFlag(registers.FLAG_C, isCarrySub(a, c));
+
+  registers.setA(result);
+}
+
+void CPU::SubAD() {
+  uint8_t a = registers.getA();
+  uint8_t d = registers.getD();
+  uint8_t result = a - d;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, d));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, d));
+
+  registers.setA(result);
+}
+
+void CPU::SubAE() {
+  uint8_t a = registers.getA();
+  uint8_t e = registers.getE();
+  uint8_t result = a - e;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, e));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, e));
+
+  registers.setA(result);
+}
+
+void CPU::SubAH() {
+  uint8_t a = registers.getA();
+  uint8_t h = registers.getH();
+  uint8_t result = a - h;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, h));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, h));
+
+  registers.setA(result);
+}
+
+void CPU::SubAL() {
+  uint8_t a = registers.getA();
+  uint8_t l = registers.getL();
+  uint8_t result = a - l;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, l));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, l));
 
   registers.setA(result);
 }

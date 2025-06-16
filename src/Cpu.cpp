@@ -1760,7 +1760,7 @@ void CPU::AddAL() {
   registers.setFlag(registers.FLAG_H, isHalfCarryAdd(a, l));
   registers.setFlag(registers.FLAG_C, isCarryAdd(a, l));
 
-  registers.setL(result);
+  registers.setA(result);
 }
 
 void CPU::AddAA() {

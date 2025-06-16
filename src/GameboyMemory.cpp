@@ -306,7 +306,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.soundChannel3PeriodHighAndControl = byte;
     break;
   case 0xff20:
-    throw std::runtime_error("writing sound channel 4 length timer");
+    // throw std::runtime_error("writing sound channel 4 length timer");
     hardwareRegisters.soundChannel4LengthTimer = byte;
     break;
   case 0xff21:

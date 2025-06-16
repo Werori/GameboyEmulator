@@ -481,6 +481,9 @@ struct CPU {
   void Bit2B();
   void Bit2C();
   void Bit2D();
+  void Bit2E();
+  void Bit2H();
+  void Bit2L();
   void Bit0C();
   void Bit0D();
   void Bit0E();

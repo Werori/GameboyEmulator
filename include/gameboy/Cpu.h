@@ -397,14 +397,15 @@ struct CPU {
   // jump to 0x38
   void RST38h();
   // rotate bits in C one to the right
+
+  // extended opcodes
   void RRC();
   void RRB();
   // rotate bits in C to the right
   void RRD();
   // rotate bits in E to the right
   void RRE();
-
-  // extended opcodes
+  void SLAA();
   // swap bits in A
   void SwapA();
   // shift b >> 1, set carry

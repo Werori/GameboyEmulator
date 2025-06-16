@@ -65,8 +65,8 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
 
   switch (address) {
   case 0xff00:
-    std::cout << "joypad: " << std::hex << (int)hardwareRegisters.joypad
-              << std::endl;
+    // std::cout << "joypad: " << std::hex << (int)hardwareRegisters.joypad
+    //           << std::endl;
     return 0xcf;
     return hardwareRegisters.joypad;
     // throw std::runtime_error("reading joypad");

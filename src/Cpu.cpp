@@ -207,6 +207,7 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x19] = {[this]() { CPU::RRC(); }, 2, 8, 8};
   extendedOpcodes[0x1a] = {[this]() { CPU::RRD(); }, 2, 8, 8};
   extendedOpcodes[0x1b] = {[this]() { CPU::RRE(); }, 2, 8, 8};
+  extendedOpcodes[0x27] = {[this]() { CPU::SLAA(); }, 2, 8, 8};
   extendedOpcodes[0x37] = {[this]() { CPU::SwapA(); }, 2, 8, 8};
   extendedOpcodes[0x38] = {[this]() { CPU::SrlB(); }, 2, 8, 8};
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
@@ -1292,7 +1293,19 @@ void CPU::LDEHL() {
 
 void CPU::LDEL() { registers.setE(registers.getL()); }
 // rotate bits in E to the right
-void RRE();
+
+void CPU::SLAA() {
+  uint8_t a = registers.getA();
+  bool carry = (a & 0x80);
+  uint8_t result = a << 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, carry);
+
+  registers.setA(result);
+}
 
 void CPU::LDBA() {
   uint8_t a = registers.getA();
@@ -1726,7 +1739,7 @@ void CPU::handleInterrupts() {
     return; // no interrupt requestedsetInterruptsor enabled
   }
 
-  std::cout << "interrupts fired" << std::endl;
+  // std::cout << "interrupts fired" << std::endl;
   // Interrupts have priority from bit 0 to 4:
   const uint16_t interruptVectors[5] = {
       0x40, // V-Blank

@@ -642,7 +642,7 @@ void CPU::ORAE() {
   registers.setFlag(registers.FLAG_H, false);
   registers.setFlag(registers.FLAG_N, false);
 
-  registers.setE(result);
+  registers.setA(result);
 }
 
 void CPU::ORAHLaddr() {

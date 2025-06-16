@@ -149,6 +149,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xb0] = {[this]() { CPU::ORAB(); }, 1, 4, 4};
   opcodes[0xb1] = {[this]() { CPU::ORAC(); }, 1, 4, 4};
   opcodes[0xb2] = {[this]() { CPU::ORAD(); }, 1, 4, 4};
+  opcodes[0xb3] = {[this]() { CPU::ORAE(); }, 1, 4, 4};
   opcodes[0xb6] = {[this]() { CPU::ORAHLaddr(); }, 1, 8, 8};
   opcodes[0xb7] = {[this]() { CPU::ORAA(); }, 1, 4, 4};
   opcodes[0xb8] = {[this]() { CPU::CPAB(); }, 1, 4, 4};
@@ -609,6 +610,19 @@ void CPU::ORAD() {
   registers.setFlag(registers.FLAG_N, false);
 
   registers.setA(result);
+}
+
+void CPU::ORAE() {
+  uint8_t a = registers.getA();
+  uint8_t e = registers.getE();
+  uint8_t result = a | e;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_C, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_N, false);
+
+  registers.setE(result);
 }
 
 void CPU::ORAHLaddr() {

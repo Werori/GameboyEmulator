@@ -357,6 +357,7 @@ struct CPU {
   void LDAFF00PlusC();
   void SCF();
   void CCF();
+  void ORAE();
   // pop address into AF
   void PopAF();
   // disable interrupt

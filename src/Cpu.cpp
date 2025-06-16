@@ -1682,7 +1682,7 @@ void CPU::LDAA() {
 void CPU::AddAB() {
   uint8_t a = registers.getA();
   uint8_t b = registers.getB();
-  uint16_t result = a + b;
+  uint8_t result = a + b;
 
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, false);
@@ -1695,7 +1695,7 @@ void CPU::AddAB() {
 void CPU::AddAL() {
   uint8_t a = registers.getA();
   uint8_t l = registers.getL();
-  uint16_t result = a + l;
+  uint8_t result = a + l;
 
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, false);
@@ -1707,7 +1707,7 @@ void CPU::AddAL() {
 
 void CPU::AddAA() {
   uint8_t a = registers.getA();
-  uint16_t result = a + a;
+  uint8_t result = a + a;
 
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, false);

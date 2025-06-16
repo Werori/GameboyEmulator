@@ -302,7 +302,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.soundChannel3PeriodLow = byte;
     break;
   case 0xff1e:
-    throw std::runtime_error("writing sound channel 3 period high and co");
+    // throw std::runtime_error("writing sound channel 3 period high and co");
     hardwareRegisters.soundChannel3PeriodHighAndControl = byte;
     break;
   case 0xff20:

@@ -231,7 +231,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     }
     break;
   case 0xff04:
-    throw std::runtime_error("writing divider register");
+    // throw std::runtime_error("writing divider register");
     hardwareRegisters.dividerRegister = 0;
     break;
   case 0xff05:

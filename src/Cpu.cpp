@@ -106,13 +106,20 @@ void CPU::initializeOpcodes() {
   opcodes[0x58] = {[this]() { CPU::LDEB(); }, 1, 4, 4};
   opcodes[0x59] = {[this]() { CPU::LDEC(); }, 1, 4, 4};
   opcodes[0x5a] = {[this]() { CPU::LDED(); }, 1, 4, 4};
+  opcodes[0x5b] = {[this]() { CPU::LDEE(); }, 1, 4, 4};
+  opcodes[0x5c] = {[this]() { CPU::LDEH(); }, 1, 4, 4};
   opcodes[0x5e] = {[this]() { CPU::LDEHL(); }, 1, 8, 8};
   opcodes[0x5d] = {[this]() { CPU::LDEL(); }, 1, 4, 4};
   opcodes[0x5f] = {[this]() { CPU::LDEA(); }, 1, 4, 4};
   opcodes[0x60] = {[this]() { CPU::LDHB(); }, 1, 4, 4};
+  opcodes[0x61] = {[this]() { CPU::LDHC(); }, 1, 4, 4};
   opcodes[0x62] = {[this]() { CPU::LDHD(); }, 1, 4, 4};
+  opcodes[0x63] = {[this]() { CPU::LDHE(); }, 1, 4, 4};
+  opcodes[0x64] = {[this]() { CPU::LDHH(); }, 1, 4, 4};
+  opcodes[0x65] = {[this]() { CPU::LDHL(); }, 1, 4, 4};
   opcodes[0x66] = {[this]() { CPU::LDHHL(); }, 1, 8, 8};
   opcodes[0x67] = {[this]() { CPU::LDHA(); }, 1, 4, 4};
+  opcodes[0x68] = {[this]() { CPU::LDLB(); }, 1, 4, 4};
   opcodes[0x69] = {[this]() { CPU::LDLC(); }, 1, 4, 4};
   opcodes[0x6b] = {[this]() { CPU::LDLE(); }, 1, 4, 4};
   opcodes[0x6e] = {[this]() { CPU::LDLHL(); }, 1, 8, 8};
@@ -1281,6 +1288,24 @@ void CPU::LDDL() { registers.setD(registers.getL()); }
 void CPU::LDEB() { registers.setE(registers.getB()); }
 
 void CPU::LDED() { registers.setE(registers.getD()); }
+
+void CPU::LDEE() {
+  // do nothing
+}
+
+void CPU::LDEH() { registers.setE(registers.getH()); }
+
+void CPU::LDHC() { registers.setH(registers.getC()); }
+
+void CPU::LDHE() { registers.setH(registers.getE()); }
+
+void CPU::LDHH() {
+  // do nothing
+}
+
+void CPU::LDHL() { registers.setH(registers.getL()); }
+
+void CPU::LDLB() { registers.setL(registers.getB()); }
 
 void CPU::LDDHL() {
   uint8_t value = memory.read(registers.HL);

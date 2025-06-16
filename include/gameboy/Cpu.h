@@ -190,6 +190,13 @@ struct CPU {
   void LDEB();
   // load D into E
   void LDED();
+  void LDEE();
+  void LDEH();
+  void LDHC();
+  void LDHE();
+  void LDHH();
+  void LDHL();
+  void LDLB();
   // load value at HL into D
   void LDDHL();
   // load A into E

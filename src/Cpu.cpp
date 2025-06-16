@@ -131,6 +131,8 @@ void CPU::initializeOpcodes() {
   opcodes[0x71] = {[this]() { CPU::LDHLaddrC(); }, 1, 8, 8};
   opcodes[0x72] = {[this]() { CPU::LDHLaddrD(); }, 1, 8, 8};
   opcodes[0x73] = {[this]() { CPU::LDHLE(); }, 1, 8, 8};
+  opcodes[0x74] = {[this]() { CPU::LDHLH(); }, 1, 8, 8};
+  opcodes[0x75] = {[this]() { CPU::LDHLL(); }, 1, 8, 8};
   opcodes[0x76] = {[this]() { CPU::HALT(); }, 1, 4, 4};
   opcodes[0x77] = {[this]() { CPU::LDHLA(); }, 1, 8, 8};
   opcodes[0x78] = {[this]() { CPU::LDAB(); }, 1, 4, 4};
@@ -1317,6 +1319,10 @@ void CPU::LDLH() { registers.setL(registers.getH()); }
 void CPU::LDLL() {
   // do nothing
 }
+
+void CPU::LDHLH() { memory.write(registers.HL, registers.getH()); }
+
+void CPU::LDHLL() { memory.write(registers.HL, registers.getL()); }
 
 void CPU::LDDHL() {
   uint8_t value = memory.read(registers.HL);

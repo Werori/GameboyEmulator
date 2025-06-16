@@ -351,6 +351,8 @@ struct CPU {
   // xor AC, set flags
   void XORAC();
   void XORAB();
+  void XORAD();
+  void XORAH();
   void XORAE();
   // A ^ L
   void XORAL();

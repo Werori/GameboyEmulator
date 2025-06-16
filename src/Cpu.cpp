@@ -260,6 +260,7 @@ void CPU::initializeOpcodes() {
 void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x00] = {[this]() { CPU::RLCB(); }, 2, 8, 8};
   extendedOpcodes[0x01] = {[this]() { CPU::RLCC(); }, 2, 8, 8};
+  extendedOpcodes[0x01] = {[this]() { CPU::RLCC(); }, 2, 8, 8};
   extendedOpcodes[0x18] = {[this]() { CPU::RRB(); }, 2, 8, 8};
   extendedOpcodes[0x19] = {[this]() { CPU::RRC(); }, 2, 8, 8};
   extendedOpcodes[0x1a] = {[this]() { CPU::RRD(); }, 2, 8, 8};

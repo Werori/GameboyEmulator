@@ -176,6 +176,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xda] = {[this]() { CPU::JPCu16(); }, 3, 12, 16};
   opcodes[0xdc] = {[this]() { CPU::CallCu16(); }, 3, 12, 24};
   opcodes[0xde] = {[this]() { CPU::SBCAu8(); }, 2, 8, 8};
+  opcodes[0xdf] = {[this]() { CPU::RST18h(); }, 1, 16, 16};
   opcodes[0xe0] = {[this]() { CPU::LDFF00Plusu8A(); }, 2, 12, 12};
   opcodes[0xe1] = {[this]() { CPU::PopHL(); }, 1, 12, 12};
   opcodes[0xe2] = {[this]() { CPU::LDFF00PlusCA(); }, 1, 8, 8};
@@ -722,6 +723,12 @@ void CPU::RST00h() {
 void CPU::RST10h() {
   pushToStack(registers.PC + 1);
   registers.PC = 0x10;
+  jumped = true;
+}
+
+void CPU::RST18h() {
+  pushToStack(registers.PC + 1);
+  registers.PC = 0x18;
   jumped = true;
 }
 

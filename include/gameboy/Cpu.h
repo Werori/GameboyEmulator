@@ -319,6 +319,7 @@ struct CPU {
   void RST08h();
   // pop address into DE
   void PopDE();
+  void JPNCu16();
   // load data to 0xFF00 Plus 8-bit data in the next byte
   void LDFF00Plusu8A();
   // pop from stack

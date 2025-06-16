@@ -164,6 +164,7 @@ void CPU::initializeOpcodes() {
   // opcodes[0xcf] = {[this]() { CPU::RST08h(); }, 1, 16, 16};
   opcodes[0xd0] = {[this]() { CPU::RetNc(); }, 1, 8, 20};
   opcodes[0xd1] = {[this]() { CPU::PopDE(); }, 1, 12, 12};
+  opcodes[0xd2] = {[this]() { CPU::JPNCu16(); }, 3, 12, 16};
   opcodes[0xd5] = {[this]() { CPU::PushDE(); }, 1, 16, 16};
   opcodes[0xd6] = {[this]() { CPU::SubAu8(); }, 2, 8, 8};
   opcodes[0xd8] = {[this]() { CPU::RetC(); }, 1, 8, 20};
@@ -868,6 +869,14 @@ void CPU::RST08h() {
 }
 
 void CPU::PopDE() { registers.DE = popFromStack(); }
+
+void CPU::JPNCu16() {
+  if (!registers.isFlagSet(registers.FLAG_C)) {
+    auto [lowByte, highByte] = getLowByteAndHighByte();
+    registers.PC = toLittleEndian(lowByte, highByte);
+    jumped = true;
+  }
+}
 
 void CPU::LDHLu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();

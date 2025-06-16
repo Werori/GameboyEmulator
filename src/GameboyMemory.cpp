@@ -314,7 +314,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.soundChannel4VolumeAndEnvelope = byte;
     break;
   case 0xff22:
-    throw std::runtime_error("writing sound channel 4 frequency and random");
+    // throw std::runtime_error("writing sound channel 4 frequency and random");
     hardwareRegisters.soundChannel4FrequencyAndRandom = byte;
     break;
   case 0xff23:

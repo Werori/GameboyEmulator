@@ -229,7 +229,12 @@ void PPU::renderWindow() {
   }
 }
 
-uint8_t PPU::onRegisterRead(uint16_t addresss) { return memory.defaultKey; }
+uint8_t PPU::onRegisterRead(uint16_t address) {
+  switch (address) {
+  case 0xff00:
+    break;
+  }
+}
 
 void PPU::onRegisterWrite(uint16_t address, uint8_t byte) {
   switch (address) {
@@ -285,7 +290,7 @@ void PPU::renderScanline(uint8_t ly) {
 
     // Get tile index from background map
     uint16_t tileMapAddr = tileMapBase + tileRow * 32 + tileCol;
-    int8_t tileIndex = memory.read(tileMapAddr);
+    uint8_t tileIndex = memory.read(tileMapAddr);
 
     // Compute address of tile data
     uint16_t tileAddr;

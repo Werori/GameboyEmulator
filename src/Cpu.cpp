@@ -106,21 +106,33 @@ void CPU::initializeOpcodes() {
   opcodes[0x58] = {[this]() { CPU::LDEB(); }, 1, 4, 4};
   opcodes[0x59] = {[this]() { CPU::LDEC(); }, 1, 4, 4};
   opcodes[0x5a] = {[this]() { CPU::LDED(); }, 1, 4, 4};
+  opcodes[0x5b] = {[this]() { CPU::LDEE(); }, 1, 4, 4};
+  opcodes[0x5c] = {[this]() { CPU::LDEH(); }, 1, 4, 4};
   opcodes[0x5e] = {[this]() { CPU::LDEHL(); }, 1, 8, 8};
   opcodes[0x5d] = {[this]() { CPU::LDEL(); }, 1, 4, 4};
   opcodes[0x5f] = {[this]() { CPU::LDEA(); }, 1, 4, 4};
   opcodes[0x60] = {[this]() { CPU::LDHB(); }, 1, 4, 4};
+  opcodes[0x61] = {[this]() { CPU::LDHC(); }, 1, 4, 4};
   opcodes[0x62] = {[this]() { CPU::LDHD(); }, 1, 4, 4};
+  opcodes[0x63] = {[this]() { CPU::LDHE(); }, 1, 4, 4};
+  opcodes[0x64] = {[this]() { CPU::LDHH(); }, 1, 4, 4};
+  opcodes[0x65] = {[this]() { CPU::LDHL(); }, 1, 4, 4};
   opcodes[0x66] = {[this]() { CPU::LDHHL(); }, 1, 8, 8};
   opcodes[0x67] = {[this]() { CPU::LDHA(); }, 1, 4, 4};
+  opcodes[0x68] = {[this]() { CPU::LDLB(); }, 1, 4, 4};
   opcodes[0x69] = {[this]() { CPU::LDLC(); }, 1, 4, 4};
+  opcodes[0x6a] = {[this]() { CPU::LDLD(); }, 1, 4, 4};
   opcodes[0x6b] = {[this]() { CPU::LDLE(); }, 1, 4, 4};
+  opcodes[0x6c] = {[this]() { CPU::LDLH(); }, 1, 4, 4};
+  opcodes[0x6d] = {[this]() { CPU::LDLL(); }, 1, 4, 4};
   opcodes[0x6e] = {[this]() { CPU::LDLHL(); }, 1, 8, 8};
   opcodes[0x6f] = {[this]() { CPU::LDLA(); }, 1, 4, 4};
   opcodes[0x70] = {[this]() { CPU::LDHLaddrB(); }, 1, 8, 8};
   opcodes[0x71] = {[this]() { CPU::LDHLaddrC(); }, 1, 8, 8};
   opcodes[0x72] = {[this]() { CPU::LDHLaddrD(); }, 1, 8, 8};
   opcodes[0x73] = {[this]() { CPU::LDHLE(); }, 1, 8, 8};
+  opcodes[0x74] = {[this]() { CPU::LDHLH(); }, 1, 8, 8};
+  opcodes[0x75] = {[this]() { CPU::LDHLL(); }, 1, 8, 8};
   opcodes[0x76] = {[this]() { CPU::HALT(); }, 1, 4, 4};
   opcodes[0x77] = {[this]() { CPU::LDHLA(); }, 1, 8, 8};
   opcodes[0x78] = {[this]() { CPU::LDAB(); }, 1, 4, 4};
@@ -217,8 +229,15 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x1a] = {[this]() { CPU::RRD(); }, 2, 8, 8};
   extendedOpcodes[0x1b] = {[this]() { CPU::RRE(); }, 2, 8, 8};
   extendedOpcodes[0x27] = {[this]() { CPU::SLAA(); }, 2, 8, 8};
+  extendedOpcodes[0x33] = {[this]() { CPU::SwapE(); }, 2, 8, 8};
   extendedOpcodes[0x37] = {[this]() { CPU::SwapA(); }, 2, 8, 8};
   extendedOpcodes[0x38] = {[this]() { CPU::SrlB(); }, 2, 8, 8};
+  extendedOpcodes[0x3f] = {[this]() { CPU::SRLA(); }, 2, 8, 8};
+  extendedOpcodes[0x40] = {[this]() { CPU::Bit0B(); }, 2, 8, 8};
+  extendedOpcodes[0x41] = {[this]() { CPU::Bit0C(); }, 2, 8, 8};
+  extendedOpcodes[0x42] = {[this]() { CPU::Bit0D(); }, 2, 8, 8};
+  extendedOpcodes[0x43] = {[this]() { CPU::Bit0E(); }, 2, 8, 8};
+  extendedOpcodes[0x44] = {[this]() { CPU::Bit0H(); }, 2, 8, 8};
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
   extendedOpcodes[0x5f] = {[this]() { CPU::Bit3A(); }, 2, 8, 8};
   extendedOpcodes[0x6f] = {[this]() { CPU::Bit5A(); }, 2, 8, 8};
@@ -227,6 +246,7 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x7f] = {[this]() { CPU::Bit7A(); }, 2, 8, 8};
   extendedOpcodes[0x86] = {[this]() { CPU::Res0HL(); }, 2, 16, 16};
   extendedOpcodes[0x87] = {[this]() { CPU::Res0A(); }, 2, 8, 8};
+  extendedOpcodes[0xbe] = {[this]() { CPU::Res7HL(); }, 2, 16, 16};
   extendedOpcodes[0xfe] = {[this]() { CPU::Set7HL(); }, 2, 16, 16};
 }
 
@@ -277,7 +297,7 @@ void CPU::decodeAndExecute() {
   }
 
   ppu.tick(lastInstructionCycles * 4);
-  timers.tick(lastInstructionCycles * 4);
+  timers.tick(lastInstructionCycles);
 
   memory.dividerCounter += lastInstructionCycles;
 
@@ -1274,6 +1294,36 @@ void CPU::LDEB() { registers.setE(registers.getB()); }
 
 void CPU::LDED() { registers.setE(registers.getD()); }
 
+void CPU::LDEE() {
+  // do nothing
+}
+
+void CPU::LDEH() { registers.setE(registers.getH()); }
+
+void CPU::LDHC() { registers.setH(registers.getC()); }
+
+void CPU::LDHE() { registers.setH(registers.getE()); }
+
+void CPU::LDHH() {
+  // do nothing
+}
+
+void CPU::LDHL() { registers.setH(registers.getL()); }
+
+void CPU::LDLB() { registers.setL(registers.getB()); }
+
+void CPU::LDLD() { registers.setL(registers.getD()); }
+
+void CPU::LDLH() { registers.setL(registers.getH()); }
+
+void CPU::LDLL() {
+  // do nothing
+}
+
+void CPU::LDHLH() { memory.write(registers.HL, registers.getH()); }
+
+void CPU::LDHLL() { memory.write(registers.HL, registers.getL()); }
+
 void CPU::LDDHL() {
   uint8_t value = memory.read(registers.HL);
   registers.setD(value);
@@ -1718,6 +1768,18 @@ void CPU::SwapA() {
   registers.setA(result);
 }
 
+void CPU::SwapE() {
+  uint8_t e = registers.getE();
+  uint8_t result = (e << 4) | (e >> 4);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, false);
+
+  registers.setE(result);
+}
+
 void CPU::SrlB() {
   uint8_t b = registers.getB();
   bool carry = (b & 0x01);
@@ -1731,8 +1793,56 @@ void CPU::SrlB() {
   registers.setB(result);
 }
 
+void CPU::SRLA() {
+  uint8_t a = registers.getA();
+  bool carry = (a & 0x01);
+  uint8_t result = a >> 1;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, carry);
+
+  registers.setA(result);
+}
+
 void CPU::Bit0A() {
   bool bit = ((registers.getA() & (1 << 0)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit0B() {
+  bool bit = ((registers.getB() & (1 << 0)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit0C() {
+  bool bit = ((registers.getC() & (1 << 0)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit0D() {
+  bool bit = ((registers.getD() & (1 << 0)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit0E() {
+  bool bit = ((registers.getE() & (1 << 0)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit0H() {
+  bool bit = ((registers.getH() & (1 << 0)) == 0);
   registers.setFlag(registers.FLAG_Z, bit == 0);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
@@ -1779,6 +1889,12 @@ void CPU::Res0A() { registers.setA(registers.getA() & ~(1 << 0)); }
 void CPU::Res0HL() {
   uint8_t value = memory.read(registers.HL);
   uint8_t result = value & ~(1 << 0);
+  memory.write(registers.HL, result);
+}
+
+void CPU::Res7HL() {
+  uint8_t value = memory.read(registers.HL);
+  uint8_t result = value & ~(1 << 7);
   memory.write(registers.HL, result);
 }
 

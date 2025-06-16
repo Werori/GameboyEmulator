@@ -42,7 +42,12 @@ void Timers::tick(int cycles) {
   }
 }
 
-uint8_t Timers::onRegisterRead(uint16_t addresss) { return memory.defaultKey; }
+uint8_t Timers::onRegisterRead(uint16_t address) {
+  switch (address) {
+  case 0xff00:
+    break;
+  }
+}
 
 void Timers::onRegisterWrite(uint16_t address, uint8_t byte) {
   switch (address) {

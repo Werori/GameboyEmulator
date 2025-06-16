@@ -10,9 +10,9 @@
 Gameboy::Gameboy()
     : memory(), ppu(memory), cpu(memory, ppu, timers), timers(memory),
       joypad(memory) {
+  memory.addObserver(&joypad);
   memory.addObserver(&ppu);
   memory.addObserver(&timers);
-  memory.addObserver(&joypad);
 };
 
 bool Gameboy::loadROMFromFile(std::string_view filename) {
@@ -38,25 +38,27 @@ bool Gameboy::loadROMFromFile(std::string_view filename) {
 void Gameboy::run() {
   cpu.openLogFile("cpu_log.txt");
   const int CYCLES_PER_FRAME = 70224;
-  // const int CYCLES_PER_FRAME = 1000000;
   ppu.init();
 
   while (!WindowShouldClose()) {
-    // Run CPU instructions until enough cycles for one frame
     while (cpu.cycles < CYCLES_PER_FRAME) {
       cpu.logCPUState();
-      joypad.update();
       if (cpu.halted) {
         uint8_t interruptFlag = memory.read(0xFF0F);
         uint8_t interruptEnable = memory.read(0xFFFF);
         uint8_t firedInterrupts = interruptFlag & interruptEnable;
 
         if (firedInterrupts) {
-          cpu.halted = false; // Wake CPU from HALT
+          cpu.halted = false;
         }
         ppu.tick(1);
         timers.tick(1);
       } else {
+        joypad.update();
+        if (IsKeyDown(KEY_E)) {
+          std::cout << "button state: " << std::hex << (int)joypad.buttonState
+                    << std::endl;
+        }
         cpu.fetchOpcode();
         cpu.decodeAndExecute();
       }
@@ -64,7 +66,6 @@ void Gameboy::run() {
     BeginDrawing();
     ClearBackground(WHITE);
 
-    // Now that we've emulated one frame worth of CPU cycles, draw the frame
     if (ppu.frameReady) {
       ppu.renderFrame();
       ppu.frameReady = false;

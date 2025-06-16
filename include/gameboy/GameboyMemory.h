@@ -59,6 +59,7 @@ private:
 public:
   int dividerCounter = 0;
   bool interruptsWritten = false;
+  bool joypadSet = false;
   uint8_t defaultKey = 0xff;
   GameboyMemory();
 

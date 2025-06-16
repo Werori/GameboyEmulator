@@ -190,6 +190,18 @@ struct CPU {
   void LDEB();
   // load D into E
   void LDED();
+  void LDEE();
+  void LDEH();
+  void LDHC();
+  void LDHE();
+  void LDHH();
+  void LDHL();
+  void LDLB();
+  void LDLD();
+  void LDLH();
+  void LDLL();
+  void LDHLH();
+  void LDHLL();
   // load value at HL into D
   void LDDHL();
   // load A into E
@@ -416,10 +428,17 @@ struct CPU {
   void SLAA();
   // swap bits in A
   void SwapA();
+  void SwapE();
   // shift b >> 1, set carry
   void SrlB();
+  void SRLA();
   // check bit 0 of A
   void Bit0A();
+  void Bit0B();
+  void Bit0C();
+  void Bit0D();
+  void Bit0E();
+  void Bit0H();
   void Bit3A();
   // check bit 5 of A
   void Bit5A();
@@ -430,6 +449,7 @@ struct CPU {
   // reset bit 0 of A
   void Res0A();
   void Res0HL();
+  void Res7HL();
 
   void Set7HL();
 

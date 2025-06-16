@@ -423,6 +423,9 @@ struct CPU {
   void ADCAC();
   void ADCAB();
   void ADCAD();
+  void ADCAE();
+  void ADCAH();
+  void ADCAL();
   // enable interrupt
   void EI();
   // jump to 0x38

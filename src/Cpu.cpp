@@ -153,6 +153,9 @@ void CPU::initializeOpcodes() {
   opcodes[0x88] = {[this]() { CPU::ADCAB(); }, 1, 4, 4};
   opcodes[0x89] = {[this]() { CPU::ADCAC(); }, 1, 4, 4};
   opcodes[0x8a] = {[this]() { CPU::ADCAD(); }, 1, 4, 4};
+  opcodes[0x8b] = {[this]() { CPU::ADCAE(); }, 1, 4, 4};
+  opcodes[0x8c] = {[this]() { CPU::ADCAH(); }, 1, 4, 4};
+  opcodes[0x8d] = {[this]() { CPU::ADCAL(); }, 1, 4, 4};
   opcodes[0x8f] = {[this]() { CPU::ADCAA(); }, 1, 4, 4};
   opcodes[0xa7] = {[this]() { CPU::AndAA(); }, 1, 4, 4};
   opcodes[0x90] = {[this]() { CPU::SubAB(); }, 1, 4, 4};
@@ -1837,6 +1840,60 @@ void CPU::ADCAD() {
   bool carry = isCarryAddWithCarry(a, d, oldCarry);
 
   registers.setA(a + d + oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
+}
+
+void CPU::ADCAE() {
+  uint8_t a = registers.getA();
+  uint8_t e = registers.getE();
+
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarryAddWithCarry(a, e, oldCarry);
+  bool carry = isCarryAddWithCarry(a, e, oldCarry);
+
+  registers.setA(a + e + oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
+}
+
+void CPU::ADCAH() {
+  uint8_t a = registers.getA();
+  uint8_t h = registers.getH();
+
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarryAddWithCarry(a, h, oldCarry);
+  bool carry = isCarryAddWithCarry(a, h, oldCarry);
+
+  registers.setA(a + h + oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
+}
+
+void CPU::ADCAL() {
+  uint8_t a = registers.getA();
+  uint8_t l = registers.getL();
+
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarryAddWithCarry(a, l, oldCarry);
+  bool carry = isCarryAddWithCarry(a, l, oldCarry);
+
+  registers.setA(a + l + oldCarry);
   uint8_t newA = registers.getA();
 
   registers.setFlag(registers.FLAG_Z, newA == 0);

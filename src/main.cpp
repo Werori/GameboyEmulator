@@ -6,7 +6,8 @@ int main() {
   // gameboy.loadROMFromFile("games/03-op sp,hl.gb");
   // gameboy.loadROMFromFile("games/04-op r,imm.gb");
   // gameboy.loadROMFromFile("games/07-jr,jp,call,ret,rst.gb");
-  gameboy.loadROMFromFile("games/08-misc instrs.gb");
+  // gameboy.loadROMFromFile("games/08-misc instrs.gb");
+  gameboy.loadROMFromFile("games/09-op r,r.gb");
   // gameboy.loadROMFromFile("games/06-ld r,r.gb");
   // gameboy.loadROMFromFile("games/05-op rp.gb");
 

@@ -70,6 +70,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x34] = {[this]() { CPU::IncHLAddr(); }, 1, 12, 12};
   opcodes[0x35] = {[this]() { CPU::DecAddrHL(); }, 1, 12, 12};
   opcodes[0x36] = {[this]() { CPU::LDHLu8(); }, 2, 12, 12};
+  opcodes[0x37] = {[this]() { CPU::SCF(); }, 1, 4, 4};
   opcodes[0x38] = {[this]() { CPU::JRCi8(); }, 2, 8, 12};
   opcodes[0x39] = {[this]() { CPU::AddHLSP(); }, 1, 8, 8};
   opcodes[0x3a] = {[this]() { CPU::LDAHLDec(); }, 1, 8, 8};
@@ -77,6 +78,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x3c] = {[this]() { CPU::IncA(); }, 1, 4, 4};
   opcodes[0x3d] = {[this]() { CPU::DecA(); }, 1, 4, 4};
   opcodes[0x3e] = {[this]() { CPU::LDAu8(); }, 2, 8, 8};
+  opcodes[0x3f] = {[this]() { CPU::CCF(); }, 1, 4, 4};
   opcodes[0x40] = {[this]() { CPU::LDBB(); }, 1, 4, 4};
   opcodes[0x41] = {[this]() { CPU::LDBC(); }, 1, 4, 4};
   opcodes[0x42] = {[this]() { CPU::LDBD(); }, 1, 4, 4};
@@ -1451,6 +1453,20 @@ void CPU::LDAFF00PlusC() {
   uint8_t value = memory.read(address);
 
   registers.setA(value);
+}
+
+void CPU::SCF() {
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, true);
+}
+
+void CPU::CCF() {
+  bool carry = registers.isFlagSet(registers.FLAG_C);
+
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, !carry);
 }
 
 void CPU::PopAF() { registers.AF = popFromStack(); }

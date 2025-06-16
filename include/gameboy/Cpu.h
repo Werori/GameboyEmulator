@@ -355,6 +355,8 @@ struct CPU {
   // load value of 0xFF00 plus 8-bit into register A
   void LDAFF00Plusu8();
   void LDAFF00PlusC();
+  void SCF();
+  void CCF();
   // pop address into AF
   void PopAF();
   // disable interrupt

@@ -806,6 +806,7 @@ void CPU::RetC() {
 void CPU::Reti() {
   registers.PC = popFromStack();
   IME = 1;
+  jumped = true;
 }
 
 void CPU::SBCAu8() {

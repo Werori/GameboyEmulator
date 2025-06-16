@@ -7,6 +7,7 @@
 #include <ios>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 CPU::CPU(GameboyMemory &memory, PPU &ppu, Timers &timers)
     : memory(memory), ppu(ppu), timers(timers) {
@@ -395,7 +396,11 @@ void CPU::RRCA() {
   registers.setA(result);
 }
 
-void CPU::STOP() { halted = true; }
+void CPU::STOP() {
+
+  throw std::runtime_error("STOP");
+  halted = true;
+}
 
 void CPU::LDDEu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();

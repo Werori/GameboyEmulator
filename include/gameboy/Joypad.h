@@ -18,9 +18,9 @@ public:
 private:
   GameboyMemory &memory;
 
-  uint8_t selectBits;
-  uint8_t buttonState;
-  uint8_t lastState;
+  uint8_t selectBits = 0x30;
+  uint8_t buttonState = memory.defaultKey;
+  uint8_t lastState = memory.defaultKey;
 
   uint8_t pollButtons();
 };

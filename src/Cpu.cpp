@@ -395,7 +395,7 @@ void CPU::RRCA() {
   registers.setA(result);
 }
 
-void CPU::STOP() {}
+void CPU::STOP() { halted = true; }
 
 void CPU::LDDEu16() {
   auto [lowByte, highByte] = getLowByteAndHighByte();

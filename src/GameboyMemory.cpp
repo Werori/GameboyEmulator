@@ -65,11 +65,6 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
 
   switch (address) {
   case 0xff00:
-    // std::cout << "joypad: " << std::hex << (int)hardwareRegisters.joypad
-    //           << std::endl;
-    return 0xcf;
-    return hardwareRegisters.joypad;
-    // throw std::runtime_error("reading joypad");
     break;
   case 0xff01:
     return hardwareRegisters.serialTransferData;
@@ -183,7 +178,10 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
     throw std::runtime_error("out of range io");
   }
   for (auto *observer : observers) {
-    observer->onRegisterRead(address);
+    uint8_t value = observer->onRegisterRead(address);
+    if (value != defaultKey) {
+      return value;
+    }
   }
   return 0;
 }

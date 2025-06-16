@@ -15,13 +15,20 @@ uint8_t Joypad::read() {
   result &= ~0x30;
   result |= selectBits;
 
-  result |= buttonState;
+  if (!(selectBits & 0x10)) {
+    // Direction buttons selected
+    result &= (buttonState >> 4) | 0xF0;
+  } else if (!(selectBits & 0x20)) {
+    // Action buttons selected
+    result &= (buttonState & 0x0F) | 0xF0;
+  }
 
+  // return result;
   return result;
 }
 
 void Joypad::update() {
-  uint8_t newState = 0x0f;
+  uint8_t newState = 0xcf;
 
   if (!(selectBits & 0x10)) {
     // direction buttons
@@ -85,4 +92,5 @@ uint8_t Joypad::onRegisterRead(uint16_t address) {
     return read();
     break;
   }
+  return memory.defaultKey;
 }

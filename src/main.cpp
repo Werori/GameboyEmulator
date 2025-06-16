@@ -2,6 +2,7 @@
 
 int main() {
   Gameboy gameboy;
+  // gameboy.loadROMFromFile("games/01-special.gb");
   // gameboy.loadROMFromFile("games/02-interrupts.gb");
   // gameboy.loadROMFromFile("games/03-op sp,hl.gb");
   // gameboy.loadROMFromFile("games/04-op r,imm.gb");

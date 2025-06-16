@@ -183,6 +183,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xe5] = {[this]() { CPU::PushHL(); }, 1, 16, 16};
   opcodes[0xe6] = {[this]() { CPU::AndAu8(); }, 2, 8, 8};
   opcodes[0xe8] = {[this]() { CPU::AddSPi8(); }, 2, 16, 16};
+  opcodes[0xe7] = {[this]() { CPU::RST20h(); }, 1, 16, 16};
   opcodes[0xe9] = {[this]() { CPU::JPHL(); }, 1, 4, 4};
   opcodes[0xea] = {[this]() { CPU::LDu16A(); }, 3, 16, 16};
   opcodes[0xee] = {[this]() { CPU::XORAu8(); }, 2, 8, 8};
@@ -729,6 +730,12 @@ void CPU::RST10h() {
 void CPU::RST18h() {
   pushToStack(registers.PC + 1);
   registers.PC = 0x18;
+  jumped = true;
+}
+
+void CPU::RST20h() {
+  pushToStack(registers.PC + 1);
+  registers.PC = 0x20;
   jumped = true;
 }
 

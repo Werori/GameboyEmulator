@@ -421,6 +421,7 @@ struct CPU {
   void SRLA();
   // check bit 0 of A
   void Bit0A();
+  void Bit0B();
   void Bit3A();
   // check bit 5 of A
   void Bit5A();

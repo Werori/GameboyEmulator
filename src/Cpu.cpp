@@ -224,6 +224,8 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x40] = {[this]() { CPU::Bit0B(); }, 2, 8, 8};
   extendedOpcodes[0x41] = {[this]() { CPU::Bit0C(); }, 2, 8, 8};
   extendedOpcodes[0x42] = {[this]() { CPU::Bit0D(); }, 2, 8, 8};
+  extendedOpcodes[0x43] = {[this]() { CPU::Bit0E(); }, 2, 8, 8};
+  extendedOpcodes[0x44] = {[this]() { CPU::Bit0H(); }, 2, 8, 8};
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
   extendedOpcodes[0x5f] = {[this]() { CPU::Bit3A(); }, 2, 8, 8};
   extendedOpcodes[0x6f] = {[this]() { CPU::Bit5A(); }, 2, 8, 8};
@@ -1785,6 +1787,20 @@ void CPU::Bit0C() {
 
 void CPU::Bit0D() {
   bool bit = ((registers.getD() & (1 << 0)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit0E() {
+  bool bit = ((registers.getE() & (1 << 0)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit0H() {
+  bool bit = ((registers.getH() & (1 << 0)) == 0);
   registers.setFlag(registers.FLAG_Z, bit == 0);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);

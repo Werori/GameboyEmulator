@@ -333,6 +333,13 @@ struct CPU {
   void SubAH();
   void SubAL();
   void SubAA();
+  void SBCAB();
+  void SBCAC();
+  void SBCAD();
+  void SBCAE();
+  void SBCAH();
+  void SBCAL();
+  void SBCAA();
   // A and C
   void AndAC();
   // A and L

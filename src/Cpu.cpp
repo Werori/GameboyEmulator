@@ -165,6 +165,13 @@ void CPU::initializeOpcodes() {
   opcodes[0x94] = {[this]() { CPU::SubAH(); }, 1, 4, 4};
   opcodes[0x95] = {[this]() { CPU::SubAL(); }, 1, 4, 4};
   opcodes[0x97] = {[this]() { CPU::SubAA(); }, 1, 4, 4};
+  opcodes[0x98] = {[this]() { CPU::SBCAB(); }, 1, 4, 4};
+  opcodes[0x99] = {[this]() { CPU::SBCAC(); }, 1, 4, 4};
+  opcodes[0x9a] = {[this]() { CPU::SBCAD(); }, 1, 4, 4};
+  opcodes[0x9b] = {[this]() { CPU::SBCAE(); }, 1, 4, 4};
+  opcodes[0x9c] = {[this]() { CPU::SBCAH(); }, 1, 4, 4};
+  opcodes[0x9d] = {[this]() { CPU::SBCAL(); }, 1, 4, 4};
+  opcodes[0x9f] = {[this]() { CPU::SBCAA(); }, 1, 4, 4};
   opcodes[0xa1] = {[this]() { CPU::AndAC(); }, 1, 4, 4};
   opcodes[0xa5] = {[this]() { CPU::ANDAL(); }, 1, 4, 4};
   opcodes[0xa9] = {[this]() { CPU::XORAC(); }, 1, 4, 4};
@@ -1096,6 +1103,131 @@ void CPU::SubAA() {
   registers.setFlag(registers.FLAG_C, isCarrySub(a, a));
 
   registers.setA(result);
+}
+
+void CPU::SBCAB() {
+  uint8_t a = registers.getA();
+  uint8_t b = registers.getB();
+
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarrySubWithCarry(a, b, oldCarry);
+  bool carry = isCarrySubWithCarry(a, b, oldCarry);
+
+  registers.setA(a - b - oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
+}
+
+void CPU::SBCAC() {
+  uint8_t a = registers.getA();
+  uint8_t c = registers.getC();
+
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarrySubWithCarry(a, c, oldCarry);
+  bool carry = isCarrySubWithCarry(a, c, oldCarry);
+
+  registers.setA(a - c - oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
+}
+
+void CPU::SBCAD() {
+  uint8_t a = registers.getA();
+  uint8_t d = registers.getD();
+
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarrySubWithCarry(a, d, oldCarry);
+  bool carry = isCarrySubWithCarry(a, d, oldCarry);
+
+  registers.setA(a - d - oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
+}
+
+void CPU::SBCAE() {
+  uint8_t a = registers.getA();
+  uint8_t e = registers.getE();
+
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarrySubWithCarry(a, e, oldCarry);
+  bool carry = isCarrySubWithCarry(a, e, oldCarry);
+
+  registers.setA(a - e - oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
+}
+
+void CPU::SBCAH() {
+  uint8_t a = registers.getA();
+  uint8_t h = registers.getH();
+
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarrySubWithCarry(a, h, oldCarry);
+  bool carry = isCarrySubWithCarry(a, h, oldCarry);
+
+  registers.setA(a - h - oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
+}
+
+void CPU::SBCAL() {
+  uint8_t a = registers.getA();
+  uint8_t l = registers.getL();
+
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarrySubWithCarry(a, l, oldCarry);
+  bool carry = isCarrySubWithCarry(a, l, oldCarry);
+
+  registers.setA(a - l - oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
+}
+
+void CPU::SBCAA() {
+  uint8_t a = registers.getA();
+
+  uint8_t oldCarry = registers.isFlagSet(registers.FLAG_C) ? 1 : 0;
+
+  bool halfCarry = isHalfCarrySubWithCarry(a, a, oldCarry);
+  bool carry = isCarrySubWithCarry(a, a, oldCarry);
+
+  registers.setA(a - a - oldCarry);
+  uint8_t newA = registers.getA();
+
+  registers.setFlag(registers.FLAG_Z, newA == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, halfCarry);
+  registers.setFlag(registers.FLAG_C, carry);
 }
 
 void CPU::AndAC() {

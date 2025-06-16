@@ -2324,42 +2324,42 @@ void CPU::SRLA() {
 
 void CPU::Bit0A() {
   bool bit = ((registers.getA() & (1 << 0)) == 0);
-  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
 }
 
 void CPU::Bit0B() {
   bool bit = ((registers.getB() & (1 << 0)) == 0);
-  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
 }
 
 void CPU::Bit0C() {
   bool bit = ((registers.getC() & (1 << 0)) == 0);
-  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
 }
 
 void CPU::Bit0D() {
   bool bit = ((registers.getD() & (1 << 0)) == 0);
-  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
 }
 
 void CPU::Bit0E() {
   bool bit = ((registers.getE() & (1 << 0)) == 0);
-  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
 }
 
 void CPU::Bit0H() {
   bool bit = ((registers.getH() & (1 << 0)) == 0);
-  registers.setFlag(registers.FLAG_Z, bit == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);
 }

@@ -471,6 +471,7 @@ struct CPU {
   // check bit 0 of A
   void Bit0A();
   void Bit0B();
+  void Bit1B();
   void Bit0C();
   void Bit0D();
   void Bit0E();

@@ -217,9 +217,6 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
 
   switch (address) {
   case 0xff00:
-    hardwareRegisters.joypad = byte & 0x30;
-    // std::cout << "byte: " << std::hex << (int)byte << std::endl;
-    // throw std::runtime_error("writing joypad");
     break;
   case 0xff01:
     hardwareRegisters.serialTransferData = byte;

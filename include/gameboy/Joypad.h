@@ -2,7 +2,7 @@
 
 #include "GameboyMemory.h"
 #include <cstdint>
-class Joypad {
+class Joypad : public IRegisterObserver {
 public:
   Joypad(GameboyMemory &memory);
 
@@ -10,6 +10,8 @@ public:
   uint8_t read();
 
   void update();
+
+  void onRegisterWrite(uint16_t address, uint8_t byte);
 
 private:
   GameboyMemory &memory;

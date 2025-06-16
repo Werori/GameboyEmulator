@@ -12,6 +12,7 @@ Gameboy::Gameboy()
       joypad(memory) {
   memory.addObserver(&ppu);
   memory.addObserver(&timers);
+  memory.addObserver(&joypad);
 };
 
 bool Gameboy::loadROMFromFile(std::string_view filename) {

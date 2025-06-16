@@ -70,3 +70,11 @@ void Joypad::update() {
   lastState = buttonState;
   buttonState = newState;
 }
+
+void Joypad::onRegisterWrite(uint16_t address, uint8_t byte) {
+  switch (address) {
+  case 0xff00:
+    write(byte);
+    break;
+  }
+}

@@ -479,6 +479,7 @@ struct CPU {
   void Bit0L();
   void Bit3A();
   void Bit3B();
+  void Bit4B();
   // check bit 5 of A
   void Bit5A();
   // check bit 6 of A

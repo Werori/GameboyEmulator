@@ -311,6 +311,7 @@ struct CPU {
   void ANDAL();
   // xor AC, set flags
   void XORAC();
+  void XORAE();
   // A ^ L
   void XORAL();
   // A ^ (HL)

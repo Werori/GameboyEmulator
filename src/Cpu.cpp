@@ -136,6 +136,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xa1] = {[this]() { CPU::AndAC(); }, 1, 4, 4};
   opcodes[0xa5] = {[this]() { CPU::ANDAL(); }, 1, 4, 4};
   opcodes[0xa9] = {[this]() { CPU::XORAC(); }, 1, 4, 4};
+  opcodes[0xab] = {[this]() { CPU::XORAE(); }, 1, 4, 4};
   opcodes[0xad] = {[this]() { CPU::XORAL(); }, 1, 4, 4};
   opcodes[0xae] = {[this]() { CPU::XORAHL(); }, 1, 8, 8};
   opcodes[0xaf] = {[this]() { CPU::XORAA(); }, 1, 4, 4};
@@ -1108,6 +1109,19 @@ void CPU::XORAC() {
   registers.setFlag(registers.FLAG_C, false);
 
   registers.setA(result);
+}
+
+void CPU::XORAE() {
+  uint8_t a = registers.getA();
+  uint8_t e = registers.getE();
+  uint8_t result = a ^ e;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, false);
+
+  registers.setE(result);
 }
 
 void CPU::XORAL() {

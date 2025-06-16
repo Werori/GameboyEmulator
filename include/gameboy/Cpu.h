@@ -354,6 +354,7 @@ struct CPU {
   void RST28h();
   // load value of 0xFF00 plus 8-bit into register A
   void LDAFF00Plusu8();
+  void LDAFF00PlusC();
   // pop address into AF
   void PopAF();
   // disable interrupt

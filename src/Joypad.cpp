@@ -30,8 +30,8 @@ uint8_t Joypad::read() {
 
 void Joypad::update() {
   uint8_t newState = memory.defaultKey;
-  std::cout << "selectBits: " << std::bitset<8>(selectBits)
-            << " newState: " << std::bitset<8>(newState) << std::endl;
+  // std::cout << "selectBits: " << std::bitset<8>(selectBits)
+  //           << " newState: " << std::bitset<8>(newState) << std::endl;
   if (!(selectBits & 0x10)) {
     // direction buttons
     if (IsKeyDown(KEY_RIGHT)) {

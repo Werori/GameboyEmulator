@@ -195,6 +195,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xef] = {[this]() { CPU::RST28h(); }, 1, 16, 16};
   opcodes[0xf0] = {[this]() { CPU::LDAFF00Plusu8(); }, 2, 12, 12};
   opcodes[0xf1] = {[this]() { CPU::PopAF(); }, 1, 12, 12};
+  opcodes[0xf2] = {[this]() { CPU::LDAFF00PlusC(); }, 1, 8, 8};
   opcodes[0xf3] = {[this]() { CPU::DI(); }, 1, 4, 4};
   opcodes[0xf9] = {[this]() { CPU::LDSPHL(); }, 1, 8, 8};
   opcodes[0xf8] = {[this]() { CPU::LDHLSPi8(); }, 2, 12, 12};
@@ -1438,6 +1439,14 @@ void CPU::RST28h() {
 
 void CPU::LDAFF00Plusu8() {
   auto byte = memory.read(registers.PC + 1);
+  auto address = 0xff00 + byte;
+  uint8_t value = memory.read(address);
+
+  registers.setA(value);
+}
+
+void CPU::LDAFF00PlusC() {
+  auto byte = registers.getC();
   auto address = 0xff00 + byte;
   uint8_t value = memory.read(address);
 

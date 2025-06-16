@@ -6,13 +6,14 @@ int main() {
   // gameboy.loadROMFromFile("games/03-op sp,hl.gb");
   // gameboy.loadROMFromFile("games/04-op r,imm.gb");
   // gameboy.loadROMFromFile("games/07-jr,jp,call,ret,rst.gb");
+  gameboy.loadROMFromFile("games/08-misc instrs.gb");
   // gameboy.loadROMFromFile("games/06-ld r,r.gb");
   // gameboy.loadROMFromFile("games/05-op rp.gb");
 
   // gameboy.loadROMFromFile("games/dmg-acid2.gb");
   // gameboy.loadROMFromFile("games/hello-world.gb");
   // gameboy.loadROMFromFile("games/sml.gb");
-  gameboy.loadROMFromFile("games/tetris.gb");
+  // gameboy.loadROMFromFile("games/tetris.gb");
   // gameboy.loadROMFromFile("07-jr,jp,call,ret,rst.gb");
   gameboy.run();
   return 0;

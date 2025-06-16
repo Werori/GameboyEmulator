@@ -290,15 +290,15 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.soundChannel3DACEnable = byte;
     break;
   case 0xff1b:
-    throw std::runtime_error("writing sound channel 3 length timer");
+    // throw std::runtime_error("writing sound channel 3 length timer");
     hardwareRegisters.soundChannel3LengthTimer = byte;
     break;
   case 0xff1c:
-    throw std::runtime_error("writing sound channel 3 output level");
+    // throw std::runtime_error("writing sound channel 3 output level");
     hardwareRegisters.soundChannel3OutputLevel = byte;
     break;
   case 0xff1d:
-    throw std::runtime_error("writing sound channel 3 period low");
+    // throw std::runtime_error("writing sound channel 3 period low");
     hardwareRegisters.soundChannel3PeriodLow = byte;
     break;
   case 0xff1e:

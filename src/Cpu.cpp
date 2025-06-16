@@ -198,6 +198,7 @@ void CPU::initializeOpcodes() {
 };
 
 void CPU::initializeExtendedOpcodes() {
+  extendedOpcodes[0x18] = {[this]() { CPU::RRB(); }, 2, 8, 8};
   extendedOpcodes[0x19] = {[this]() { CPU::RRC(); }, 2, 8, 8};
   extendedOpcodes[0x1a] = {[this]() { CPU::RRD(); }, 2, 8, 8};
   extendedOpcodes[0x1b] = {[this]() { CPU::RRE(); }, 2, 8, 8};
@@ -1544,6 +1545,20 @@ void CPU::RRD() {
   registers.setFlag(registers.FLAG_C, newCarry);
 
   registers.setD(result);
+}
+
+void CPU::RRB() {
+  bool oldCarry = registers.isFlagSet(registers.FLAG_C);
+  uint8_t b = registers.getB();
+  bool newCarry = (b & 0x01) == 1;
+  uint8_t result = (b >> 1) | (oldCarry ? 0x80 : 0x00);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, newCarry);
+
+  registers.setB(result);
 }
 
 void CPU::RRE() {

@@ -393,6 +393,7 @@ struct CPU {
   void RST38h();
   // rotate bits in C one to the right
   void RRC();
+  void RRB();
   // rotate bits in C to the right
   void RRD();
   // rotate bits in E to the right

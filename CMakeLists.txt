@@ -17,7 +17,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 link_directories(${CMAKE_SOURCE_DIR}/lib/raylib)
 add_executable(${PROJECT_NAME} src/main.cpp src/Gameboy.cpp
   src/GameboyMemory.cpp src/Cpu.cpp src/Registers.cpp src/Range.cpp src/Ppu.cpp
-  src/Timers.cpp)
+  src/Timers.cpp src/Joypad.cpp)
 
 include_directories(${CMAKE_SOURCE_DIR}/include/raylib)
 include_directories(${CMAKE_SOURCE_DIR}/include/gameboy)

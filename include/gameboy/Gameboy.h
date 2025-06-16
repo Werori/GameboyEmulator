@@ -2,6 +2,7 @@
 
 #include "Cpu.h"
 #include "GameboyMemory.h"
+#include "Joypad.h"
 #include "Ppu.h"
 #include "Timers.h"
 #include <cstddef>
@@ -12,6 +13,7 @@ struct Gameboy {
   PPU ppu;
   CPU cpu;
   Timers timers;
+  Joypad joypad;
 
   Gameboy();
 

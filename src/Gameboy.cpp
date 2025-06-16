@@ -1,5 +1,6 @@
 #include "Cpu.h"
 #include "Gameboy.h"
+#include "Joypad.h"
 #include <cstdint>
 #include <fstream>
 #include <iostream>
@@ -42,6 +43,7 @@ void Gameboy::run() {
     // Run CPU instructions until enough cycles for one frame
     while (cpu.cycles < CYCLES_PER_FRAME) {
       cpu.logCPUState();
+      joypad.update();
       if (cpu.halted) {
         uint8_t interruptFlag = memory.read(0xFF0F);
         uint8_t interruptEnable = memory.read(0xFFFF);

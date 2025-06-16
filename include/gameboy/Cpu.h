@@ -279,6 +279,7 @@ struct CPU {
   void RST10h();
   void RST18h();
   void RST20h();
+  void RST30h();
   // jump to address from stack if Zero flag is set
   void RetZ();
   // return from stack

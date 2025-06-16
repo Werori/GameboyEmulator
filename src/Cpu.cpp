@@ -195,6 +195,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xf8] = {[this]() { CPU::LDHLSPi8(); }, 2, 12, 12};
   opcodes[0xf5] = {[this]() { CPU::PushAF(); }, 1, 16, 16};
   opcodes[0xf6] = {[this]() { CPU::OrAu8(); }, 2, 8, 8};
+  opcodes[0xf7] = {[this]() { CPU::RST30h(); }, 1, 16, 16};
   opcodes[0xfa] = {[this]() { CPU::LDAu16(); }, 3, 16, 16};
   opcodes[0xfe] = {[this]() { CPU::CPAu8(); }, 2, 8, 8};
   opcodes[0xfb] = {[this]() { CPU::EI(); }, 1, 4, 4};
@@ -736,6 +737,12 @@ void CPU::RST18h() {
 void CPU::RST20h() {
   pushToStack(registers.PC + 1);
   registers.PC = 0x20;
+  jumped = true;
+}
+
+void CPU::RST30h() {
+  pushToStack(registers.PC + 1);
+  registers.PC = 0x30;
   jumped = true;
 }
 

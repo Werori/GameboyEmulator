@@ -106,6 +106,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x5e] = {[this]() { CPU::LDEHL(); }, 1, 8, 8};
   opcodes[0x5d] = {[this]() { CPU::LDEL(); }, 1, 4, 4};
   opcodes[0x5f] = {[this]() { CPU::LDEA(); }, 1, 4, 4};
+  opcodes[0x60] = {[this]() { CPU::LDHB(); }, 1, 4, 4};
   opcodes[0x62] = {[this]() { CPU::LDHD(); }, 1, 4, 4};
   opcodes[0x66] = {[this]() { CPU::LDHHL(); }, 1, 8, 8};
   opcodes[0x67] = {[this]() { CPU::LDHA(); }, 1, 4, 4};
@@ -1253,6 +1254,8 @@ void CPU::LDHHL() {
 void CPU::LDHA() { registers.setH(registers.getA()); }
 
 void CPU::LDLC() { registers.setL(registers.getC()); }
+
+void CPU::LDHB() { registers.setH(registers.getB()); }
 
 void CPU::LDLE() { registers.setL(registers.getE()); }
 

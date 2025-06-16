@@ -217,6 +217,7 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x6f] = {[this]() { CPU::Bit5A(); }, 2, 8, 8};
   extendedOpcodes[0x77] = {[this]() { CPU::Bit6A(); }, 2, 8, 8};
   extendedOpcodes[0x7f] = {[this]() { CPU::Bit7A(); }, 2, 8, 8};
+  extendedOpcodes[0x86] = {[this]() { CPU::Res0HL(); }, 2, 16, 16};
   extendedOpcodes[0x87] = {[this]() { CPU::Res0A(); }, 2, 8, 8};
 }
 
@@ -1700,6 +1701,12 @@ void CPU::Bit7A() {
 }
 
 void CPU::Res0A() { registers.setA(registers.getA() & ~(1 << 0)); }
+
+void CPU::Res0HL() {
+  uint8_t value = memory.read(registers.HL);
+  uint8_t result = value & ~(1 << 0);
+  memory.write(registers.HL, result);
+}
 
 uint16_t CPU::toLittleEndian(uint8_t lowByte, uint8_t highByte) {
   return (static_cast<uint16_t>(lowByte)) |

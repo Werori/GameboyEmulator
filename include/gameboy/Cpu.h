@@ -422,6 +422,7 @@ struct CPU {
   void Bit7A();
   // reset bit 0 of A
   void Res0A();
+  void Res0HL();
 
   void openLogFile(const std::string &filename);
   void closeLogFile();

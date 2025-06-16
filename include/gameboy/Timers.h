@@ -13,5 +13,6 @@ struct Timers : IRegisterObserver {
   Timers(GameboyMemory &memory);
 
   void onRegisterWrite(uint16_t address, uint8_t byte);
+  uint8_t onRegisterRead(uint16_t address);
   void tick(int cycles);
 };

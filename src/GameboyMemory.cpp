@@ -182,6 +182,9 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   default:
     throw std::runtime_error("out of range io");
   }
+  for (auto *observer : observers) {
+    observer->onRegisterRead(address);
+  }
   return 0;
 }
 

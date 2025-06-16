@@ -78,3 +78,11 @@ void Joypad::onRegisterWrite(uint16_t address, uint8_t byte) {
     break;
   }
 }
+
+uint8_t Joypad::onRegisterRead(uint16_t address) {
+  switch (address) {
+  case 0xff00:
+    return read();
+    break;
+  }
+}

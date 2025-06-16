@@ -229,6 +229,8 @@ void PPU::renderWindow() {
   }
 }
 
+uint8_t PPU::onRegisterRead(uint16_t addresss) {}
+
 void PPU::onRegisterWrite(uint16_t address, uint8_t byte) {
   switch (address) {
   case 0xff47:

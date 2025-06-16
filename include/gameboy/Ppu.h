@@ -60,6 +60,7 @@ private:
   void renderWindow();
 
   void onRegisterWrite(uint16_t address, uint8_t byte);
+  uint8_t onRegisterRead(uint16_t address);
 
   uint32_t shadeToColor(uint8_t shade);
 

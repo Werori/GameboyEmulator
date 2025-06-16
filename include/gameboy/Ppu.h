@@ -45,7 +45,7 @@ private:
 
   uint32_t framebuffer[SCREEN_WIDTH * SCREEN_HEIGHT] = {0};
   Texture2D frameTexture = {0, 0, 0, 0, 0};
-  uint8_t scaleFactor = 4;
+  uint8_t scaleFactor = 5;
   uint8_t startOfVBlank = 144;
   uint8_t endOfVBlank = 153;
   int cycleCounter = 0;

@@ -430,6 +430,7 @@ struct CPU {
   // reset bit 0 of A
   void Res0A();
   void Res0HL();
+  void Res7HL();
 
   void Set7HL();
 

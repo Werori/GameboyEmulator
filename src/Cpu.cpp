@@ -227,6 +227,7 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x7f] = {[this]() { CPU::Bit7A(); }, 2, 8, 8};
   extendedOpcodes[0x86] = {[this]() { CPU::Res0HL(); }, 2, 16, 16};
   extendedOpcodes[0x87] = {[this]() { CPU::Res0A(); }, 2, 8, 8};
+  extendedOpcodes[0xbe] = {[this]() { CPU::Res7HL(); }, 2, 16, 16};
   extendedOpcodes[0xfe] = {[this]() { CPU::Set7HL(); }, 2, 16, 16};
 }
 
@@ -277,7 +278,7 @@ void CPU::decodeAndExecute() {
   }
 
   ppu.tick(lastInstructionCycles * 4);
-  timers.tick(lastInstructionCycles * 4);
+  timers.tick(lastInstructionCycles);
 
   memory.dividerCounter += lastInstructionCycles;
 
@@ -1779,6 +1780,12 @@ void CPU::Res0A() { registers.setA(registers.getA() & ~(1 << 0)); }
 void CPU::Res0HL() {
   uint8_t value = memory.read(registers.HL);
   uint8_t result = value & ~(1 << 0);
+  memory.write(registers.HL, result);
+}
+
+void CPU::Res7HL() {
+  uint8_t value = memory.read(registers.HL);
+  uint8_t result = value & ~(1 << 7);
   memory.write(registers.HL, result);
 }
 

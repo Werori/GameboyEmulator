@@ -419,6 +419,7 @@ struct CPU {
   void Bit5A();
   // check bit 6 of A
   void Bit6A();
+  void Bit7A();
   // reset bit 0 of A
   void Res0A();
 

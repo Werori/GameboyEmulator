@@ -284,6 +284,9 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x4c] = {[this]() { CPU::Bit1H(); }, 2, 8, 8};
   extendedOpcodes[0x4d] = {[this]() { CPU::Bit1L(); }, 2, 8, 8};
   extendedOpcodes[0x4f] = {[this]() { CPU::Bit1A(); }, 2, 8, 8};
+  extendedOpcodes[0x50] = {[this]() { CPU::Bit2B(); }, 2, 8, 8};
+  extendedOpcodes[0x51] = {[this]() { CPU::Bit2C(); }, 2, 8, 8};
+  extendedOpcodes[0x52] = {[this]() { CPU::Bit2D(); }, 2, 8, 8};
   extendedOpcodes[0x58] = {[this]() { CPU::Bit3B(); }, 2, 8, 8};
   extendedOpcodes[0x5f] = {[this]() { CPU::Bit3A(); }, 2, 8, 8};
   extendedOpcodes[0x60] = {[this]() { CPU::Bit4B(); }, 2, 8, 8};
@@ -2433,6 +2436,27 @@ void CPU::Bit1A() {
   registers.setFlag(registers.FLAG_H, true);
 }
 
+void CPU::Bit2B() {
+  bool bit = ((registers.getB() & (1 << 2)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit2C() {
+  bool bit = ((registers.getC() & (1 << 2)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit2D() {
+  bool bit = ((registers.getD() & (1 << 2)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
 void CPU::Bit0D() {
   bool bit = ((registers.getD() & (1 << 0)) == 0);
   registers.setFlag(registers.FLAG_Z, bit);
@@ -2522,7 +2546,7 @@ void CPU::RLCC() {
   bool bit7 = (c & 0x80) != 0;
 
   uint8_t result = (c << 1) | (bit7 ? 1 : 0);
-  registers.setB(result);
+  registers.setC(result);
 
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, false);

@@ -67,6 +67,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   case 0xff00:
     std::cout << "joypad: " << std::hex << (int)hardwareRegisters.joypad
               << std::endl;
+    return 0xcf;
     return hardwareRegisters.joypad;
     // throw std::runtime_error("reading joypad");
     break;
@@ -154,7 +155,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   case 0xff44:
     // std::cout << "ly returned: " << std::hex << (int)hardwareRegisters.ly
     //           << std::endl;
-    // return hardwareRegisters.ly;
+    return hardwareRegisters.ly;
     return 0x90;
     break;
   case 0xff45:
@@ -379,7 +380,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.windowX = byte;
     break;
   case 0xff50:
-    // throw std::runtime_error("boot rom disable!");
+    throw std::runtime_error("boot rom disable!");
     // throw std::runtime_error("out of range io write");
   }
   for (auto *observer : observers) {

@@ -67,6 +67,7 @@ struct CPU {
   void DecC();
   // load 8-bit into register C
   void LDCu8();
+  void RRCA();
   // stop and wait for input
   void STOP();
   // load 16-bit address into register DE
@@ -85,6 +86,8 @@ struct CPU {
   void IncDE();
   // increase D
   void IncD();
+  // decrease D
+  void DecD();
   // set u8 to D
   void LDDu8();
   // increase E

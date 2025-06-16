@@ -275,6 +275,7 @@ struct CPU {
   void PushBC();
   // Add A + u8, set flags
   void AddAu8();
+  void RST00h();
   // jump to address from stack if Zero flag is set
   void RetZ();
   // return from stack

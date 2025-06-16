@@ -156,6 +156,7 @@ void CPU::initializeOpcodes() {
   opcodes[0xc4] = {[this]() { CPU::CallNZu16(); }, 3, 12, 24};
   opcodes[0xc5] = {[this]() { CPU::PushBC(); }, 1, 16, 16};
   opcodes[0xc6] = {[this]() { CPU::AddAu8(); }, 2, 8, 8};
+  opcodes[0xc7] = {[this]() { CPU::RST00h(); }, 1, 16, 16};
   opcodes[0xc8] = {[this]() { CPU::RetZ(); }, 1, 8, 20};
   opcodes[0xc9] = {[this]() { CPU::RET(); }, 1, 16, 16};
   opcodes[0xca] = {[this]() { CPU::JPZu16(); }, 3, 12, 16};
@@ -709,6 +710,12 @@ void CPU::AddAu8() {
   registers.setFlag(registers.FLAG_C, isCarryAdd(a, value));
 
   registers.setA(result);
+}
+
+void CPU::RST00h() {
+  pushToStack(registers.PC + 1);
+  registers.PC = 0x00;
+  jumped = true;
 }
 
 void CPU::RetZ() {

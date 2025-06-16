@@ -36,6 +36,7 @@ void CPU::initializeOpcodes() {
   opcodes[0x12] = {[this]() { CPU::LDDEA(); }, 1, 8, 8};
   opcodes[0x13] = {[this]() { CPU::IncDE(); }, 1, 8, 8};
   opcodes[0x14] = {[this]() { CPU::IncD(); }, 1, 4, 4};
+  opcodes[0x15] = {[this]() { CPU::DecD(); }, 1, 4, 4};
   opcodes[0x16] = {[this]() { CPU::LDDu8(); }, 2, 8, 8};
   opcodes[0x18] = {[this]() { CPU::JRi8(); }, 2, 12, 12};
   opcodes[0x19] = {[this]() { CPU::AddHLDE(); }, 1, 8, 8};
@@ -410,6 +411,18 @@ void CPU::LDDEA() {
 }
 
 void CPU::IncDE() { registers.DE++; }
+
+void CPU::DecD() {
+  uint8_t d = registers.getD();
+  uint8_t result = d - 1;
+
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(d, 1));
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+
+  registers.setD(result);
+}
 
 void CPU::IncD() {
   uint8_t d = registers.getD();

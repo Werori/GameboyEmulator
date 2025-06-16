@@ -86,6 +86,8 @@ struct CPU {
   void IncDE();
   // increase D
   void IncD();
+  // decrease D
+  void DecD();
   // set u8 to D
   void LDDu8();
   // increase E

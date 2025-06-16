@@ -172,7 +172,11 @@ void CPU::initializeOpcodes() {
   opcodes[0x9c] = {[this]() { CPU::SBCAH(); }, 1, 4, 4};
   opcodes[0x9d] = {[this]() { CPU::SBCAL(); }, 1, 4, 4};
   opcodes[0x9f] = {[this]() { CPU::SBCAA(); }, 1, 4, 4};
+  opcodes[0xa0] = {[this]() { CPU::AndAB(); }, 1, 4, 4};
   opcodes[0xa1] = {[this]() { CPU::AndAC(); }, 1, 4, 4};
+  opcodes[0xa2] = {[this]() { CPU::AndAD(); }, 1, 4, 4};
+  opcodes[0xa3] = {[this]() { CPU::AndAE(); }, 1, 4, 4};
+  opcodes[0xa4] = {[this]() { CPU::AndAH(); }, 1, 4, 4};
   opcodes[0xa5] = {[this]() { CPU::ANDAL(); }, 1, 4, 4};
   opcodes[0xa9] = {[this]() { CPU::XORAC(); }, 1, 4, 4};
   opcodes[0xab] = {[this]() { CPU::XORAE(); }, 1, 4, 4};
@@ -1228,6 +1232,42 @@ void CPU::SBCAA() {
   registers.setFlag(registers.FLAG_N, true);
   registers.setFlag(registers.FLAG_H, halfCarry);
   registers.setFlag(registers.FLAG_C, carry);
+}
+
+void CPU::AndAB() {
+  registers.setA(registers.getA() & registers.getB());
+
+  registers.setFlag(registers.FLAG_Z, registers.getA() == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+  registers.setFlag(registers.FLAG_C, false);
+}
+
+void CPU::AndAD() {
+  registers.setA(registers.getA() & registers.getD());
+
+  registers.setFlag(registers.FLAG_Z, registers.getA() == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+  registers.setFlag(registers.FLAG_C, false);
+}
+
+void CPU::AndAE() {
+  registers.setA(registers.getA() & registers.getE());
+
+  registers.setFlag(registers.FLAG_Z, registers.getA() == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+  registers.setFlag(registers.FLAG_C, false);
+}
+
+void CPU::AndAH() {
+  registers.setA(registers.getA() & registers.getH());
+
+  registers.setFlag(registers.FLAG_Z, registers.getA() == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+  registers.setFlag(registers.FLAG_C, false);
 }
 
 void CPU::AndAC() {

@@ -341,6 +341,10 @@ struct CPU {
   void SBCAL();
   void SBCAA();
   // A and C
+  void AndAB();
+  void AndAD();
+  void AndAE();
+  void AndAH();
   void AndAC();
   // A and L
   void ANDAL();

@@ -285,7 +285,7 @@ void PPU::renderScanline(uint8_t ly) {
 
     // Get tile index from background map
     uint16_t tileMapAddr = tileMapBase + tileRow * 32 + tileCol;
-    int8_t tileIndex = memory.read(tileMapAddr);
+    uint8_t tileIndex = memory.read(tileMapAddr);
 
     // Compute address of tile data
     uint16_t tileAddr;

@@ -197,6 +197,9 @@ struct CPU {
   void LDHH();
   void LDHL();
   void LDLB();
+  void LDLD();
+  void LDLH();
+  void LDLL();
   // load value at HL into D
   void LDDHL();
   // load A into E

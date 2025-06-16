@@ -467,6 +467,7 @@ struct CPU {
   void SrlB();
   void SRLA();
   void RLCB();
+  void RLCC();
   // check bit 0 of A
   void Bit0A();
   void Bit0B();

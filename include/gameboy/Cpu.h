@@ -420,6 +420,7 @@ struct CPU {
   // check bit 6 of A
   void Bit6A();
   void Bit7A();
+  void Bit7HL();
   // reset bit 0 of A
   void Res0A();
   void Res0HL();

@@ -216,6 +216,7 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x47] = {[this]() { CPU::Bit0A(); }, 2, 8, 8};
   extendedOpcodes[0x6f] = {[this]() { CPU::Bit5A(); }, 2, 8, 8};
   extendedOpcodes[0x77] = {[this]() { CPU::Bit6A(); }, 2, 8, 8};
+  extendedOpcodes[0x7e] = {[this]() { CPU::Bit7HL(); }, 2, 12, 12};
   extendedOpcodes[0x7f] = {[this]() { CPU::Bit7A(); }, 2, 8, 8};
   extendedOpcodes[0x86] = {[this]() { CPU::Res0HL(); }, 2, 16, 16};
   extendedOpcodes[0x87] = {[this]() { CPU::Res0A(); }, 2, 8, 8};
@@ -1695,6 +1696,14 @@ void CPU::Bit6A() {
 
 void CPU::Bit7A() {
   bool bit = ((registers.getA() & (1 << 7)) == 0);
+  registers.setFlag(registers.FLAG_Z, bit);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, true);
+}
+
+void CPU::Bit7HL() {
+  uint8_t value = memory.read(registers.HL);
+  bool bit = ((value & (1 << 7)) == 0);
   registers.setFlag(registers.FLAG_Z, bit);
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, true);

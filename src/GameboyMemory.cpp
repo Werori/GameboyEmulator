@@ -65,6 +65,8 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
 
   switch (address) {
   case 0xff00:
+    std::cout << "joypad: " << std::hex << (int)hardwareRegisters.joypad
+              << std::endl;
     return hardwareRegisters.joypad;
     // throw std::runtime_error("reading joypad");
     break;
@@ -152,7 +154,7 @@ uint8_t GameboyMemory::readIORegister(uint16_t address) {
   case 0xff44:
     // std::cout << "ly returned: " << std::hex << (int)hardwareRegisters.ly
     //           << std::endl;
-    // return hardwareRegisters.ly;
+    return hardwareRegisters.ly;
     return 0x90;
     break;
   case 0xff45:
@@ -209,7 +211,7 @@ void GameboyMemory::write(uint16_t address, uint8_t byte) {
 
 void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
   if (address >= 0xff30 && address <= 0xff3f) {
-    throw std::runtime_error("writing storage");
+    // throw std::runtime_error("writing wave pattern");
   }
 
   switch (address) {
@@ -231,7 +233,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     }
     break;
   case 0xff04:
-    throw std::runtime_error("writing divider register");
+    // throw std::runtime_error("writing divider register");
     hardwareRegisters.dividerRegister = 0;
     break;
   case 0xff05:
@@ -251,34 +253,34 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.soundChannel1Sweep = byte;
     break;
   case 0xff11:
-    // hardwareRegisters.soundChannel1LengthTimer = byte;
+    hardwareRegisters.soundChannel1LengthTimer = byte;
     // std::cout << "writing sound channel 1 length timer" << std::endl;
-    throw std::runtime_error("writing sound channel 1 length timer");
+    // throw std::runtime_error("writing sound channel 1 length timer");
     break;
   case 0xff12:
     hardwareRegisters.soundChannel1VolumeAndEnvelope = byte;
     // throw std::runtime_error("writing sound channel 1 volume and envelope");
     break;
   case 0xff13:
-    // hardwareRegisters.soundChannel1PeriodLow = byte;
-    throw std::runtime_error("writing sound channel 1 period low");
+    hardwareRegisters.soundChannel1PeriodLow = byte;
+    // throw std::runtime_error("writing sound channel 1 period low");
     break;
   case 0xff14:
     hardwareRegisters.soundChannel1PeriodHighAndControl = byte;
     // throw std::runtime_error("writing sound channel 1 period high");
     break;
   case 0xff16:
-    throw std::runtime_error("writing sound channel 2 length timer");
+    hardwareRegisters.soundChannel2LengthTimer = byte;
+    // throw std::runtime_error("writing sound channel 2 length timer");
     break;
     // std::cout << "writing sound channel 2 length timer" << std::endl;
-    hardwareRegisters.soundChannel2LengthTimer = byte;
   case 0xff17:
     // throw std::runtime_error("writing sound channel 2 volume and envelope");
     hardwareRegisters.soundChannel2VolumeAndEnvelope = byte;
     break;
     // std::cout << "writing sound channel 2 volume and envelope" << std::endl;
   case 0xff18:
-    throw std::runtime_error("writing sound channel 2 period low");
+    // throw std::runtime_error("writing sound channel 2 period low");
     hardwareRegisters.soundChannel2PeriodLow = byte;
     break;
   case 0xff19:
@@ -290,23 +292,23 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.soundChannel3DACEnable = byte;
     break;
   case 0xff1b:
-    throw std::runtime_error("writing sound channel 3 length timer");
+    // throw std::runtime_error("writing sound channel 3 length timer");
     hardwareRegisters.soundChannel3LengthTimer = byte;
     break;
   case 0xff1c:
-    throw std::runtime_error("writing sound channel 3 output level");
+    // throw std::runtime_error("writing sound channel 3 output level");
     hardwareRegisters.soundChannel3OutputLevel = byte;
     break;
   case 0xff1d:
-    throw std::runtime_error("writing sound channel 3 period low");
+    // throw std::runtime_error("writing sound channel 3 period low");
     hardwareRegisters.soundChannel3PeriodLow = byte;
     break;
   case 0xff1e:
-    throw std::runtime_error("writing sound channel 3 period high and co");
+    // throw std::runtime_error("writing sound channel 3 period high and co");
     hardwareRegisters.soundChannel3PeriodHighAndControl = byte;
     break;
   case 0xff20:
-    throw std::runtime_error("writing sound channel 4 length timer");
+    // throw std::runtime_error("writing sound channel 4 length timer");
     hardwareRegisters.soundChannel4LengthTimer = byte;
     break;
   case 0xff21:
@@ -314,7 +316,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.soundChannel4VolumeAndEnvelope = byte;
     break;
   case 0xff22:
-    throw std::runtime_error("writing sound channel 4 frequency and random");
+    // throw std::runtime_error("writing sound channel 4 frequency and random");
     hardwareRegisters.soundChannel4FrequencyAndRandom = byte;
     break;
   case 0xff23:
@@ -377,7 +379,7 @@ void GameboyMemory::writeIORegister(uint16_t address, uint8_t byte) {
     hardwareRegisters.windowX = byte;
     break;
   case 0xff50:
-    throw std::runtime_error("boot rom disable!");
+    // throw std::runtime_error("boot rom disable!");
     // throw std::runtime_error("out of range io write");
   }
   for (auto *observer : observers) {

@@ -275,6 +275,9 @@ struct CPU {
   void CPAD();
   // compare A and E
   void CPAE();
+  void CPAH();
+  void CPAL();
+  void CPAA();
   void CPAHL();
   // return from stack if not zero
   void RetNz();
@@ -370,6 +373,8 @@ struct CPU {
   void SCF();
   void CCF();
   void ORAE();
+  void ORAH();
+  void ORAL();
   // pop address into AF
   void PopAF();
   // disable interrupt

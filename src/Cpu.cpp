@@ -162,13 +162,18 @@ void CPU::initializeOpcodes() {
   opcodes[0xb1] = {[this]() { CPU::ORAC(); }, 1, 4, 4};
   opcodes[0xb2] = {[this]() { CPU::ORAD(); }, 1, 4, 4};
   opcodes[0xb3] = {[this]() { CPU::ORAE(); }, 1, 4, 4};
+  opcodes[0xb4] = {[this]() { CPU::ORAH(); }, 1, 4, 4};
+  opcodes[0xb5] = {[this]() { CPU::ORAL(); }, 1, 4, 4};
   opcodes[0xb6] = {[this]() { CPU::ORAHLaddr(); }, 1, 8, 8};
   opcodes[0xb7] = {[this]() { CPU::ORAA(); }, 1, 4, 4};
   opcodes[0xb8] = {[this]() { CPU::CPAB(); }, 1, 4, 4};
   opcodes[0xb9] = {[this]() { CPU::CPAC(); }, 1, 4, 4};
   opcodes[0xba] = {[this]() { CPU::CPAD(); }, 1, 4, 4};
   opcodes[0xbb] = {[this]() { CPU::CPAE(); }, 1, 4, 4};
+  opcodes[0xbc] = {[this]() { CPU::CPAH(); }, 1, 4, 4};
+  opcodes[0xbd] = {[this]() { CPU::CPAL(); }, 1, 4, 4};
   opcodes[0xbe] = {[this]() { CPU::CPAHL(); }, 1, 8, 8};
+  opcodes[0xbf] = {[this]() { CPU::CPAA(); }, 1, 4, 4};
   opcodes[0xc0] = {[this]() { CPU::RetNz(); }, 1, 8, 20};
   opcodes[0xc1] = {[this]() { CPU::PopBC(); }, 1, 12, 12};
   opcodes[0xc2] = {[this]() { CPU::JPNzu16(); }, 3, 12, 16};
@@ -645,6 +650,32 @@ void CPU::ORAE() {
   registers.setA(result);
 }
 
+void CPU::ORAH() {
+  uint8_t a = registers.getA();
+  uint8_t h = registers.getH();
+  uint8_t result = a | h;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_C, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_N, false);
+
+  registers.setA(result);
+}
+
+void CPU::ORAL() {
+  uint8_t a = registers.getA();
+  uint8_t l = registers.getL();
+  uint8_t result = a | l;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_C, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_N, false);
+
+  registers.setA(result);
+}
+
 void CPU::ORAHLaddr() {
   uint8_t a = registers.getA();
   uint8_t value = memory.read(registers.HL);
@@ -712,6 +743,38 @@ void CPU::CPAE() {
   registers.setFlag(registers.FLAG_N, true);
   registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, e));
   registers.setFlag(registers.FLAG_C, isCarrySub(a, e));
+}
+
+void CPU::CPAH() {
+  uint8_t a = registers.getA();
+  uint8_t h = registers.getH();
+  uint8_t result = a - h;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, h));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, h));
+}
+
+void CPU::CPAL() {
+  uint8_t a = registers.getA();
+  uint8_t l = registers.getL();
+  uint8_t result = a - l;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, l));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, l));
+}
+
+void CPU::CPAA() {
+  uint8_t a = registers.getA();
+  uint8_t result = a - a;
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, true);
+  registers.setFlag(registers.FLAG_H, isHalfCarrySub(a, a));
+  registers.setFlag(registers.FLAG_C, isCarrySub(a, a));
 }
 
 void CPU::CPAHL() {

@@ -260,7 +260,11 @@ void CPU::initializeOpcodes() {
 void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x00] = {[this]() { CPU::RLCB(); }, 2, 8, 8};
   extendedOpcodes[0x01] = {[this]() { CPU::RLCC(); }, 2, 8, 8};
-  extendedOpcodes[0x01] = {[this]() { CPU::RLCC(); }, 2, 8, 8};
+  extendedOpcodes[0x02] = {[this]() { CPU::RLCD(); }, 2, 8, 8};
+  extendedOpcodes[0x03] = {[this]() { CPU::RLCE(); }, 2, 8, 8};
+  extendedOpcodes[0x04] = {[this]() { CPU::RLCH(); }, 2, 8, 8};
+  extendedOpcodes[0x05] = {[this]() { CPU::RLCL(); }, 2, 8, 8};
+  extendedOpcodes[0x07] = {[this]() { CPU::RLCAex(); }, 2, 8, 8};
   extendedOpcodes[0x18] = {[this]() { CPU::RRB(); }, 2, 8, 8};
   extendedOpcodes[0x19] = {[this]() { CPU::RRC(); }, 2, 8, 8};
   extendedOpcodes[0x1a] = {[this]() { CPU::RRD(); }, 2, 8, 8};
@@ -2571,6 +2575,71 @@ void CPU::RLCC() {
 
   uint8_t result = (c << 1) | (bit7 ? 1 : 0);
   registers.setC(result);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, bit7);
+}
+
+void CPU::RLCH() {
+  uint8_t h = registers.getH();
+  bool bit7 = (h & 0x80) != 0;
+
+  uint8_t result = (h << 1) | (bit7 ? 1 : 0);
+  registers.setH(result);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, bit7);
+}
+
+void CPU::RLCD() {
+  uint8_t d = registers.getD();
+  bool bit7 = (d & 0x80) != 0;
+
+  uint8_t result = (d << 1) | (bit7 ? 1 : 0);
+  registers.setD(result);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, bit7);
+}
+
+void CPU::RLCL() {
+  uint8_t l = registers.getL();
+  bool bit7 = (l & 0x80) != 0;
+
+  uint8_t result = (l << 1) | (bit7 ? 1 : 0);
+  registers.setL(result);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, bit7);
+}
+
+void CPU::RLCAex() {
+  uint8_t a = registers.getA();
+  bool bit7 = (a & 0x80) != 0;
+
+  uint8_t result = (a << 1) | (bit7 ? 1 : 0);
+  registers.setA(result);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, bit7);
+}
+
+void CPU::RLCE() {
+  uint8_t e = registers.getE();
+  bool bit7 = (e & 0x80) != 0;
+
+  uint8_t result = (e << 1) | (bit7 ? 1 : 0);
+  registers.setE(result);
 
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, false);

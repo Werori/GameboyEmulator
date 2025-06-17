@@ -307,6 +307,11 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x86] = {[this]() { CPU::Res0HL(); }, 2, 16, 16};
   extendedOpcodes[0x87] = {[this]() { CPU::Res0A(); }, 2, 8, 8};
   extendedOpcodes[0xbe] = {[this]() { CPU::Res7HL(); }, 2, 16, 16};
+  extendedOpcodes[0xc6] = {[this]() { CPU::Set0HL(); }, 2, 16, 16};
+  extendedOpcodes[0xce] = {[this]() { CPU::Set1HL(); }, 2, 16, 16};
+  extendedOpcodes[0xe6] = {[this]() { CPU::Set4HL(); }, 2, 16, 16};
+  extendedOpcodes[0xee] = {[this]() { CPU::Set5HL(); }, 2, 16, 16};
+  extendedOpcodes[0xf6] = {[this]() { CPU::Set6HL(); }, 2, 16, 16};
   extendedOpcodes[0xfe] = {[this]() { CPU::Set7HL(); }, 2, 16, 16};
 }
 
@@ -2664,6 +2669,36 @@ void CPU::Res7HL() {
 void CPU::Set7HL() {
   uint8_t value = memory.read(registers.HL);
   value |= (1 << 7);
+  memory.write(registers.HL, value);
+}
+
+void CPU::Set6HL() {
+  uint8_t value = memory.read(registers.HL);
+  value |= (1 << 6);
+  memory.write(registers.HL, value);
+}
+
+void CPU::Set1HL() {
+  uint8_t value = memory.read(registers.HL);
+  value |= (1 << 1);
+  memory.write(registers.HL, value);
+}
+
+void CPU::Set4HL() {
+  uint8_t value = memory.read(registers.HL);
+  value |= (1 << 4);
+  memory.write(registers.HL, value);
+}
+
+void CPU::Set0HL() {
+  uint8_t value = memory.read(registers.HL);
+  value |= (1 << 0);
+  memory.write(registers.HL, value);
+}
+
+void CPU::Set5HL() {
+  uint8_t value = memory.read(registers.HL);
+  value |= (1 << 5);
   memory.write(registers.HL, value);
 }
 

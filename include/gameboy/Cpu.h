@@ -512,6 +512,11 @@ struct CPU {
   void Res7HL();
 
   void Set7HL();
+  void Set6HL();
+  void Set1HL();
+  void Set4HL();
+  void Set0HL();
+  void Set5HL();
 
   void openLogFile(const std::string &filename);
   void closeLogFile();

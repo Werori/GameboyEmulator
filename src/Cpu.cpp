@@ -266,6 +266,7 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x05] = {[this]() { CPU::RLCL(); }, 2, 8, 8};
   extendedOpcodes[0x07] = {[this]() { CPU::RLCAex(); }, 2, 8, 8};
   extendedOpcodes[0x08] = {[this]() { CPU::RRCB(); }, 2, 8, 8};
+  extendedOpcodes[0x09] = {[this]() { CPU::RRCC(); }, 2, 8, 8};
   extendedOpcodes[0x18] = {[this]() { CPU::RRB(); }, 2, 8, 8};
   extendedOpcodes[0x19] = {[this]() { CPU::RRC(); }, 2, 8, 8};
   extendedOpcodes[0x1a] = {[this]() { CPU::RRD(); }, 2, 8, 8};
@@ -2642,6 +2643,19 @@ void CPU::RRCB() {
 
   uint8_t result = (b >> 1) | (bit0 ? 0x80 : 0);
   registers.setB(result);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, bit0);
+}
+
+void CPU::RRCC() {
+  uint8_t c = registers.getC();
+  bool bit0 = (c & 0x01) != 0;
+
+  uint8_t result = (c >> 1) | (bit0 ? 0x80 : 0);
+  registers.setC(result);
 
   registers.setFlag(registers.FLAG_Z, result == 0);
   registers.setFlag(registers.FLAG_N, false);

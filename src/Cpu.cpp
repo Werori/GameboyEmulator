@@ -265,6 +265,7 @@ void CPU::initializeExtendedOpcodes() {
   extendedOpcodes[0x04] = {[this]() { CPU::RLCH(); }, 2, 8, 8};
   extendedOpcodes[0x05] = {[this]() { CPU::RLCL(); }, 2, 8, 8};
   extendedOpcodes[0x07] = {[this]() { CPU::RLCAex(); }, 2, 8, 8};
+  extendedOpcodes[0x08] = {[this]() { CPU::RRCB(); }, 2, 8, 8};
   extendedOpcodes[0x18] = {[this]() { CPU::RRB(); }, 2, 8, 8};
   extendedOpcodes[0x19] = {[this]() { CPU::RRC(); }, 2, 8, 8};
   extendedOpcodes[0x1a] = {[this]() { CPU::RRD(); }, 2, 8, 8};
@@ -319,7 +320,6 @@ void CPU::fetchOpcode() {
   if (IME_scheduled) {
     IME = 1;
     IME_scheduled = false;
-    std::cout << "IME now enabled" << std::endl;
   }
 
   if (!halted) {
@@ -2232,10 +2232,7 @@ void CPU::ADCAL() {
   registers.setFlag(registers.FLAG_C, carry);
 }
 
-void CPU::EI() {
-  IME_scheduled = true;
-  std::cout << "Executed EI, scheduling IME" << std::endl;
-}
+void CPU::EI() { IME_scheduled = true; }
 
 void CPU::RST38h() {
   pushToStack(registers.PC + 1);
@@ -2637,6 +2634,19 @@ void CPU::RLCAex() {
   registers.setFlag(registers.FLAG_N, false);
   registers.setFlag(registers.FLAG_H, false);
   registers.setFlag(registers.FLAG_C, bit7);
+}
+
+void CPU::RRCB() {
+  uint8_t b = registers.getB();
+  bool bit0 = (b & 0x01) != 0;
+
+  uint8_t result = (b >> 1) | (bit0 ? 0x80 : 0);
+  registers.setB(result);
+
+  registers.setFlag(registers.FLAG_Z, result == 0);
+  registers.setFlag(registers.FLAG_N, false);
+  registers.setFlag(registers.FLAG_H, false);
+  registers.setFlag(registers.FLAG_C, bit0);
 }
 
 void CPU::RLCE() {

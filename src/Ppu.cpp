@@ -8,7 +8,7 @@
 PPU::PPU(GameboyMemory &memory) : memory(memory) {};
 
 void PPU::init() {
-  // SetTargetFPS(60);
+  SetTargetFPS(60);
   InitWindow(SCREEN_WIDTH * scaleFactor, SCREEN_HEIGHT * scaleFactor,
              "Game Boy Emulator");
 
@@ -237,7 +237,6 @@ uint8_t PPU::onRegisterRead(uint16_t address) {
 void PPU::onRegisterWrite(uint16_t address, uint8_t byte) {
   switch (address) {
   case 0xff47:
-    std::cout << "ppu on write" << std::endl;
     for (int i = 0; i < 4; ++i) {
       uint8_t shade = (byte >> (i * 2)) & 0x03;
       bgPalleteData[i] = shadeToColor(shade);

@@ -59,7 +59,6 @@ void Joypad::update() {
   }
 
   if ((buttonState & ~newState) != 0) {
-    std::cout << "INTERRUPT REQUESTED" << std::endl;
     memory.requestInterrupt(InterruptFlag::Joypad);
   }
 

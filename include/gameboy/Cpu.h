@@ -472,6 +472,7 @@ struct CPU {
   void RLCE();
   void RLCH();
   void RLCAex();
+  void RRCB();
   void RLCL();
   // check bit 0 of A
   void Bit0A();
